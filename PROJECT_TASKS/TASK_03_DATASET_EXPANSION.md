@@ -4,7 +4,9 @@
 
 **Trạng thái:** CAPTURE_APP đã sẵn sàng để thu ảnh và nhập dữ liệu; cần thực hiện theo [TASK-00](TASK_00_CAPTURE_PROTOCOL_AND_DATA_GOVERNANCE.md) trước khi thu hàng loạt.
 
-## 1. Mục tiêu và phạm vi
+## Phần 1 — Mục tiêu và hướng dẫn
+
+### 1. Mục tiêu và phạm vi
 
 Mục tiêu ngay trước mắt là tạo một tập dữ liệu thực, truy vết được, phục vụ hồi quy số lượng hạt:
 
@@ -21,15 +23,16 @@ Máy tính   = host (CAPTURE_APP, QR, mã ảnh, Excel, lưu trữ, pipeline AI)
 
 Chi tiết thiết lập và cách quản lý metadata thuộc [TASK-00](TASK_00_CAPTURE_PROTOCOL_AND_DATA_GOVERNANCE.md). Cân điện tử hiện được nhập tay; việc kết nối trực tiếp chỉ là một hạng mục tương lai sau khi xác định được model cân và giao thức truyền dữ liệu.
 
-## 2. Thiết lập chụp bắt buộc
+### 2. Thiết lập chụp bắt buộc
 
-- Dùng điện thoại cố định trên giá, camera vuông góc với miệng ly (mục tiêu 90°).
-- Chọn **một** chiều cao ống kính–mặt bàn, ví dụ 18,0 cm, đo thực tế và ghi trong `Capture_Height_mm`; không dùng một khoảng 15–20 cm.
-- Dùng đèn LED tán xạ/ring light có diffuser, giữ cùng vị trí và cường độ khi thu một batch.
+- Dùng điện thoại cố định trên giá, camera hướng gần vuông góc với miệng ly.
+- Chọn độ cao/góc chụp trong khoảng đã kiểm thử để toàn bộ ly và hạt nhìn rõ;
+  không yêu cầu cố định một độ cao hay ghi `Capture_Height_mm`.
+- Bảo đảm ảnh đủ sáng và không chói/mờ; không yêu cầu lưu cấu hình ánh sáng.
 - Khoá focus, exposure và white balance nếu ứng dụng điện thoại cho phép; kiểm tra ảnh không rung, không cháy sáng và ly nằm trọn khung.
 - Khuyến nghị có bảng chuẩn kích thước/màu xuất hiện trong ảnh kiểm tra đầu mỗi phiên. Không bắt buộc đưa vào mọi ảnh sản xuất nếu ảnh hưởng pipeline.
 
-## 3. Kế hoạch lấy mẫu pilot
+### 3. Kế hoạch lấy mẫu pilot
 
 | Phân tầng | Dải số hạt | Số mẫu | Mục đích |
 | --- | ---: | ---: | --- |
@@ -39,20 +42,37 @@ Chi tiết thiết lập và cách quản lý metadata thuộc [TASK-00](TASK_00
 | Giống/hình dạng khác | Đa dạng | 10 | Kiểm tra độ bao phủ hình thái |
 | **Tổng pilot** |  | **55** | Kiểm tra protocol trước khi mở rộng |
 
-Mỗi phiên phải ghi ít nhất `Capture_Batch`, ngày/giờ, thiết bị, người thao tác, giống/loại hạt và thiết lập đèn. Các nhóm này được giữ lại để tách train/test theo batch ở TASK-04, tránh ảnh cùng điều kiện xuất hiện đồng thời ở train và test.
+Mỗi phiên phải có `Capture_Batch` và `Device_ID` hoặc `Device_Model`.
+`Capture_Timestamp` được app tạo khi lưu ảnh. Các nhóm này được giữ lại để tách
+train/test theo batch hoặc thiết bị ở TASK-04, tránh ảnh cùng điều kiện xuất
+hiện đồng thời ở train và test.
 
-## 4. Quy trình thao tác
+### 4. Quy trình thao tác
 
 1. Chạy [`run_capture_app.bat`](../DATASET_BUILDER/CAPTURE_APP/run_capture_app.bat), chọn thư mục lưu ảnh phẳng và file Excel đích, rồi quét QR bằng điện thoại.
-2. Nhập các thông số thủ công của mẫu: `Weight_g`, `Container_Height_mm`, `Inner_Diameter_mm`, `Empty_Height_mm`, `Actual_Count` và các metadata phiên chụp. `Rice_Height_mm` là giá trị suy ra từ kích thước ly và khoảng trống, cần được kiểm tra công thức thay vì nhập trùng.
+2. Khi mở phiên, chọn `Capture_Batch` và thiết bị. Với từng mẫu, nhập `Weight_g`, `Container_Height_mm`, `Inner_Diameter_mm`, `Empty_Height_mm` và `Actual_Count`. `Rice_Height_mm` là giá trị suy ra từ kích thước ly và khoảng trống, không nhập trùng.
 3. Chụp/lưu. Ảnh nằm trực tiếp trong thư mục đã chọn với mã tăng dần, ví dụ `M0058.jpg`, `M0059.jpg`; không tạo cấu trúc con kiểu `M001/M001A`.
 4. Chạy [`AI_DATASET_EXTRACTION_PIPELINE.ipynb`](../DATASET_BUILDER/AI_DATASET_EXTRACTION_PIPELINE.ipynb) để bóc tách hạt và tạo đặc trưng.
-5. Chạy `check_filtered_grains.py` để tạo báo cáo QC. Mốc “ít hơn 3 hạt crop” là **cảnh báo để kiểm tra ảnh/pipeline**, không phải quy tắc tự động loại mẫu ít hạt vì sẽ làm lệch phân bố dữ liệu.
-6. Chỉ đánh dấu loại trừ khi có lý do được ghi rõ (ảnh rung, lỗi nhãn, không thấy ly, lỗi phân đoạn không khắc phục được). Lưu lý do trong bảng dữ liệu.
+5. Chạy `check_filtered_grains.py` để kiểm tra pipeline khi cần. Mốc “ít hơn 3 hạt crop” là **cảnh báo để kiểm tra ảnh/pipeline**, không phải quy tắc tự động loại mẫu ít hạt vì sẽ làm lệch phân bố dữ liệu.
 
-## 5. Definition of Done
+## Phần 2 — Công việc cụ thể và theo dõi
 
-- Hoàn tất 55 mẫu pilot, có nhật ký thiết lập và ảnh/mã Excel khớp một-một.
-- Từ pilot đã sửa các lỗi protocol trước khi thu tiếp; đạt ít nhất 100 mẫu hợp lệ, có nhãn `Actual_Count` đo thực.
-- Ảnh lưu phẳng trong thư mục được chọn; file Excel, kết quả pipeline và báo cáo QC có đường dẫn/phiên bản rõ ràng.
-- Không có mẫu nào được loại chỉ vì số hạt ít; mọi loại trừ đều có nguyên nhân lưu vết.
+### Công việc cụ thể và trạng thái (kiểm toán 16/09/2026)
+
+- [x] `CAPTURE_APP` có luồng desktop/mobile, lưu ảnh và workbook; 15 unit test
+  đã PASS trong lần kiểm toán 16/09/2026.
+- [x] Có 261 ảnh gốc trong 57 thư mục mẫu và workbook dataset cuối có 285 bản
+  ghi tương ứng 57 mã mẫu gốc.
+- [ ] Chưa chứng minh được 55 mẫu pilot có nhật ký thiết lập và đối chiếu
+  ảnh–Excel một-một.
+- [ ] Chưa đạt bằng chứng tối thiểu 100 mẫu vật lý hợp lệ: workbook thủ công
+  hiện có 92 mã mẫu gốc, trong đó 35 bản ghi trống `Actual_Count`.
+- [ ] Thiếu `Capture_Batch` và thông tin thiết bị, nên chưa thể xác nhận dữ liệu
+  đủ điều kiện cho benchmark theo batch/thiết bị.
+
+### Tiêu chí hoàn thành toàn bộ task
+
+- [ ] Hoàn tất 55 mẫu pilot, có nhật ký thiết lập và ảnh/mã Excel khớp một-một.
+- [ ] Từ pilot đã sửa các lỗi protocol trước khi thu tiếp; đạt ít nhất 100 mẫu hợp lệ, có nhãn `Actual_Count` đo thực.
+- [ ] Ảnh lưu phẳng trong thư mục được chọn; file Excel và kết quả pipeline có đường dẫn/phiên bản rõ ràng.
+- [ ] Pipeline không tự loại mẫu chỉ vì số hạt ít.

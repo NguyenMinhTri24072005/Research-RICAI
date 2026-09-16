@@ -1,22 +1,40 @@
 # RICE VISION AI — MASTER TASK BOARD & ROADMAP
 
-> **Cập nhật lần cuối:** 15/09/2026  
+> **Cập nhật lần cuối:** 16/09/2026
 > **Trạng thái tổng thể:** Đang thực hiện  
 > **Mục tiêu:** Xây dựng quy trình thu thập đáng tin cậy, benchmark có giá trị
 > khoa học và sản phẩm AI có thể giải trình.
 
-## 1. Bảng theo dõi nhiệm vụ
+## Phần 1 — Mục tiêu và hướng dẫn
+
+### Mục tiêu chung
+
+Xây dựng một quy trình thu thập dữ liệu có thể tái lập, một dịch vụ AI dự đoán
+số hạt lúa với schema đặc trưng rõ ràng, và benchmark đủ chặt chẽ để dùng cho
+nghiên cứu/bài báo.
+
+### Hướng dẫn sử dụng task board
+
+- Đọc **Phần 1** của từng task để biết phạm vi, quy tắc và điều kiện kỹ thuật.
+- Chỉ đánh dấu `[x]` trong **Phần 2** khi có code, test, dữ liệu hoặc artefact
+  có thể đối chiếu trong repository.
+- Không đánh dấu toàn bộ task hoàn thành nếu còn một điều kiện trong tiêu chí
+  hoàn thành chưa đạt.
+
+## Phần 2 — Công việc cụ thể và theo dõi
+
+### 1. Bảng theo dõi nhiệm vụ
 
 | Mã task | Nhiệm vụ | Ưu tiên | Trạng thái | Đặc tả |
 | :--- | :--- | :---: | :--- | :--- |
-| **TASK-00** | Quy chuẩn thu thập, điện thoại camera node và kiểm soát chất lượng | 🔴 P1 | ⏳ Mới | [TASK-00](TASK_00_CAPTURE_PROTOCOL_AND_DATA_GOVERNANCE.md) |
-| **TASK-01** | Hoàn tất tích hợp hồi quy 31 biến vào `AI_SERVICES` | 🔴 P1 | 🟡 Làm một phần | [TASK-01](TASK_01_AI_SERVICES_INTEGRATION.md) |
+| **TASK-00** | Quy chuẩn thu thập, điện thoại camera node và kiểm soát chất lượng | 🔴 P1 | 🟡 Đang làm — thiếu metadata/protocol xác nhận | [TASK-00](TASK_00_CAPTURE_PROTOCOL_AND_DATA_GOVERNANCE.md) |
+| **TASK-01** | Hoàn tất tích hợp hồi quy 31 biến vào `AI_SERVICES` | 🔴 P1 | 🟡 Đang làm — source đã tích hợp, chưa đủ DoD | [TASK-01](TASK_01_AI_SERVICES_INTEGRATION.md) |
 | **TASK-02** | Module giải trình kết quả AI/XAI | 🔴 P1 | ⏳ Chờ TASK-01 | [TASK-02](TASK_02_EXPLAINABLE_AI_XAI.md) |
 | **TASK-03** | Thu thập/mở rộng dataset bằng `CAPTURE_APP` | 🔴 P1 | 🟡 Ứng dụng sẵn sàng, chờ thu thập | [TASK-03](TASK_03_DATASET_EXPANSION.md) |
-| **TASK-04** | Benchmark 14 mô hình hồi quy và artefact bài báo | 🟡 P2 | ⏳ Chờ dataset ổn định | [TASK-04](TASK_04_REGRESSION_BENCHMARK_PAPER.md) |
+| **TASK-04** | Benchmark 14 mô hình hồi quy và artefact bài báo | 🟡 P2 | 🟡 Có kết quả thăm dò, chờ protocol/dataset ổn định | [TASK-04](TASK_04_REGRESSION_BENCHMARK_PAPER.md) |
 | **TASK-05** | Nghiên cứu feasibility few-shot/transfer sang hạt khác | 🟢 P3 | ⏳ Định hướng nghiên cứu | [TASK-05](TASK_05_FEW_SHOT_TRANSFER_LEARNING.md) |
 
-## 2. Thứ tự triển khai
+### 2. Thứ tự triển khai
 
 ```mermaid
 gantt
@@ -39,7 +57,7 @@ gantt
 TASK-01 và TASK-03 có thể chạy song song: TASK-01 dùng tập dữ liệu hiện có để
 hoàn thiện API; TASK-03 tạo dữ liệu chuẩn cho đánh giá và công bố sau cùng.
 
-## 3. Nguyên tắc quyết định
+### 3. Nguyên tắc quyết định
 
 - **Camera:** điện thoại là camera node; máy tính là host. Không mua camera
   mạch để thay thế điện thoại.
@@ -50,7 +68,7 @@ hoàn thiện API; TASK-03 tạo dữ liệu chuẩn cho đánh giá và công b
 - **Giải trình:** kết quả sản phẩm phải hiển thị được cơ sở hình học và đóng góp
   của đặc trưng hồi quy, thay vì chỉ trả một con số.
 
-## 4. Cấu trúc thư mục
+### 4. Cấu trúc thư mục
 
 ```text
 PROJECT_TASKS/
