@@ -17,11 +17,20 @@ import numpy as np
 from typing import Any, Dict, List, Optional, Tuple
 
 # Import from feature_schema
-from feature_schema import (
-    ALL_31_FEATURES,
-    validate_feature_vector,
-    feature_vector_to_ordered_list,
-)
+try:
+    from feature_schema import (
+        ALL_31_FEATURES,
+        validate_feature_vector,
+        feature_vector_to_ordered_list,
+        compute_trained_hybrid_feature,
+    )
+except ImportError:
+    from AI_SERVICES.feature_schema import (
+        ALL_31_FEATURES,
+        validate_feature_vector,
+        feature_vector_to_ordered_list,
+        compute_trained_hybrid_feature,
+    )
 
 # Export ALL_31_FEATURES for backward compatibility
 __all__ = [
@@ -135,6 +144,16 @@ def assemble_31_features(
     if container_diam_px is not None:
         container_diam_px = float(container_diam_px)
 
+    # --- Tinh Estimated_Total_Seeds_Hybrid chuan theo training semantics ---
+    bulk_vol = container_res.get("bulk_rice_volume_mm3")
+    trained_hybrid = compute_trained_hybrid_feature(bulk_vol, volumes)
+    if trained_hybrid is not None:
+        hybrid_feature = float(trained_hybrid)
+    elif hybrid_estimate is not None and hybrid_estimate > 0:
+        hybrid_feature = float(hybrid_estimate)
+    else:
+        hybrid_feature = None
+
     features = {
         # Group 1: Container & Bulk
         "Bulk_Rice_Volume_mm3": container_res.get("bulk_rice_volume_mm3"),
@@ -148,7 +167,7 @@ def assemble_31_features(
         # Group 2: Surface & Estimation
         "Whole_Grains_Count": float(len(whole_grains)),
         "Uniformity_Rate_Pct": uniformity_res.get("uniformity_rate_pct"),
-        "Estimated_Total_Seeds_Hybrid": hybrid_estimate,
+        "Estimated_Total_Seeds_Hybrid": hybrid_feature,
         # Group 3: Length 2a
         "Grain_Length_mm_Mean": _safe_stat(lengths, np.mean),
         "Grain_Length_mm_Min": _safe_stat(lengths, np.min),
@@ -197,13 +216,14 @@ def assemble_31_features(
 def predict_from_tree(
     model: Any,
     scaler: Any,
-    features_dict: Dict[str, float],
+    features_dict: Dict[str, Optional[float]],
 ) -> float:
     """
     Suy luan bang Extra Trees Regressor (primary).
     Thuc hien scaler.transform() roi model.predict().
+    Tu choi vector thieu du lieu bat buoc hoac chua None (khong tu ep 0.0).
     """
-    ordered_list = feature_vector_to_ordered_list(features_dict, default=0.0)
+    ordered_list = feature_vector_to_ordered_list(features_dict, allow_missing=False)
     feature_vector = np.array([ordered_list])
 
     if scaler is not None:

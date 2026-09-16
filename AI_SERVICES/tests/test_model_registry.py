@@ -49,6 +49,54 @@ class TestModelRegistry(unittest.TestCase):
         self.assertIsNotNone(status.error)
         self.assertIn("không tồn tại", status.error.lower())
 
+    def test_model_sha256_mismatch_fails_verification(self):
+        import json, tempfile
+        with open(self.manifest_path, "r", encoding="utf-8") as f:
+            manifest_data = json.load(f)
+        manifest_data["model"]["sha256"] = "0" * 64
+        with tempfile.NamedTemporaryFile("w", encoding="utf-8", suffix=".json", delete=False) as tmp:
+            json.dump(manifest_data, tmp)
+            tmp_path = Path(tmp.name)
+        try:
+            reg = ModelRegistry(project_root=PROJECT_ROOT, manifest_path=tmp_path)
+            status = reg.load_bundle(force=True)
+            self.assertFalse(status.verified)
+            self.assertIn("Model SHA-256 mismatch", str(status.error))
+        finally:
+            tmp_path.unlink(missing_ok=True)
+
+    def test_schema_hash_mismatch_fails_verification(self):
+        import json, tempfile
+        with open(self.manifest_path, "r", encoding="utf-8") as f:
+            manifest_data = json.load(f)
+        manifest_data["schema_hash"] = "f" * 64
+        with tempfile.NamedTemporaryFile("w", encoding="utf-8", suffix=".json", delete=False) as tmp:
+            json.dump(manifest_data, tmp)
+            tmp_path = Path(tmp.name)
+        try:
+            reg = ModelRegistry(project_root=PROJECT_ROOT, manifest_path=tmp_path)
+            status = reg.load_bundle(force=True)
+            self.assertFalse(status.verified)
+            self.assertIn("Schema hash mismatch", str(status.error))
+        finally:
+            tmp_path.unlink(missing_ok=True)
+
+    def test_model_class_mismatch_fails_verification(self):
+        import json, tempfile
+        with open(self.manifest_path, "r", encoding="utf-8") as f:
+            manifest_data = json.load(f)
+        manifest_data["model"]["expected_class"] = "sklearn.linear_model.LinearRegression"
+        with tempfile.NamedTemporaryFile("w", encoding="utf-8", suffix=".json", delete=False) as tmp:
+            json.dump(manifest_data, tmp)
+            tmp_path = Path(tmp.name)
+        try:
+            reg = ModelRegistry(project_root=PROJECT_ROOT, manifest_path=tmp_path)
+            status = reg.load_bundle(force=True)
+            self.assertFalse(status.verified)
+            self.assertIn("Model class mismatch", str(status.error))
+        finally:
+            tmp_path.unlink(missing_ok=True)
+
 
 if __name__ == "__main__":
     unittest.main()

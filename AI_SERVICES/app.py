@@ -553,18 +553,13 @@ async def predict(
             "container_height_mm": height_mm,
         }
 
-        # TODO: Estimated_Total_Seeds_Hybrid discrepancy —
-        # Training extractor: Round(bulk_vol * packing / vol_mean_mm3)
-        # Runtime: estimates["final"] (hybrid of geometry + weight)
-        # This mismatch is documented in manifest.json pipeline_config
-        hybrid_for_regression = float(estimates.get("final") or 0)
-
+        # Estimated_Total_Seeds_Hybrid duoc tinh tu dong ben trong assemble_31_features
+        # theo dung cong thuc trinh chiet dataset huan luyen (packing factor 0.62)
         features_dict = assemble_31_features(
             container_res=container_res,
             whole_grains=whole_grains,
             uniformity_res=uniformity_res,
             form_inputs=form_inputs,
-            hybrid_estimate=hybrid_for_regression,
         )
 
         # ── Bước 7: Validate features trước regression ───────────────────────
@@ -578,20 +573,21 @@ async def predict(
         regression_method: Optional[str] = None
 
         if estimator_mode in ("auto", "regression"):
-            if not feature_validation.valid and feature_validation.grain_count == 0:
+            if not feature_validation.valid:
                 if estimator_mode == "regression":
+                    err_code = getattr(ErrorCode, feature_validation.error_code, ErrorCode.INVALID_INPUT) if feature_validation.error_code else ErrorCode.INVALID_INPUT
                     resp = PredictResponse(
                         status="error",
                         request_id=request_id,
                         error=ErrorDetail(
-                            code=ErrorCode.NO_VALID_GRAINS,
-                            message="Không có hạt nguyên nào được phát hiện để chạy hồi quy.",
+                            code=err_code,
+                            message=feature_validation.error_message or "Vector dac trung khong hop le cho hoi quy",
                             stage="regression_validation",
                         ),
                     )
                     return JSONResponse(status_code=422, content=resp.to_dict())
                 response_warnings.append(
-                    "NO_VALID_GRAINS: Regression bỏ qua vì không có hạt nguyên nào."
+                    f"REGRESSION_SKIPPED: {feature_validation.error_message or 'Vector dac trung khong dat chuan'}"
                 )
             else:
                 # Load bundle nếu chưa
@@ -600,12 +596,8 @@ async def predict(
                 if bundle_status.verified:
                     model, scaler = _registry.get_model_and_scaler()
                     try:
-                        # Thay None bằng 0.0 cho regression (model cần vector đầy đủ)
-                        features_for_model = {
-                            k: (v if v is not None else 0.0) for k, v in features_dict.items()
-                        }
                         pred, method = predict_regression(
-                            features_dict=features_for_model,
+                            features_dict=features_dict,
                             model=model,
                             scaler=scaler,
                         )

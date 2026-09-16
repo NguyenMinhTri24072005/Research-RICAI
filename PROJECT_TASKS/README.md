@@ -1,6 +1,6 @@
 # RICE VISION AI — MASTER TASK BOARD & ROADMAP
 
-> **Cập nhật lần cuối:** 16/09/2026
+> **Cập nhật lần cuối:** 17/09/2026
 > **Trạng thái tổng thể:** Đang thực hiện  
 > **Mục tiêu:** Xây dựng quy trình thu thập đáng tin cậy, benchmark có giá trị
 > khoa học và sản phẩm AI có thể giải trình.
@@ -28,8 +28,8 @@ nghiên cứu/bài báo.
 | Mã task | Nhiệm vụ | Ưu tiên | Trạng thái | Đặc tả |
 | :--- | :--- | :---: | :--- | :--- |
 | **TASK-00** | Quy chuẩn thu thập, điện thoại camera node và kiểm soát chất lượng | 🔴 P1 | 🟡 Đang làm — thiếu metadata/protocol xác nhận | [TASK-00](TASK_00_CAPTURE_PROTOCOL_AND_DATA_GOVERNANCE.md) |
-| **TASK-01** | Hoàn tất tích hợp hồi quy 31 biến vào `AI_SERVICES` | 🔴 P1 | 🟡 Đang làm — source đã tích hợp, chưa đủ DoD | [TASK-01](TASK_01_AI_SERVICES_INTEGRATION.md) |
-| **TASK-02** | Module giải trình kết quả AI/XAI | 🔴 P1 | ⏳ Chờ TASK-01 | [TASK-02](TASK_02_EXPLAINABLE_AI_XAI.md) |
+| **TASK-01** | Hoàn tất tích hợp hồi quy 31 biến vào `AI_SERVICES` | 🔴 P1 | 🟢 Hoàn thành (Verified) — 34/34 tests, M001A E2E pass | [TASK-01](TASK_01_AI_SERVICES_INTEGRATION.md) |
+| **TASK-02** | Module giải trình kết quả AI/XAI | 🔴 P1 | ⏳ Sẵn sàng triển khai (Sau TASK-01) | [TASK-02](TASK_02_EXPLAINABLE_AI_XAI.md) |
 | **TASK-03** | Thu thập/mở rộng dataset bằng `CAPTURE_APP` | 🔴 P1 | 🟡 Ứng dụng sẵn sàng, chờ thu thập | [TASK-03](TASK_03_DATASET_EXPANSION.md) |
 | **TASK-04** | Benchmark 14 mô hình hồi quy và artefact bài báo | 🟡 P2 | 🟡 Có kết quả thăm dò, chờ protocol/dataset ổn định | [TASK-04](TASK_04_REGRESSION_BENCHMARK_PAPER.md) |
 | **TASK-05** | Nghiên cứu feasibility few-shot/transfer sang hạt khác | 🟢 P3 | ⏳ Định hướng nghiên cứu | [TASK-05](TASK_05_FEW_SHOT_TRANSFER_LEARNING.md) |

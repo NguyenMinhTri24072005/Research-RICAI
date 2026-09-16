@@ -66,6 +66,8 @@ class TestRealPipeline(unittest.TestCase):
         abs_err = abs(final_est - self.ground_truth_count)
         pct_err = (abs_err / self.ground_truth_count) * 100.0
 
+        hybrid_f11 = payload.get("debug_info", {}).get("features_vector", {}).get("Estimated_Total_Seeds_Hybrid")
+
         print("\n" + "=" * 70)
         print("🎯 KẾT QUẢ KIỂM THỬ TÍCH HỢP TRÊN FIXTURE M001a:")
         print(f"   • Ground Truth (Actual_Count): {self.ground_truth_count} hạt")
@@ -74,6 +76,7 @@ class TestRealPipeline(unittest.TestCase):
         print(f"   • Hồi quy Extra Trees         : {estimation.get('regression_est')}")
         print(f"   • Hình học (Geometry/AI)      : {estimation.get('geometry_est')}")
         print(f"   • Cân mẫu (Weight)            : {estimation.get('weight_est')}")
+        print(f"   • Feature 11 (Trained Hybrid) : {hybrid_f11}")
         print(f"   • Sai số tuyệt đối            : {abs_err} hạt")
         print(f"   • Tỷ lệ sai số (MAPE)         : {pct_err:.2f}%")
         print("=" * 70)

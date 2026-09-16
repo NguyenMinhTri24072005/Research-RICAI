@@ -21,6 +21,49 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 FEATURE_SCHEMA_VERSION = "31v1"
 TARGET_COLUMN = "Actual_Count"
+TRAINED_HYBRID_PACKING_FRACTION: float = 0.62  # Xac minh 100% (254/254 mau FOUND tren final_linear_regression_dataset.csv)
+
+
+def compute_trained_hybrid_feature(
+    bulk_volume_mm3: Optional[float],
+    grain_volumes_mm3: Sequence[float],
+) -> Optional[int]:
+    """
+    Tinh dac trung Estimated_Total_Seeds_Hybrid (index 10) chuan hoa
+    theo dung cong thuc trinh chiet dataset huan luyen.
+
+    Cong thuc:
+        int(round(Bulk_Rice_Volume_mm3 * 0.62 / Grain_Volume_mm3_Mean))
+
+    Rang buoc:
+      - Hoan toan doc lap voi Actual_Count va can mau (weight).
+      - Tra ve None neu khong du thong tin (khong co the tich hat hop le).
+    """
+    if bulk_volume_mm3 is None or bulk_volume_mm3 <= 0 or not math.isfinite(bulk_volume_mm3):
+        return None
+    if not grain_volumes_mm3:
+        return None
+
+    valid_vols = [float(v) for v in grain_volumes_mm3 if v is not None and v > 0 and math.isfinite(v)]
+    if not valid_vols:
+        return None
+
+    mean_vol = sum(valid_vols) / len(valid_vols)
+    if mean_vol <= 0 or not math.isfinite(mean_vol):
+        return None
+
+    return int(round(bulk_volume_mm3 * TRAINED_HYBRID_PACKING_FRACTION / mean_vol))
+
+
+def compute_schema_hash() -> str:
+    """
+    Tính SHA-256 canonical hash của schema version và danh sách ALL_31_FEATURES.
+    Dùng để phát hiện bất kỳ sự thay đổi hoặc xáo trộn thứ tự feature nào.
+    """
+    import hashlib
+    import json
+    canonical = json.dumps({"version": FEATURE_SCHEMA_VERSION, "features": ALL_31_FEATURES}, separators=(',', ':'))
+    return hashlib.sha256(canonical.encode('utf-8')).hexdigest()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -221,8 +264,29 @@ def validate_feature_vector(
 
 
 def feature_vector_to_ordered_list(
-    features_dict: Dict[str, float],
-    default: float = 0.0,
+    features_dict: Dict[str, Optional[float]],
+    allow_missing: bool = False,
 ) -> List[float]:
-    """Chuyển dict sang list theo đúng thứ tự ALL_31_FEATURES."""
-    return [features_dict.get(name, default) for name in ALL_31_FEATURES]
+    """
+    Chuyển dict sang list theo đúng thứ tự ALL_31_FEATURES.
+
+    Parameters
+    ----------
+    features_dict : dict
+        Vector đặc trưng đầu vào.
+    allow_missing : bool
+        Nếu False, sẽ raise ValueError nếu thiếu đặc trưng bắt buộc hoặc gặp giá trị None/non-finite.
+        Tuyệt đối không tự ý gán 0.0 cho các biến bắt buộc bị thiếu.
+    """
+    ordered: List[float] = []
+    for fdef in FEATURE_DEFS:
+        val = features_dict.get(fdef.name)
+        if val is None:
+            if fdef.required and not allow_missing:
+                raise ValueError(f"Thiếu đặc trưng bắt buộc '{fdef.name}' (giá trị là None/chưa xác định).")
+            val = 0.0
+        elif not math.isfinite(val):
+            if not allow_missing:
+                raise ValueError(f"Đặc trưng '{fdef.name}' có giá trị không hữu hạn ({val}).")
+        ordered.append(float(val))
+    return ordered

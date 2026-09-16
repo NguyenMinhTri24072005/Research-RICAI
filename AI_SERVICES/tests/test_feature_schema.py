@@ -18,8 +18,11 @@ from feature_schema import (
     ALL_31_FEATURES,
     FEATURE_DEFS,
     FEATURE_SCHEMA_VERSION,
+    TRAINED_HYBRID_PACKING_FRACTION,
     validate_feature_vector,
     feature_vector_to_ordered_list,
+    compute_trained_hybrid_feature,
+    compute_schema_hash,
 )
 
 
@@ -106,6 +109,72 @@ class TestFeatureSchema(unittest.TestCase):
         lst = feature_vector_to_ordered_list(feats)
         self.assertEqual(len(lst), 31)
         self.assertEqual(lst[0], feats["Bulk_Rice_Volume_mm3"])
+
+    def test_ordered_list_conversion_strict_rejection(self):
+        feats = _make_dummy_features()
+        del feats["Bulk_Rice_Volume_mm3"]
+        with self.assertRaises(ValueError):
+            feature_vector_to_ordered_list(feats, allow_missing=False)
+
+    def test_ordered_list_conversion_optional_weight_allowed(self):
+        feats = _make_dummy_features()
+        feats["Weight_g"] = None
+        lst = feature_vector_to_ordered_list(feats, allow_missing=False)
+        self.assertEqual(len(lst), 31)
+        self.assertEqual(lst[2], 0.0)
+
+    def test_compute_trained_hybrid_feature_synthetic(self):
+        # 8000 * 0.62 / 20 = 248.0 -> 248
+        res = compute_trained_hybrid_feature(8000.0, [10.0, 20.0, 30.0])
+        self.assertEqual(res, 248)
+
+        # Edge cases: None or <= 0
+        self.assertIsNone(compute_trained_hybrid_feature(None, [10.0, 20.0]))
+        self.assertIsNone(compute_trained_hybrid_feature(8000.0, []))
+        self.assertIsNone(compute_trained_hybrid_feature(-100.0, [10.0]))
+        self.assertIsNone(compute_trained_hybrid_feature(8000.0, [0.0, -5.0]))
+
+    def test_compute_trained_hybrid_feature_csv_parity(self):
+        import csv
+        csv_path = AI_SERVICES_DIR.parent / "DATASET_BUILDER" / "4_Final_Dataset" / "final_linear_regression_dataset.csv"
+        if not csv_path.exists():
+            self.skipTest(f"CSV file không tồn tại: {csv_path}")
+
+        with open(csv_path, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            rows = list(reader)
+
+        found_rows = [r for r in rows if r.get("Image_Status") == "FOUND"]
+        self.assertGreater(len(found_rows), 0)
+
+        match_count = 0
+        total_valid = 0
+        for r in found_rows:
+            bulk_str = r.get("Bulk_Rice_Volume_mm3", "")
+            mean_vol_str = r.get("Grain_Volume_mm3_Mean", "")
+            stored_str = r.get("Estimated_Total_Seeds_Hybrid", "")
+
+            if bulk_str and mean_vol_str and stored_str:
+                try:
+                    bulk = float(bulk_str)
+                    mean_vol = float(mean_vol_str)
+                    stored_hybrid = float(stored_str)
+                except ValueError:
+                    continue
+                if mean_vol > 0:
+                    total_valid += 1
+                    computed = compute_trained_hybrid_feature(bulk, [mean_vol])
+                    if computed == int(round(stored_hybrid)):
+                        match_count += 1
+
+        self.assertEqual(match_count, total_valid)
+        self.assertEqual(total_valid, 254)
+
+    def test_compute_schema_hash(self):
+        h = compute_schema_hash()
+        self.assertIsInstance(h, str)
+        self.assertEqual(len(h), 64)
+        self.assertEqual(h, "dee4b46be6aaef6cb4f696696aaa11cbcfa1e9d718deea96ca9ec5238046f5a8")
 
 
 if __name__ == "__main__":

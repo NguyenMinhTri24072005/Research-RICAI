@@ -65,13 +65,30 @@ def verify_artifacts(manifest_path: Path, project_root: Path) -> bool:
         print("\n❌ FAIL: Model object is None sau khi load.")
         return False
 
-    # 1. Kiểm tra n_features_in_
+    import numpy as np
+
+    # 1. Kiểm tra class type
+    model_class = f"{type(model).__module__}.{type(model).__qualname__}"
+    print(f"🌲 Model Class       : {model_class} (Family: {type(model).__name__})")
+    if type(model).__name__ != "ExtraTreesRegressor":
+        print(f"\n❌ FAIL: Model family là {type(model).__name__}, kỳ vọng ExtraTreesRegressor.")
+        return False
+
+    if scaler is not None:
+        scaler_class = f"{type(scaler).__module__}.{type(scaler).__qualname__}"
+        print(f"📏 Scaler Class      : {scaler_class}")
+        if type(scaler).__name__ != "StandardScaler":
+            print(f"\n❌ FAIL: Scaler class là {type(scaler).__name__}, kỳ vọng StandardScaler.")
+            return False
+
+    # 2. Kiểm tra n_features_in_
     n_in = getattr(model, "n_features_in_", None)
     if n_in != 31:
         print(f"\n❌ FAIL: Model có n_features_in_ = {n_in}, kỳ vọng 31.")
         return False
+    print(f"🔢 Input Features    : {n_in} / 31 (OK)")
 
-    # 2. Kiểm tra scaler nếu có
+    # 3. Kiểm tra scaler nếu có
     if status.has_scaler:
         if scaler is None:
             print("\n❌ FAIL: Scaler flag bật nhưng scaler object is None.")
@@ -80,13 +97,57 @@ def verify_artifacts(manifest_path: Path, project_root: Path) -> bool:
         if scaler_n != 31:
             print(f"\n❌ FAIL: Scaler có n_features_in_ = {scaler_n}, kỳ vọng 31.")
             return False
+        print(f"⚖️ Scaler Features   : {scaler_n} / 31 (OK)")
 
-    # 3. Kiểm tra feature names nếu model có
+    # 4. Kiểm tra feature names nếu model có
     feature_names = getattr(model, "feature_names_in_", None)
     if feature_names is not None:
         if list(feature_names) != ALL_31_FEATURES:
             print("\n❌ FAIL: feature_names_in_ của model không khớp với ALL_31_FEATURES.")
             return False
+        print("📋 Feature Names In  : Khớp chính xác 31 đặc trưng theo thứ tự (OK)")
+
+    # 5. Kiểm tra scaler_params.json cross-validation
+    manifest = registry.get_manifest()
+    sp_rel = manifest.get("preprocessing", {}).get("scaler_params_relative_path")
+    if sp_rel:
+        import json
+        sp_path = project_root / sp_rel
+        if sp_path.exists():
+            with open(sp_path, "r", encoding="utf-8") as f:
+                sp_data = json.load(f)
+            mean_diff = float(np.max(np.abs(scaler.mean_ - np.array(sp_data["mean"]))))
+            scale_diff = float(np.max(np.abs(scaler.scale_ - np.array(sp_data["scale"]))))
+            if mean_diff > 1e-9 or scale_diff > 1e-9:
+                print(f"\n❌ FAIL: Scaler joblib không khớp scaler_params.json (mean_diff={mean_diff}, scale_diff={scale_diff})")
+                return False
+            print(f"🔍 Scaler Metadata   : Khớp chính xác 100% với scaler_params.json (diff={max(mean_diff, scale_diff)})")
+
+    # 6. Kiểm tra best_tree_model_info.json cross-validation
+    mi_rel = manifest.get("model", {}).get("metadata_path")
+    if mi_rel:
+        import json
+        mi_path = project_root / mi_rel
+        if mi_path.exists():
+            with open(mi_path, "r", encoding="utf-8") as f:
+                mi_data = json.load(f)
+            info_importances = {item["name"]: item["importance_score"] for item in mi_data.get("feature_importances", [])}
+            actual_importances = dict(zip(ALL_31_FEATURES, model.feature_importances_))
+            imp_diffs = [abs(actual_importances[name] - info_importances[name]) for name in ALL_31_FEATURES if name in info_importances]
+            max_imp_diff = max(imp_diffs) if imp_diffs else 0.0
+            if max_imp_diff > 1e-9:
+                print(f"\n❌ FAIL: Model importances không khớp best_tree_model_info.json (diff={max_imp_diff})")
+                return False
+            print(f"🌳 Model Metadata    : Khớp chính xác 100% với best_tree_model_info.json (diff={max_imp_diff})")
+
+    # 7. Smoke predict: kiểm tra suy luận với vector số 0 và vector chuẩn
+    test_vec = np.zeros((1, 31), dtype=np.float64)
+    scaled_vec = scaler.transform(test_vec) if scaler is not None else test_vec
+    pred = model.predict(scaled_vec)
+    if not np.isfinite(pred[0]):
+        print(f"\n❌ FAIL: Smoke prediction trả về non-finite ({pred[0]}).")
+        return False
+    print(f"🚀 Smoke Prediction  : Thành công (pred={pred[0]:.4f}, hữu hạn)")
 
     print("\n" + "=" * 80)
     print("🎉 PASS: Toàn bộ artifacts và pipeline preprocessing đã được xác minh thành công!")

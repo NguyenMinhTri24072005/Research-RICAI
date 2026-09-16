@@ -1,19 +1,27 @@
 {
   "schema_version": "31v1",
+  "schema_hash": "dee4b46be6aaef6cb4f696696aaa11cbcfa1e9d718deea96ca9ec5238046f5a8",
   "bundle_id": "rice_vision_extratrees_31v1_20260824",
   "description": "Extra Trees Regressor 31-feature bundle for rice seed count estimation",
   "provenance": {
     "training_date": "2026-08-24",
     "training_source": "LINEAR_REGRESSION_MODEL/RICE_SEED_DECISION_TREE_TRAINER.ipynb",
+    "training_source_sha256": "4103a1931395fb4054ceeba997722d32623b82bac43837af7f04803dc857eb12",
     "dataset_path": "DATASET_BUILDER/4_Final_Dataset/final_linear_regression_dataset.csv",
-    "dataset_fingerprint_note": "55 samples, 31 features, target=Actual_Count, filter=Image_Status==FOUND",
-    "verified": false,
-    "verification_note": "Timestamps of scaler.joblib (16:17), best_tree_ensemble_model.joblib (16:23), and best_tree_model_info.json (16:23) on 2026-08-24 are consistent with a single training session. Binary provenance not cryptographically verified."
+    "dataset_sha256": "a9fddb014fce8899ceda9fc392cc1ed1ad602fa7c5d30330978b00176c3bf78b",
+    "dataset_fingerprint_note": "254 rows with Image_Status==FOUND, 31 features, target=Actual_Count",
+    "deployment_contract_verified": true,
+    "historical_run_verified": false,
+    "verification_note": "Artifact SHA-256 hashes match deployed binaries and pass full cross-validation against scaler_params.json and best_tree_model_info.json. Historical execution trace was not re-executed from scratch, so historical_run_verified remains false."
   },
   "target_variable": "Actual_Count",
   "model": {
     "family": "ExtraTreesRegressor",
+    "expected_class": "sklearn.ensemble._forest.ExtraTreesRegressor",
     "relative_path": "LINEAR_REGRESSION_MODEL/models/best_tree_ensemble_model.joblib",
+    "sha256": "cfa58aa3255b48a9f2073f8376a1e0ee084c4aa929e7fe601eff7924667f96f8",
+    "metadata_path": "LINEAR_REGRESSION_MODEL/models/best_tree_model_info.json",
+    "metadata_sha256": "49384ca9731a566bca77d77376c7937c2668f7c9181ac8e7a223a24e199b6612",
     "expected_n_features": 31,
     "reported_metrics": {
       "r2_test": 0.9999,
@@ -24,8 +32,12 @@
   "preprocessing": {
     "type": "scaler",
     "scaler_relative_path": "LINEAR_REGRESSION_MODEL/models/scaler.joblib",
-    "scaler_params_relative_path": "LINEAR_REGRESSION_MODEL/models/scaler_params.json",
+    "scaler_sha256": "af1b9536ef863a5a654edfc2392524d8c0954f1671ddee8a93933d57c87390cf",
     "scaler_type": "sklearn.preprocessing.StandardScaler",
+    "expected_class": "sklearn.preprocessing._data.StandardScaler",
+    "scaler_params_relative_path": "LINEAR_REGRESSION_MODEL/models/scaler_params.json",
+    "scaler_params_sha256": "e6904245895347052d53aa0550d03c57db42aeab1de5809d680f440db46d8ffa",
+    "expected_n_features": 31,
     "note": "Scaler fitted on X_train only (train/test split with random_state=42, test_size=0.20)"
   },
   "ols_fallback": {
@@ -87,8 +99,9 @@
     }
   },
   "pipeline_config": {
-    "packing_fraction": 0.82,
-    "packing_fraction_note": "Extractor default=0.62, notebook=0.80, runtime=0.82. Training data used extractor value. This discrepancy is a known risk — see audit.",
+    "packing_fraction_display": 0.82,
+    "packing_fraction_trained_feature": 0.62,
+    "packing_fraction_note": "Training dataset extractor used packing_fraction=0.62 (100% verified on 254 FOUND samples). Regression feature 11 uses 0.62. Runtime geometry display estimate uses 0.82 for user presentation.",
     "sahi_slice_size": 640,
     "sahi_overlap_ratio": 0.20,
     "sahi_overlap_note": "Extractor default=0.25, runtime=0.20. Minor discrepancy.",
@@ -97,7 +110,6 @@
     "cnn_threshold": 0.50,
     "thickness_ratio_hat_nguyen": 0.85,
     "grain_stat_ddof": 0,
-    "volume_aggregation": "median_px3",
-    "volume_aggregation_note": "Extractor uses mean mm³ for Estimated_Total_Seeds_Hybrid. Runtime uses median px³ for ai_est. The Hybrid feature fed to regression is computed differently."
+    "volume_aggregation": "median_px3"
   }
 }

@@ -14,7 +14,7 @@ PROJECT_ROOT = AI_SERVICES_DIR.parent
 if str(AI_SERVICES_DIR) not in sys.path:
     sys.path.insert(0, str(AI_SERVICES_DIR))
 
-from feature_schema import ALL_31_FEATURES
+from feature_schema import ALL_31_FEATURES, compute_trained_hybrid_feature
 from model_registry import ModelRegistry
 from regression_engine import (
     assemble_31_features,
@@ -86,6 +86,51 @@ class TestRegressionEngine(unittest.TestCase):
     def test_predict_regression_raises_on_none_model(self):
         with self.assertRaises(ValueError):
             predict_regression(features_dict={}, model=None, scaler=None)
+
+    def test_assemble_hybrid_feature_invariance_to_weight(self):
+        container_res = {
+            "pixels_per_mm": 67.0,
+            "bulk_rice_volume_mm3": 8000.0,
+            "rice_height_mm": 23.0,
+            "inner_w_px": 1200.0,
+        }
+        whole_grains = [
+            {"length_mm": 7.0, "width_mm": 2.0, "thickness_mm": 6.0, "area_mm2": 20.0, "volume_mm3": 20.0},
+        ]
+        uniformity_res = {"uniformity_rate_pct": 95.0}
+
+        vec1 = assemble_31_features(
+            container_res=container_res,
+            whole_grains=whole_grains,
+            uniformity_res=uniformity_res,
+            form_inputs={"weight_g": 2.0, "empty_height_mm": 11.0, "inner_diameter_mm": 20.0, "container_height_mm": 34.0},
+        )
+        vec2 = assemble_31_features(
+            container_res=container_res,
+            whole_grains=whole_grains,
+            uniformity_res=uniformity_res,
+            form_inputs={"weight_g": 200.0, "empty_height_mm": 11.0, "inner_diameter_mm": 20.0, "container_height_mm": 34.0},
+        )
+        expected_hybrid = compute_trained_hybrid_feature(8000.0, [20.0])
+        self.assertEqual(vec1["Estimated_Total_Seeds_Hybrid"], expected_hybrid)
+        self.assertEqual(vec2["Estimated_Total_Seeds_Hybrid"], expected_hybrid)
+        self.assertEqual(vec1["Estimated_Total_Seeds_Hybrid"], 248)
+
+    def test_predict_from_tree_rejects_missing_required_feature(self):
+        model, scaler = self.registry.get_model_and_scaler()
+        vec = {k: 5.0 for k in ALL_31_FEATURES}
+        del vec["Grain_Volume_mm3_Mean"]
+        with self.assertRaises(ValueError) as ctx:
+            predict_from_tree(model, scaler, vec)
+        self.assertIn("Grain_Volume_mm3_Mean", str(ctx.exception))
+
+    def test_predict_from_tree_rejects_nan_feature(self):
+        model, scaler = self.registry.get_model_and_scaler()
+        vec = {k: 5.0 for k in ALL_31_FEATURES}
+        vec["Bulk_Rice_Volume_mm3"] = float("nan")
+        with self.assertRaises(ValueError) as ctx:
+            predict_from_tree(model, scaler, vec)
+        self.assertIn("Bulk_Rice_Volume_mm3", str(ctx.exception))
 
 
 if __name__ == "__main__":

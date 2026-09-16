@@ -58,18 +58,19 @@ không tạo task dựa trên đường dẫn này.
   - [x] Viết fixture ảnh + form cố định, kiểm tra `/api/status` và `/predict` trên
     Windows (`AI_SERVICES/tests/test_real_pipeline.py`).
   - [x] Ghi runtime thực đo trên CPU/GPU thay vì cam kết thời gian không có baseline
-    (ghi nhận 272.7s CPU trên Windows trong `reports/task_01/verification.md`).
+    (ghi nhận 132.2s CPU trên Windows trong `reports/task_01/verification.md`).
 
 ### Trạng thái kiểm toán (17/09/2026)
 
 - [x] Schema 31 biến được khai báo tập trung và `/predict` tạo feature vector,
-  suy luận Extra Trees/OLS và trả `regression_est`.
+  suy luận Extra Trees và trả `regression_est` (không fallback ngầm OLS).
+- [x] Đạt 100% training parity cho biến `Estimated_Total_Seeds_Hybrid` (xác minh 254/254 mẫu FOUND trên CSV với factor 0.62).
 - [x] `/api/status` và frontend hiển thị trạng thái/kết quả hồi quy cơ bản.
 - [x] Đã có manifest phiên bản dataset–model–scaler (`AI_SERVICES/artifacts/manifest.json`),
-  model và scaler được xác minh nạp theo cùng bundle `rice_vision_extratrees_31v1_20260824`.
-- [x] Đã có validation rõ ràng cho feature bắt buộc và kiểm tra miền giá trị đầu vào (HTTP 422).
+  model và scaler được xác minh nạp theo cùng bundle `rice_vision_extratrees_31v1_20260824` bằng mã băm SHA-256.
+- [x] Đã có validation rõ ràng cho feature bắt buộc và kiểm tra miền giá trị đầu vào (HTTP 422 `MISSING_FEATURE`, không tự động gán 0.0).
 - [x] Đã có integration test fixture tái lập được cho `/api/status` và `/predict`
-  trên Windows, đo runtime thực tế và đạt 22/22 tests PASS (`reports/task_01/test_report.json`).
+  trên Windows, đo runtime thực tế và đạt 34/34 tests PASS (`reports/task_01/test_report.json`).
 
 ### Tiêu chí hoàn thành toàn bộ task
 

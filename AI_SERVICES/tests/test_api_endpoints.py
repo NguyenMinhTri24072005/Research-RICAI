@@ -95,6 +95,42 @@ class TestAPIEndpoints(unittest.TestCase):
         self.assertEqual(res.status_code, 422)
         self.assertEqual(res.json().get("error", {}).get("code"), "INVALID_INPUT")
 
+    def test_predict_regression_mode_fails_validation_when_grains_empty(self):
+        from unittest.mock import patch
+        with patch("app.execute_container_analysis") as mock_cnt, \
+             patch("app.execute_sahi_crops") as mock_sahi, \
+             patch("app.execute_grain_classification_and_metrics") as mock_grains:
+
+            mock_cnt.return_value = {
+                "pixels_per_mm": 67.0,
+                "bulk_rice_volume_mm3": 8000.0,
+                "rice_height_mm": 23.0,
+                "inner_w_px": 1200.0,
+                "outer_w_px": 1250.0,
+                "box": [10, 10, 200, 200],
+            }
+            mock_sahi.return_value = []
+            mock_grains.return_value = ([], [], 0)
+
+            import cv2
+            import numpy as np
+            img = np.ones((100, 100, 3), dtype=np.uint8) * 255
+            _, buf = cv2.imencode(".jpg", img)
+
+            files = {"file": ("test.jpg", buf.tobytes(), "image/jpeg")}
+            data = {
+                "diam": 2.0,
+                "height": 3.0,
+                "empty": 1.0,
+                "estimator_mode": "regression",
+            }
+            res = self.client.post("/predict", data=data, files=files)
+            self.assertEqual(res.status_code, 422)
+            res_json = res.json()
+            self.assertEqual(res_json.get("status"), "error")
+            self.assertEqual(res_json.get("error", {}).get("stage"), "regression_validation")
+            self.assertEqual(res_json.get("error", {}).get("code"), "MISSING_FEATURE")
+
 
 if __name__ == "__main__":
     unittest.main()
