@@ -140,6 +140,8 @@ def create_capture_app(token: str, web_root: Path, gateway_url: str = "http://lo
                     error_msg = res.json().get("error", res.text)
                 except Exception:
                     pass
+                err_payload = {"type": "error", "status": "error", "error": f"Loi tu AI Server: {error_msg}"}
+                await hub.broadcast_result(err_payload)
                 raise HTTPException(status_code=res.status_code, detail=f"Loi tu AI Server: {error_msg}")
 
             result_data = res.json()
@@ -150,8 +152,12 @@ def create_capture_app(token: str, web_root: Path, gateway_url: str = "http://lo
             return result_data
 
         except httpx.TimeoutException:
+            err_payload = {"type": "error", "status": "error", "error": "AI Server timeout (>120s)"}
+            await hub.broadcast_result(err_payload)
             raise HTTPException(status_code=504, detail="AI Server timeout (>120s). Vui long kiem tra ket noi Colab/Local.")
         except httpx.RequestError as exc:
+            err_payload = {"type": "error", "status": "error", "error": f"Gateway connection error: {exc}"}
+            await hub.broadcast_result(err_payload)
             raise HTTPException(status_code=502, detail=f"Khong the ket noi Gateway tai {gateway_url}: {exc}")
         finally:
             await file.close()

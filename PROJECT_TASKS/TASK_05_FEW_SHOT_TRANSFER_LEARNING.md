@@ -16,7 +16,7 @@ Tập ảnh tổng hợp hoặc augmentation chỉ được phép hỗ trợ tra
 
 1. Chọn một loại hạt mới và chụp theo cùng [protocol](TASK_00_CAPTURE_PROTOCOL_AND_DATA_GOVERNANCE.md), với nhãn `Actual_Count` thực.
 2. Kiểm tra trước chất lượng `container_detector` và `grain_segmenter`: tỷ lệ phát hiện ly, tỷ lệ mask đúng và các failure case. Nếu phân đoạn không đủ tốt, không diễn giải sai số hồi quy là năng lực transfer.
-3. Chia **theo batch** thành tập thích nghi và tập test thật chưa nhìn thấy. Test phải gồm mẫu thật, ưu tiên nhiều phiên chụp/độ đầy ly, và không được dùng để sinh synthetic data hay chọn hyperparameter.
+3. Chia **theo ngày/phiên suy ra từ `Capture_Timestamp`** thành tập thích nghi và tập test thật chưa nhìn thấy. Test phải gồm mẫu thật, ưu tiên nhiều ngày chụp/độ đầy ly, và không được dùng để sinh synthetic data hay chọn hyperparameter.
 4. Trong tập thích nghi, chạy các mức 5/10/20/30 nhãn, nhiều seed/lần lấy mẫu. So sánh: không thích nghi, fine-tune/transfer, baseline hình học + hồi quy bảng, và mô hình huấn luyện từ đầu khi dữ liệu đủ.
 5. Có thể dùng augment ảnh, nhiễu feature hợp lý hoặc synthetic tabular data như một ablation **chỉ trên train**. Báo cáo rõ nguồn, tỷ lệ synthetic/real và mức cải thiện so với không dùng synthetic; không đặt mục tiêu “sinh 1.000 mẫu” như một thước đo thành công.
 

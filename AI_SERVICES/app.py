@@ -8,19 +8,21 @@ Mục đích:
   - Cung cấp API suy luận trực tuyến cho ứng dụng RICE_ESTIMATION_APPLICATION.
   - Tự động nhận diện vật chứa, phân đoạn hạt lúa bằng SAHI + YOLO-seg.
   - Làm sạch và phân loại phẩm cấp hạt bằng DenseNet121.
-  - Mô hình hóa thể tích 3D Ellipsoid và ước lượng số hạt (Pure AI, Regression, Hybrid).
-  - Package độc lập, tự chứa (Self-contained) với modules nội bộ trong AI_SERVICES/modules.
+  - Mô hình hóa thể tích 3D Ellipsoid và ước lượng số hạt.
+  - Hồi quy 31 biến bằng Extra Trees Regressor.
+  - Package độc lập, tự chứa (Self-contained) với modules nội bộ.
 ===============================================================================
 """
 
 from __future__ import annotations
 
-import json
+import asyncio
 import math
 import os
 import shutil
 import sys
 import tempfile
+import time
 import traceback
 import uuid
 from pathlib import Path
@@ -41,6 +43,7 @@ import cv2
 import numpy as np
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 import uvicorn
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -67,18 +70,37 @@ from modules.ellipsoid_geometry import compute_single_grain_metrics
 from modules.uniformity_evaluator import evaluate_batch_uniformity
 from modules.grain_crop_cleaner import clean_single_grain_crop
 
-# Import module hoi quy 31 bien
+# Import feature schema, model registry, schemas
+from feature_schema import (
+    ALL_31_FEATURES,
+    FEATURE_SCHEMA_VERSION,
+    validate_feature_vector,
+)
+from model_registry import ModelRegistry
+from schemas import (
+    ErrorCode,
+    ErrorDetail,
+    EstimationResult,
+    TimingInfo,
+    PredictResponse,
+    StatusResponse,
+    ComponentInfo,
+    ComponentStatus,
+    ServiceReadiness,
+)
+
+# Import regression engine
 from regression_engine import (
     assemble_31_features,
-    load_tree_model,
+    predict_from_tree,
+    predict_from_equation,
     predict_regression,
-    ALL_31_FEATURES,
 )
 
 app = FastAPI(
     title="Rice Vision AI Inference API",
     description="Dịch vụ AI ước lượng số lượng và đánh giá chất lượng hạt giống lúa",
-    version="2.0.0",
+    version="2.1.0",
 )
 
 app.add_middleware(
@@ -94,6 +116,7 @@ app.add_middleware(
 # ─────────────────────────────────────────────────────────────────────────────
 BASE_PROJECT_DIR = CURRENT_DIR.parent
 
+
 def resolve_model_paths() -> Dict[str, Optional[Path]]:
     """Tự động tìm kiếm đường dẫn các file trọng số mô hình hợp lệ."""
     yolo_candidates = [
@@ -108,9 +131,6 @@ def resolve_model_paths() -> Dict[str, Optional[Path]]:
         BASE_PROJECT_DIR / "RESULTS" / "35_special_images_segmentation.v1i.yolov8_v1_trained" / "rice_grain_classifier_cnn.h5",
         Path("/content/drive/MyDrive/NGHIÊN CỨU KHOA HỌC/GROUP_MEMBERS/NGUYEN MINH TRI/MAIN_SOURCES/DETECTED_OBJECTS/35_special_images_segmentation.v1i.yolov8_v1_trained/rice_grain_classifier_cnn.h5"),
     ]
-    regression_model_path = BASE_PROJECT_DIR / "LINEAR_REGRESSION_MODEL" / "models" / "best_linear_regression_model.joblib"
-    scaler_path = BASE_PROJECT_DIR / "LINEAR_REGRESSION_MODEL" / "models" / "scaler.joblib"
-    tree_ensemble_path = BASE_PROJECT_DIR / "LINEAR_REGRESSION_MODEL" / "models" / "best_tree_ensemble_model.joblib"
 
     yolo_path = next((p for p in yolo_candidates if p.exists()), None)
     cnn_path = next((p for p in cnn_candidates if p.exists()), None)
@@ -118,21 +138,20 @@ def resolve_model_paths() -> Dict[str, Optional[Path]]:
     return {
         "yolo": yolo_path,
         "cnn": cnn_path,
-        "regression": regression_model_path if regression_model_path.exists() else None,
-        "scaler": scaler_path if scaler_path.exists() else None,
-        "tree_ensemble": tree_ensemble_path if tree_ensemble_path.exists() else None,
     }
 
+
 MODEL_PATHS = resolve_model_paths()
-PACKING_FRACTION = 0.82
+PACKING_FRACTION = 0.82  # Xem manifest.json cho ghi chú về discrepancy
 
 # Bộ nhớ đệm giữ mô hình nạp sẵn (Lazy load)
 _MODELS_CACHE: Dict[str, Any] = {
     "yolo_detection_model": None,
     "cnn_classifier": None,
-    "regression_model": None,
-    "scaler": None,
 }
+
+# Model Registry cho regression bundle
+_registry = ModelRegistry(project_root=BASE_PROJECT_DIR)
 
 
 def get_yolo_model(confidence: float = 0.5):
@@ -141,7 +160,7 @@ def get_yolo_model(confidence: float = 0.5):
         yolo_path = MODEL_PATHS["yolo"]
         if not yolo_path:
             raise FileNotFoundError("Không tìm thấy trọng số YOLO model trong hệ thống!")
-        
+
         import torch
         from sahi import AutoDetectionModel
 
@@ -163,7 +182,7 @@ def get_cnn_classifier():
         cnn_path = MODEL_PATHS["cnn"]
         if not cnn_path:
             raise FileNotFoundError("Không tìm thấy trọng số CNN model trong hệ thống!")
-        
+
         print(f"📦 [AI SERVER] Nạp CNN Classifier từ: {cnn_path}...")
         _MODELS_CACHE["cnn_classifier"] = GrainClassifier(
             model_path=cnn_path,
@@ -172,15 +191,6 @@ def get_cnn_classifier():
         )
         print("✅ [AI SERVER] Đã nạp CNN thành công!")
     return _MODELS_CACHE["cnn_classifier"]
-
-
-def get_regression_artifacts():
-    """Nap Extra Trees model va scaler qua regression_engine."""
-    tree_model, tree_scaler = load_tree_model(
-        model_path=MODEL_PATHS.get("tree_ensemble"),
-        scaler_path=MODEL_PATHS.get("scaler"),
-    )
-    return tree_model, tree_scaler
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -242,15 +252,10 @@ def execute_grain_classification_and_metrics(
         if rgba is None:
             continue
 
-        # 1. Bẻ cầu nối dính và cô lập hạt chủ đạo
         cleaned_rgba = clean_single_grain_crop(rgba, min_neck_ratio=0.15, sever_bridges=True)
-
-        # 2. Phan loai pham cap bang CNN DenseNet121
         cnn_result = classifier.predict(cleaned_rgba)
         label = cnn_result["label"]
-        conf = cnn_result["confidence"]
 
-        # 3. Tinh toan thong so 3D cho hat nguyen
         if label == "hat_nguyen":
             try:
                 metrics = compute_single_grain_metrics(
@@ -274,41 +279,44 @@ def compute_final_estimates(
     sample_count: int = 0,
     sample_weight: float = 0.0,
 ) -> Dict[str, Any]:
-    """Tính toán số lượng hạt theo Pure AI (Pixel Volume), Regression và Hybrid."""
-    # Quy đổi thể tích khối lúa sang px³
+    """Tính toán số lượng hạt theo Geometry (Pixel Volume) và Weight."""
     pixels_per_mm3 = pixels_per_mm ** 3
     bulk_volume_px3 = bulk_volume_mm3 * pixels_per_mm3
     effective_bulk_px3 = bulk_volume_px3 * PACKING_FRACTION
 
-    # 1. Ước tính thuần AI (Pure AI Volume Method)
+    # 1. Ước tính hình học (Geometry Volume Method)
     median_grain_vol_px3 = float(np.median(volumes_px3_list)) if volumes_px3_list else 0.0
     if median_grain_vol_px3 > 0:
-        ai_est = int(round(effective_bulk_px3 / median_grain_vol_px3))
+        geometry_est = int(round(effective_bulk_px3 / median_grain_vol_px3))
     else:
-        ai_est = 0
+        geometry_est = None
 
-    # 2. Ước tính theo tỷ trọng cân mẫu thực nghiệm
-    weight_est = 0
+    # 2. Ước tính theo cân mẫu
+    weight_est = None
     if weight_total > 0 and sample_weight > 0 and sample_count > 0:
         weight_est = int(round((weight_total / sample_weight) * sample_count))
 
-    # 3. Ước tính Hybrid dung hòa
-    if weight_est > 0 and ai_est > 0:
-        final_est = int(round((ai_est + weight_est) / 2))
+    # 3. Hybrid
+    if weight_est is not None and geometry_est is not None:
+        final_est = int(round((geometry_est + weight_est) / 2))
         used_hybrid = True
-    elif ai_est > 0:
-        final_est = ai_est
+    elif geometry_est is not None:
+        final_est = geometry_est
+        used_hybrid = False
+    elif weight_est is not None:
+        final_est = weight_est
         used_hybrid = False
     else:
-        final_est = weight_est
+        final_est = None
         used_hybrid = False
 
     return {
         "final": final_est,
-        "ai_est": ai_est,
+        "geometry_est": geometry_est,
+        "ai_est": geometry_est,  # Alias cho tương thích client cũ
         "weight_est": weight_est,
         "hybrid": used_hybrid,
-        "median_grain_vol_px3": round(median_grain_vol_px3, 2),
+        "median_grain_vol_px3": round(median_grain_vol_px3, 2) if median_grain_vol_px3 else None,
     }
 
 
@@ -316,21 +324,75 @@ def compute_final_estimates(
 # 🌐 ENDPOINTS API
 # ─────────────────────────────────────────────────────────────────────────────
 
-@app.get("/api/status")
 @app.get("/health")
+def health_check():
+    """Liveness check nhẹ — không kiểm tra model."""
+    return {"status": "ok"}
+
+
+@app.get("/api/status")
 def check_status():
-    """Kiểm tra tình trạng sẵn sàng của hệ thống và các model."""
-    return {
-        "service": "Rice Vision AI Inference API",
-        "status": "ready",
-        "models_configured": {
-            "yolo_detected": MODEL_PATHS["yolo"] is not None,
-            "cnn_detected": MODEL_PATHS["cnn"] is not None,
-            "regression_detected": MODEL_PATHS["regression"] is not None,
-            "tree_ensemble_detected": MODEL_PATHS.get("tree_ensemble") is not None,
-        },
-        "model_paths": {k: str(v) if v else None for k, v in MODEL_PATHS.items()},
-    }
+    """Kiểm tra tình trạng sẵn sàng thực tế của hệ thống và các model."""
+    # Check registry
+    bundle_status = _registry.get_status()
+
+    components = {}
+
+    # YOLO
+    yolo_path = MODEL_PATHS.get("yolo")
+    if yolo_path:
+        if _MODELS_CACHE["yolo_detection_model"] is not None:
+            components["yolo"] = ComponentInfo(status="loaded", path=yolo_path.name)
+        else:
+            components["yolo"] = ComponentInfo(status="configured", path=yolo_path.name)
+    else:
+        components["yolo"] = ComponentInfo(status="not_found")
+
+    # CNN
+    cnn_path = MODEL_PATHS.get("cnn")
+    if cnn_path:
+        if _MODELS_CACHE["cnn_classifier"] is not None:
+            components["cnn"] = ComponentInfo(status="loaded", path=cnn_path.name)
+        else:
+            components["cnn"] = ComponentInfo(status="configured", path=cnn_path.name)
+    else:
+        components["cnn"] = ComponentInfo(status="not_found")
+
+    # Regression bundle
+    if bundle_status.verified:
+        components["regression"] = ComponentInfo(status="verified")
+    elif bundle_status.loaded:
+        components["regression"] = ComponentInfo(status="loaded")
+    elif bundle_status.error:
+        components["regression"] = ComponentInfo(status="error")
+    else:
+        components["regression"] = ComponentInfo(status="not_found")
+
+    # Determine readiness
+    all_configured = (yolo_path is not None and cnn_path is not None)
+    if all_configured and bundle_status.loaded:
+        readiness = "ready"
+    elif all_configured or bundle_status.loaded:
+        readiness = "degraded"
+    else:
+        readiness = "not_ready"
+
+    capabilities = []
+    if bundle_status.verified:
+        capabilities.append("regression_31v1")
+    if yolo_path:
+        capabilities.append("yolo_segmentation")
+    if cnn_path:
+        capabilities.append("cnn_classification")
+
+    response = StatusResponse(
+        readiness=readiness,
+        schema_version=FEATURE_SCHEMA_VERSION,
+        bundle_id=bundle_status.bundle_id,
+        components=components,
+        capabilities=capabilities,
+    )
+    return response.to_dict()
 
 
 @app.post("/predict")
@@ -343,21 +405,98 @@ async def predict(
     weight_total:   float      = Form(0.0),
     sample_count:   int        = Form(0),
     sample_weight:  float      = Form(0.0),
+    estimator_mode: str        = Form("auto"),
+    debug:          bool       = Form(False),
 ):
     """
-    Endpoint chính: Nhận ảnh cốc lúa + thông số vật lý $\to$ trả về kết quả ước lượng số hạt.
+    Endpoint chính: Nhận ảnh cốc lúa + thông số vật lý → trả về kết quả ước lượng số hạt.
+    Hỗ trợ:
+      - estimator_mode: 'auto' (ưu tiên regression, fallback geometry/weight),
+                        'regression' (bắt buộc hồi quy, lỗi nếu thiếu feature/model),
+                        'geometry' (chỉ dùng đo thể tích pixel),
+                        'weight' (chỉ dùng cân mẫu).
+      - debug: True (trả thêm chi tiết timings và feature vector).
     """
+    request_id = uuid.uuid4().hex[:12]
+    timings = TimingInfo()
+    t_total_start = time.perf_counter()
     temp_work_dir = None
+    response_warnings: List[str] = []
+
+    # ── Input Validation ────────────────────────────────────────────────────
+    errors: List[str] = []
+    if diam <= 0:
+        errors.append("diam phải > 0")
+    if height <= 0:
+        errors.append("height phải > 0")
+    if empty < 0:
+        errors.append("empty không được âm")
+    if empty > height:
+        errors.append("empty phải <= height")
+    if wall_thickness < 0:
+        errors.append("wall_thickness không được âm")
+    if weight_total < 0:
+        errors.append("weight_total không được âm")
+    if sample_weight < 0:
+        errors.append("sample_weight không được âm")
+    if sample_count < 0:
+        errors.append("sample_count không được âm")
+    if estimator_mode not in ("auto", "regression", "geometry", "weight"):
+        errors.append(f"estimator_mode '{estimator_mode}' không hợp lệ (auto, regression, geometry, weight)")
+
+    if errors:
+        resp = PredictResponse(
+            status="error",
+            request_id=request_id,
+            error=ErrorDetail(
+                code=ErrorCode.INVALID_INPUT,
+                message="; ".join(errors),
+                stage="input_validation",
+            ),
+        )
+        return JSONResponse(status_code=422, content=resp.to_dict())
+
     try:
-        # Tạo thư mục làm việc tạm thời an toàn
+        # ── Bước 0: Đọc ảnh ────────────────────────────────────────────────
+        t0 = time.perf_counter()
         temp_work_dir = Path(tempfile.mkdtemp(prefix="rice_predict_"))
-        temp_img_path = temp_work_dir / f"input_{uuid.uuid4().hex[:8]}.jpg"
+        temp_img_path = temp_work_dir / f"input_{request_id}.jpg"
         crop_dir = temp_work_dir / "crops"
 
-        with open(temp_img_path, "wb") as buffer:
-            buffer.write(await file.read())
+        image_bytes = await file.read()
+        if len(image_bytes) == 0:
+            resp = PredictResponse(
+                status="error",
+                request_id=request_id,
+                error=ErrorDetail(
+                    code=ErrorCode.INVALID_IMAGE,
+                    message="File ảnh rỗng",
+                    stage="decode",
+                ),
+            )
+            return JSONResponse(status_code=422, content=resp.to_dict())
 
-        # Bước 1: Nhận diện vật chứa & tính tỷ lệ quy đổi
+        with open(temp_img_path, "wb") as buffer:
+            buffer.write(image_bytes)
+
+        # Validate image can be decoded
+        test_img = cv2.imread(str(temp_img_path))
+        if test_img is None:
+            resp = PredictResponse(
+                status="error",
+                request_id=request_id,
+                error=ErrorDetail(
+                    code=ErrorCode.INVALID_IMAGE,
+                    message="Không thể giải mã file ảnh",
+                    stage="decode",
+                ),
+            )
+            return JSONResponse(status_code=422, content=resp.to_dict())
+
+        timings.decode_ms = (time.perf_counter() - t0) * 1000
+
+        # ── Bước 1: Container Detection ─────────────────────────────────────
+        t1 = time.perf_counter()
         container_res = execute_container_analysis(
             image_path=temp_img_path,
             diam_cm=diam,
@@ -367,25 +506,31 @@ async def predict(
         )
         pixels_per_mm = container_res["pixels_per_mm"]
         bulk_volume_mm3 = container_res["bulk_rice_volume_mm3"]
+        timings.container_ms = (time.perf_counter() - t1) * 1000
 
-        # Bước 2: Cắt lát SAHI + YOLO-seg
+        # ── Bước 2: SAHI + YOLO-seg ─────────────────────────────────────────
+        t2 = time.perf_counter()
         raw_crops = execute_sahi_crops(
             image_path=temp_img_path,
             output_crop_dir=crop_dir,
             confidence=0.5,
         )
+        timings.segmentation_ms = (time.perf_counter() - t2) * 1000
 
-        # Bước 3: Làm sạch + Phân loại CNN + Đo kích thước Ellipsoid 3D
+        # ── Bước 3: Clean + CNN + Geometry ───────────────────────────────────
+        t3 = time.perf_counter()
         whole_grains, volumes_px3, total_detected = execute_grain_classification_and_metrics(
             raw_grains=raw_crops,
             pixels_per_mm=pixels_per_mm,
         )
+        timings.classification_ms = (time.perf_counter() - t3) * 1000
 
-        # Buoc 4: Danh gia do dong deu me lua
+        # ── Bước 4: Uniformity ───────────────────────────────────────────────
         grain_volumes_mm3 = [g["volume_mm3"] for g in whole_grains]
         uniformity_res = evaluate_batch_uniformity(grain_volumes_mm3)
 
-        # Buoc 5: Tinh toan cac con so uoc luong (Pure AI + Weight)
+        # ── Bước 5: Geometry/Weight estimates ────────────────────────────────
+        t5 = time.perf_counter()
         estimates = compute_final_estimates(
             bulk_volume_mm3=bulk_volume_mm3,
             pixels_per_mm=pixels_per_mm,
@@ -394,8 +539,9 @@ async def predict(
             sample_count=sample_count,
             sample_weight=sample_weight,
         )
+        timings.geometry_ms = (time.perf_counter() - t5) * 1000
 
-        # ★ Buoc 6 [MOI]: Dung vector 31 dac trung cho Regression
+        # ── Bước 6: Assemble 31 features ─────────────────────────────────────
         diam_mm = float(diam) * 10.0
         height_mm = float(height) * 10.0
         empty_mm = float(empty) * 10.0
@@ -407,66 +553,199 @@ async def predict(
             "container_height_mm": height_mm,
         }
 
+        # TODO: Estimated_Total_Seeds_Hybrid discrepancy —
+        # Training extractor: Round(bulk_vol * packing / vol_mean_mm3)
+        # Runtime: estimates["final"] (hybrid of geometry + weight)
+        # This mismatch is documented in manifest.json pipeline_config
+        hybrid_for_regression = float(estimates.get("final") or 0)
+
         features_dict = assemble_31_features(
             container_res=container_res,
             whole_grains=whole_grains,
             uniformity_res=uniformity_res,
             form_inputs=form_inputs,
-            hybrid_estimate=float(estimates.get("final", 0)),
+            hybrid_estimate=hybrid_for_regression,
         )
 
-        # ★ Buoc 7 [MOI]: Suy luan hoi quy (Extra Trees primary, OLS fallback)
-        tree_model, tree_scaler = get_regression_artifacts()
-        regression_est, regression_method = predict_regression(
-            features_dict=features_dict,
-            model=tree_model,
-            scaler=tree_scaler,
+        # ── Bước 7: Validate features trước regression ───────────────────────
+        feature_validation = validate_feature_vector(features_dict, require_grains=True)
+        if feature_validation.warnings:
+            response_warnings.extend(feature_validation.warnings)
+
+        # ── Bước 8: Regression (theo estimator_mode) ────────────────────────
+        t8 = time.perf_counter()
+        regression_est: Optional[float] = None
+        regression_method: Optional[str] = None
+
+        if estimator_mode in ("auto", "regression"):
+            if not feature_validation.valid and feature_validation.grain_count == 0:
+                if estimator_mode == "regression":
+                    resp = PredictResponse(
+                        status="error",
+                        request_id=request_id,
+                        error=ErrorDetail(
+                            code=ErrorCode.NO_VALID_GRAINS,
+                            message="Không có hạt nguyên nào được phát hiện để chạy hồi quy.",
+                            stage="regression_validation",
+                        ),
+                    )
+                    return JSONResponse(status_code=422, content=resp.to_dict())
+                response_warnings.append(
+                    "NO_VALID_GRAINS: Regression bỏ qua vì không có hạt nguyên nào."
+                )
+            else:
+                # Load bundle nếu chưa
+                bundle_status = _registry.load_bundle()
+
+                if bundle_status.verified:
+                    model, scaler = _registry.get_model_and_scaler()
+                    try:
+                        # Thay None bằng 0.0 cho regression (model cần vector đầy đủ)
+                        features_for_model = {
+                            k: (v if v is not None else 0.0) for k, v in features_dict.items()
+                        }
+                        pred, method = predict_regression(
+                            features_dict=features_for_model,
+                            model=model,
+                            scaler=scaler,
+                        )
+                        regression_est = pred
+                        regression_method = method
+                    except Exception as e:
+                        print(f"[{request_id}] Regression failed: {e}")
+                        if estimator_mode == "regression":
+                            resp = PredictResponse(
+                                status="error",
+                                request_id=request_id,
+                                error=ErrorDetail(
+                                    code=ErrorCode.INFERENCE_FAILED,
+                                    message=f"Hồi quy thất bại: {e}",
+                                    stage="regression",
+                                ),
+                            )
+                            return JSONResponse(status_code=500, content=resp.to_dict())
+                        response_warnings.append(f"INFERENCE_FAILED: {e}")
+                else:
+                    msg = bundle_status.error or "Bundle chưa verified"
+                    if estimator_mode == "regression":
+                        resp = PredictResponse(
+                            status="error",
+                            request_id=request_id,
+                            error=ErrorDetail(
+                                code=ErrorCode.MODEL_UNAVAILABLE,
+                                message=f"Mô hình hồi quy không khả dụng: {msg}",
+                                stage="model_registry",
+                            ),
+                        )
+                        return JSONResponse(status_code=503, content=resp.to_dict())
+                    response_warnings.append(f"MODEL_UNAVAILABLE: {msg}")
+
+        timings.regression_ms = (time.perf_counter() - t8) * 1000
+
+        # ── Bước 9: Quyết định final theo estimator_mode ───────────────────────
+        geometry_est = estimates.get("geometry_est")
+        weight_est = estimates.get("weight_est")
+
+        if estimator_mode == "regression":
+            final_est = int(round(regression_est)) if regression_est is not None else None
+            method_used = f"regression_{regression_method}" if regression_est is not None else "none"
+        elif estimator_mode == "geometry":
+            final_est = geometry_est
+            method_used = "geometry"
+        elif estimator_mode == "weight":
+            final_est = weight_est
+            method_used = "weight"
+        else:  # auto
+            if regression_est is not None and regression_est >= 0:
+                final_est = int(round(regression_est))
+                method_used = f"regression_{regression_method}"
+            elif estimates.get("final") is not None:
+                final_est = estimates["final"]
+                method_used = "hybrid" if estimates.get("hybrid") else (
+                    "geometry" if geometry_est is not None else "weight"
+                )
+            else:
+                final_est = None
+                method_used = "none"
+
+        # ── Build response ────────────────────────────────────────────────────
+        timings.total_ms = (time.perf_counter() - t_total_start) * 1000
+
+        estimation = EstimationResult(
+            final=final_est,
+            regression_est=regression_est,
+            geometry_est=geometry_est,
+            weight_est=weight_est,
+            method_used=method_used,
+            feature_schema_version=FEATURE_SCHEMA_VERSION,
+            model_bundle=_registry.get_status().bundle_id,
+            ai_est=geometry_est,  # backward compat
         )
 
-        # Quyet dinh gia tri cuoi cung: uu tien Regression > Hybrid > Pure AI
-        if regression_est > 0:
-            final_est = int(round(regression_est))
-            method_used = f"regression_{regression_method}"
-        elif estimates.get("final", 0) > 0:
-            final_est = estimates["final"]
-            method_used = "hybrid" if estimates.get("hybrid") else "pure_ai"
-        else:
-            final_est = 0
-            method_used = "none"
-
-        # Tong hop thong so hinh thai hoc trung binh cua me lua
         metrics_summary = {
             "total_grains_detected": total_detected,
             "whole_grains_surface": len(whole_grains),
             "uniformity_rate_pct": uniformity_res.get("uniformity_rate_pct", 0.0),
             "pixels_per_mm": round(pixels_per_mm, 2),
             "bulk_rice_volume_mm3": round(bulk_volume_mm3, 2),
-            "avg_length_mm": round(float(np.mean([g["length_mm"] for g in whole_grains])), 2) if whole_grains else 0.0,
-            "avg_width_mm": round(float(np.mean([g["width_mm"] for g in whole_grains])), 2) if whole_grains else 0.0,
-            "avg_thickness_mm": round(float(np.mean([g["thickness_mm"] for g in whole_grains])), 2) if whole_grains else 0.0,
+            "avg_length_mm": round(float(np.mean([g["length_mm"] for g in whole_grains])), 2) if whole_grains else None,
+            "avg_width_mm": round(float(np.mean([g["width_mm"] for g in whole_grains])), 2) if whole_grains else None,
+            "avg_thickness_mm": round(float(np.mean([g["thickness_mm"] for g in whole_grains])), 2) if whole_grains else None,
             "regression_model": regression_method,
+            "estimator_mode": estimator_mode,
         }
 
-        return {
-            "status": "success",
-            "estimation": {
-                "final": final_est,
-                "regression_est": regression_est,
-                "ai_est": estimates.get("ai_est", 0),
-                "weight_est": estimates.get("weight_est", 0),
-                "method_used": method_used,
-                "feature_schema_version": "31v_ExtraTrees_2026",
-            },
-            "metrics_summary": metrics_summary,
-            "features_used": {k: round(v, 4) for k, v in features_dict.items()},
-        }
+        resp_content = PredictResponse(
+            status="success",
+            request_id=request_id,
+            estimation=estimation,
+            metrics_summary=metrics_summary,
+            features_used=features_dict if debug else None,
+            warnings=response_warnings,
+            timings_ms=timings,
+        ).to_dict()
+
+        if debug:
+            resp_content["debug_info"] = {
+                "features_vector": {k: (v if v is not None else 0.0) for k, v in features_dict.items()},
+                "feature_validation": {
+                    "valid": feature_validation.valid,
+                    "warnings": feature_validation.warnings,
+                    "grain_count": feature_validation.grain_count,
+                },
+                "total_grains_detected": total_detected,
+            }
+
+        print(f"[{request_id}] ✅ Predict complete: final={final_est}, method={method_used}, time={timings.total_ms:.0f}ms")
+        return resp_content
+
+    except FileNotFoundError as e:
+        print(f"[{request_id}] Model not found: {e}")
+        traceback.print_exc()
+        resp = PredictResponse(
+            status="error",
+            request_id=request_id,
+            error=ErrorDetail(
+                code=ErrorCode.MODEL_UNAVAILABLE,
+                message=str(e),
+                stage="model_loading",
+            ),
+        )
+        return JSONResponse(status_code=503, content=resp.to_dict())
 
     except Exception as e:
+        print(f"[{request_id}] ❌ Predict error: {e}")
         traceback.print_exc()
-        return {
-            "status": "error",
-            "message": str(e),
-        }
+        resp = PredictResponse(
+            status="error",
+            request_id=request_id,
+            error=ErrorDetail(
+                code=ErrorCode.INFERENCE_FAILED,
+                message=str(e),
+                stage="pipeline",
+            ),
+        )
+        return JSONResponse(status_code=500, content=resp.to_dict())
 
     finally:
         # Dọn dẹp an toàn thư mục tạm

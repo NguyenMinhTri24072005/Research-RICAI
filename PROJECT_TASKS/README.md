@@ -62,7 +62,7 @@ hoàn thiện API; TASK-03 tạo dữ liệu chuẩn cho đánh giá và công b
 - **Camera:** điện thoại là camera node; máy tính là host. Không mua camera
   mạch để thay thế điện thoại.
 - **Dữ liệu trước chỉ số:** không công bố kết quả benchmark trước khi khóa giao
-  thức chụp, metadata batch và tập test độc lập.
+  thức chụp, timestamp và tập test độc lập.
 - **Tái lập:** mọi mô hình phải dùng cùng schema đặc trưng, split, seed, pipeline
   tiền xử lý và báo cáo metric.
 - **Giải trình:** kết quả sản phẩm phải hiển thị được cơ sở hình học và đóng góp

@@ -34,6 +34,7 @@ class DatasetExtractorCompatibilityTests(unittest.TestCase):
                         "Inner_Diameter_mm": 55,
                         "Empty_Height_mm": 15,
                         "Actual_Count": 400,
+                        "Capture_Timestamp": "2026-09-16T10:30:00+07:00",
                     },
                 )
             )

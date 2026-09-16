@@ -11,6 +11,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from capture_app_core import NamingConfig, WorkbookStore, make_manual_record
 
 
+def timestamp() -> dict[str, str]:
+    return {"Capture_Timestamp": "2026-09-16T10:30:00+07:00"}
+
+
 class NamingTests(unittest.TestCase):
     def test_default_flat_sequence(self):
         config = NamingConfig()
@@ -43,6 +47,7 @@ class ManualRecordTests(unittest.TestCase):
                 "Inner_Diameter_mm": "60",
                 "Empty_Height_mm": "12.5",
                 "Actual_Count": "450",
+                **timestamp(),
             },
         )
         self.assertEqual(record["Sample_ID"], "M001")
@@ -59,8 +64,22 @@ class ManualRecordTests(unittest.TestCase):
                     "Inner_Diameter_mm": 50,
                     "Empty_Height_mm": 90,
                     "Actual_Count": 100,
+                    **timestamp(),
                 },
             )
+
+    def test_rejects_timestamp_without_timezone(self):
+        values = {
+            "Weight_g": 100,
+            "Container_Height_mm": 80,
+            "Inner_Diameter_mm": 50,
+            "Empty_Height_mm": 10,
+            "Actual_Count": 100,
+            **timestamp(),
+        }
+        values["Capture_Timestamp"] = "2026-09-16T10:30:00"
+        with self.assertRaisesRegex(ValueError, "múi giờ"):
+            make_manual_record("M001", values)
 
 
 class WorkbookStoreTests(unittest.TestCase):
@@ -78,11 +97,13 @@ class WorkbookStoreTests(unittest.TestCase):
                         "Inner_Diameter_mm": 60,
                         "Empty_Height_mm": 20,
                         "Actual_Count": 500,
+                        **timestamp(),
                     },
                 )
             )
             self.assertEqual(row, 2)
             self.assertTrue(store.contains_sample_id("m001"))
+            self.assertEqual(dict(store.rows())[2]["Capture_Timestamp"], "2026-09-16T10:30:00+07:00")
             store.save()
 
             loaded = WorkbookStore(path)
@@ -101,6 +122,29 @@ class WorkbookStoreTests(unittest.TestCase):
             final = WorkbookStore(path)
             final.load_or_create()
             self.assertEqual(final.rows(), [])
+
+    def test_legacy_workbook_keeps_existing_data_and_adds_metadata_columns(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "legacy.xlsx"
+            import openpyxl
+
+            workbook = openpyxl.Workbook()
+            sheet = workbook.active
+            legacy_headers = [
+                "Sample_ID", "Weight_g", "Container_Height_mm", "Inner_Diameter_mm",
+                "Empty_Height_mm", "Rice_Height_mm", "Actual_Count",
+            ]
+            sheet.append(legacy_headers)
+            sheet.append(["M001", 120, 100, 60, 20, 80, 500])
+            workbook.save(path)
+
+            store = WorkbookStore(path)
+            store.load_or_create()
+            self.assertNotIn("Capture_Batch", store.headers)
+            self.assertNotIn("Device_ID", store.headers)
+            self.assertIn("Capture_Timestamp", store.headers)
+            self.assertEqual(dict(store.rows())[2]["Sample_ID"], "M001")
+            self.assertEqual(dict(store.rows())[2]["Actual_Count"], 500)
 
 
 if __name__ == "__main__":

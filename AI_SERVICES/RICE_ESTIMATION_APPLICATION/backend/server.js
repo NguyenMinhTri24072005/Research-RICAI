@@ -255,23 +255,32 @@ app.post('/api/predict', upload.any(), async (req, res) => {
 
         if (error.code === 'ECONNABORTED') {
             console.error("Timeout: Colab không phản hồi trong 120s");
-            return res.status(504).json({ error: "AI Server timeout (>120s). Kiểm tra Colab còn chạy không." });
+            const errObj = { error: "AI Server timeout (>120s). Kiểm tra Colab còn chạy không." };
+            broadcastToDashboard({ type: 'error', error: errObj });
+            return res.status(504).json(errObj);
         }
 
         if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
             console.error(`Không kết nối được tới: ${COLAB_BASE_URL}`);
-            return res.status(503).json({
+            const errObj = {
                 error: `Không kết nối được tới AI Server (${COLAB_BASE_URL}). Ngrok URL có thể đã hết hạn — cập nhật lại qua POST /api/set-url`
-            });
+            };
+            broadcastToDashboard({ type: 'error', error: errObj });
+            return res.status(503).json(errObj);
         }
 
         if (error.response) {
-            console.error("Colab phản hồi lỗi HTTP:", error.response.status, error.response.data);
-            return res.status(500).json({ error: `Colab báo lỗi ${error.response.status}: ${JSON.stringify(error.response.data)}` });
+            const status = error.response.status;
+            const errData = error.response.data || { error: `Colab báo lỗi ${status}` };
+            console.error("Colab phản hồi lỗi HTTP:", status, errData);
+            broadcastToDashboard({ type: 'error', error: errData });
+            return res.status(status).json(errData);
         }
 
         console.error("Lỗi hệ thống:", error.message);
-        res.status(500).json({ error: error.message });
+        const genericErr = { error: error.message };
+        broadcastToDashboard({ type: 'error', error: genericErr });
+        res.status(500).json(genericErr);
     }
 });
 

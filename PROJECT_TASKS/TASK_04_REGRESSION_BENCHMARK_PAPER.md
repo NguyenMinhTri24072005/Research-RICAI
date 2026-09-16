@@ -25,9 +25,9 @@ Bayesian Ridge, LightGBM và CatBoost có thể chạy như **mở rộng thăm 
 
 ### 3. Giao thức đánh giá tái lập được
 
-1. **Chốt dữ liệu và test độc lập.** Giữ lại 20% dữ liệu làm test một lần, ưu tiên tách theo `Capture_Batch`/thiết bị/ngày. Nếu metadata chưa đủ để group split, dùng `random_state=42` và nêu rõ đây là giới hạn.
+1. **Chốt dữ liệu và test độc lập.** Giữ lại 20% dữ liệu làm test một lần, ưu tiên tách theo ngày lấy từ `Capture_Timestamp`. Nếu số ngày chụp không đủ để group split, dùng `random_state=42` và nêu rõ đây là giới hạn.
 2. **Không rò rỉ dữ liệu.** Imputation, scaling, lựa chọn đặc trưng và tuning đều đặt trong `sklearn.Pipeline` và fit trong từng fold train. Không tính mean/std trên toàn bộ dữ liệu trước khi tách train/test.
-3. **Tuning trên train.** Chạy nested cross-validation (hoặc GroupKFold khi có batch) trên 80% train; test độc lập chỉ dùng đúng một lần cho bảng kết quả cuối.
+3. **Tuning trên train.** Chạy nested cross-validation (hoặc GroupKFold khi có đủ nhiều ngày chụp) trên 80% train; test độc lập chỉ dùng đúng một lần cho bảng kết quả cuối.
 4. **Cùng điều kiện.** Cố định seed, feature set, ngân sách tuning, số fold và môi trường phiên bản cho mọi mô hình. Mỗi ANN do thành viên thực hiện cũng dùng chính split và ngân sách này.
 5. **Báo cáo metric.** Bắt buộc: R², adjusted R² (khi phù hợp), MAE, MSE, RMSE, thời gian suy luận. Dùng sMAPE hoặc MAPE có điều kiện vì MAPE không ổn định khi `Actual_Count` gần 0. Báo cáo khoảng tin cậy bootstrap cho các metric chính.
 
@@ -50,7 +50,7 @@ Bayesian Ridge, LightGBM và CatBoost có thể chạy như **mở rộng thăm 
   chính thức cho đúng 14 mô hình đã đăng ký.
 - [ ] `train_linear_regression.py` chuẩn hóa toàn bộ dữ liệu trước khi tách
   train/test; chưa đạt yêu cầu pipeline fit trong train/fold train.
-- [ ] Chưa có test độc lập khóa theo batch, nested CV, khoảng tin cậy bootstrap,
+- [ ] Chưa có test độc lập khóa theo ngày chụp, nested CV, khoảng tin cậy bootstrap,
   residual đầy đủ hoặc artefact bản thảo theo Definition of Done.
 
 ### Tiêu chí hoàn thành toàn bộ task
@@ -58,4 +58,4 @@ Bayesian Ridge, LightGBM và CatBoost có thể chạy như **mở rộng thăm 
 - [ ] Tập test được khoá, sơ đồ chia dữ liệu và mọi bước tiền xử lý có thể chạy lại từ cấu hình.
 - [ ] Có đúng 14 mô hình chính, kết quả CV và kết quả test độc lập; mọi mô hình mở rộng được ghi tách biệt.
 - [ ] Có bảng metric, khoảng tin cậy, file dự đoán/residual và hình 300 DPI sẵn sàng dùng trong bản thảo.
-- [ ] Bản thảo nêu rõ nguồn nhãn, giới hạn của thiết kế thu dữ liệu và nguy cơ tổng quát hoá theo batch/thiết bị.
+- [ ] Bản thảo nêu rõ nguồn nhãn, giới hạn của thiết kế thu dữ liệu và nguy cơ tổng quát hoá giữa các ngày/điều kiện chụp.

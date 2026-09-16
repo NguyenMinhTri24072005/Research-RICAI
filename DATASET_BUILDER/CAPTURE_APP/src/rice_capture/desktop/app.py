@@ -591,6 +591,7 @@ class DatasetCaptureApp:
             "Empty_Height_mm": row["empty_height_mm"],
             "Rice_Height_mm": row["rice_height_mm"],
             "Actual_Count": row["actual_count"],
+            "Capture_Timestamp": row.get("captured_at") or "",
         }
 
     def _sync_pending_excel(self) -> None:

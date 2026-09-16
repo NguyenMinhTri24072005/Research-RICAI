@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any
 
 
@@ -11,6 +12,7 @@ MANUAL_HEADERS = (
     "Empty_Height_mm",
     "Rice_Height_mm",
     "Actual_Count",
+    "Capture_Timestamp",
 )
 
 
@@ -31,6 +33,19 @@ def parse_number(value: Any, field_label: str, *, integer: bool = False) -> floa
     return number
 
 
+def parse_capture_timestamp(value: Any) -> str:
+    text = str(value or "").strip()
+    if not text:
+        raise ValueError("Thời điểm lưu không được để trống.")
+    try:
+        timestamp = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise ValueError("Thời điểm lưu không đúng định dạng ISO 8601.") from exc
+    if timestamp.tzinfo is None:
+        raise ValueError("Thời điểm lưu phải có múi giờ.")
+    return timestamp.isoformat(timespec="seconds")
+
+
 def make_manual_record(sample_id: str, values: dict[str, Any]) -> dict[str, Any]:
     container_height = parse_number(values.get("Container_Height_mm"), "Chiều cao ly")
     empty_height = parse_number(values.get("Empty_Height_mm"), "Chiều cao khoảng trống")
@@ -45,5 +60,5 @@ def make_manual_record(sample_id: str, values: dict[str, Any]) -> dict[str, Any]
         "Empty_Height_mm": empty_height,
         "Rice_Height_mm": round(float(container_height) - float(empty_height), 6),
         "Actual_Count": parse_number(values.get("Actual_Count"), "Số hạt thực tế", integer=True),
+        "Capture_Timestamp": parse_capture_timestamp(values.get("Capture_Timestamp")),
     }
-

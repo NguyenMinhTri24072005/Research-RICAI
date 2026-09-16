@@ -92,6 +92,9 @@ class MobileApiTests(unittest.TestCase):
                     self.assertIn(b'id="cameraVideo"', page)
                     self.assertIn(b'id="aspectRatio"', page)
                     self.assertIn(b'id="flashToggle"', page)
+                    self.assertNotIn(b'id="Capture_Batch"', page)
+                    self.assertNotIn(b'id="Device_ID"', page)
+                    self.assertIn(b'capture.js?v=5', page)
 
                 session_request = urllib.request.Request(
                     f"{base}/api/session",
@@ -128,6 +131,11 @@ class MobileApiTests(unittest.TestCase):
                 self.assertEqual(result["next_sample_id"], "M002")
                 self.assertTrue((root / "images" / "M001.jpg").exists())
                 self.assertTrue(server.ca_certificate_path.exists())
+                pending = coordinator.database.pending_excel_records()
+                self.assertNotIn("capture_batch", pending[0])
+                self.assertNotIn("device_id", pending[0])
+                self.assertNotEqual(pending[0]["captured_at"], "2026-09-11T10:00:00")
+                self.assertIn("+", pending[0]["captured_at"])
             finally:
                 server.stop()
 

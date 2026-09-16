@@ -5,6 +5,7 @@ localStorage.setItem("riceCapture.nodeId", nodeId);
 
 const input = document.getElementById("cameraInput");
 const video = document.getElementById("cameraVideo");
+const cameraStage = video.closest(".camera-stage");
 const canvas = document.getElementById("captureCanvas");
 const preview = document.getElementById("preview");
 const previewEmpty = document.getElementById("previewEmpty");
@@ -62,8 +63,8 @@ function resetFlashControl() {
 }
 
 function updateFlashControl() {
-  const capabilities = activeVideoTrack()?.getCapabilities?.() || {};
-  const supported = Boolean(capabilities.torch);
+  // Try to enable flash button if using environment camera
+  const supported = facingMode === "environment";
   flashToggle.classList.toggle("hidden", !supported);
   flashToggle.disabled = !supported;
   if (!supported) {
@@ -76,10 +77,8 @@ function updateFlashControl() {
 
 async function setFlash(enabled, silent = false) {
   const track = activeVideoTrack();
-  const capabilities = track?.getCapabilities?.() || {};
-  if (!track || !capabilities.torch) {
+  if (!track) {
     resetFlashControl();
-    if (!silent) setStatus("Camera hoặc trình duyệt này không hỗ trợ flash trong khung.", "error");
     return false;
   }
   flashToggle.disabled = true;
@@ -94,7 +93,7 @@ async function setFlash(enabled, silent = false) {
     flashEnabled = false;
     flashToggle.textContent = "BẬT FLASH";
     flashToggle.classList.remove("flash-on");
-    if (!silent) setStatus("Không thể bật flash trên camera này.", "error");
+    if (!silent) setStatus("Trình duyệt hoặc camera này không hỗ trợ bật flash bằng web.", "error");
     return false;
   } finally {
     flashToggle.disabled = false;
@@ -124,12 +123,16 @@ function applyFields(serverValues = {}) {
   updateComputed();
 }
 
+function updateSessionDisplay(data) {
+  document.getElementById("nextId").textContent = data.next_sample_id;
+}
+
 async function loadSession(initial = false) {
   const response = await fetch("/api/session", { headers: { "X-Capture-Token": token } });
   if (!response.ok) throw new Error("Không thể kết nối phiên chụp trên máy tính.");
   const data = await response.json();
-  document.getElementById("nextId").textContent = data.next_sample_id;
   if (initial) applyFields(data.manual);
+  updateSessionDisplay(data);
   badge.textContent = "Đã kết nối";
   badge.className = "badge online";
 }
@@ -143,7 +146,7 @@ function connectSocket() {
   socket.onmessage = event => {
     try {
       const data = JSON.parse(event.data);
-      if (data.next_sample_id) document.getElementById("nextId").textContent = data.next_sample_id;
+      if (data.next_sample_id) updateSessionDisplay(data);
     } catch (_) {}
   };
   const pingTimer = setInterval(() => {
@@ -183,7 +186,7 @@ function showLiveCamera() {
   takePhotoButton.disabled = false;
   switchCameraButton.disabled = false;
   aspectRatioSelect.disabled = false;
-  cameraNotice.textContent = "Camera đang hiển thị trực tiếp. Căn chỉnh mẫu rồi bấm Chụp ảnh.";
+  cameraNotice.textContent = "Camera đang hiển thị trực tiếp. Chạm vào mẫu để lấy nét rồi bấm Chụp ảnh.";
 }
 
 function showCapturedImage(file, message) {
@@ -289,6 +292,82 @@ aspectRatioSelect.addEventListener("change", async () => {
 
 flashToggle.addEventListener("click", () => { void setFlash(!flashEnabled); });
 
+function pointInsideVideo(clientX, clientY) {
+  const rect = video.getBoundingClientRect();
+  if (!rect.width || !rect.height) return null;
+  const sourceWidth = video.videoWidth || rect.width;
+  const sourceHeight = video.videoHeight || rect.height;
+  const scale = Math.min(rect.width / sourceWidth, rect.height / sourceHeight);
+  const renderedWidth = sourceWidth * scale;
+  const renderedHeight = sourceHeight * scale;
+  const left = rect.left + (rect.width - renderedWidth) / 2;
+  const top = rect.top + (rect.height - renderedHeight) / 2;
+  if (clientX < left || clientX > left + renderedWidth || clientY < top || clientY > top + renderedHeight) {
+    return null;
+  }
+  return {
+    x: Math.min(1, Math.max(0, (clientX - left) / renderedWidth)),
+    y: Math.min(1, Math.max(0, (clientY - top) / renderedHeight)),
+  };
+}
+
+function showFocusRing(clientX, clientY) {
+  const stageRect = cameraStage.getBoundingClientRect();
+  const focusRing = document.createElement("span");
+  focusRing.className = "focus-ring";
+  focusRing.style.left = `${clientX - stageRect.left}px`;
+  focusRing.style.top = `${clientY - stageRect.top}px`;
+  cameraStage.appendChild(focusRing);
+  requestAnimationFrame(() => focusRing.classList.add("visible"));
+  setTimeout(() => {
+    focusRing.classList.remove("visible");
+    setTimeout(() => focusRing.remove(), 220);
+  }, 650);
+}
+
+async function focusCameraAt(event) {
+  const track = activeVideoTrack();
+  if (!track) return;
+  const point = pointInsideVideo(event.clientX, event.clientY);
+  if (!point) return;
+  showFocusRing(event.clientX, event.clientY);
+
+  const capabilities = track.getCapabilities?.() || {};
+  const focusModes = Array.isArray(capabilities.focusMode) ? capabilities.focusMode : [];
+  const supportsPoint = capabilities.pointsOfInterest === true
+    || navigator.mediaDevices.getSupportedConstraints?.().pointsOfInterest === true;
+
+  if (supportsPoint) {
+    try {
+      const pointConstraints = { pointsOfInterest: [point] };
+      if (focusModes.includes("single-shot")) pointConstraints.focusMode = "single-shot";
+      await track.applyConstraints({ advanced: [pointConstraints] });
+      cameraNotice.textContent = "Đã lấy nét tại điểm chạm. Giữ máy ổn định rồi chụp ảnh.";
+      return;
+    } catch (error) {
+      console.debug("Camera không nhận điểm lấy nét, chuyển sang autofocus:", error);
+    }
+  }
+  const fallbackMode = focusModes.includes("single-shot")
+    ? "single-shot"
+    : (focusModes.includes("continuous") ? "continuous" : null);
+  if (fallbackMode) {
+    try {
+      await track.applyConstraints({ advanced: [{ focusMode: fallbackMode }] });
+      cameraNotice.textContent = "Camera đã chạy lấy nét tự động tại vùng trung tâm.";
+      return;
+    } catch (error) {
+      console.debug("Camera không cho đổi chế độ lấy nét:", error);
+    }
+  }
+  cameraNotice.textContent = "Điện thoại này tự điều khiển lấy nét; hãy giữ máy ổn định sau khi chạm.";
+}
+
+video.addEventListener("pointerup", event => {
+  event.preventDefault();
+  void focusCameraAt(event);
+});
+
 takePhotoButton.addEventListener("click", () => {
   if (!mediaStream || !video.videoWidth || !video.videoHeight) {
     setStatus("Camera chưa tạo được khung hình. Hãy chờ một chút rồi thử lại.", "error");
@@ -326,7 +405,20 @@ input.addEventListener("change", () => {
 });
 
 for (const key of fieldKeys) {
-  document.getElementById(key).addEventListener("input", () => { persistFields(); updateComputed(); });
+  const el = document.getElementById(key);
+  el.addEventListener("input", () => {
+    if (el.getAttribute("inputmode") === "decimal") {
+      let val = el.value.replace(/,/g, ".");
+      val = val.replace(/[^0-9.]/g, "");
+      const parts = val.split(".");
+      if (parts.length > 2) val = parts[0] + "." + parts.slice(1).join("");
+      el.value = val;
+    } else if (el.getAttribute("inputmode") === "numeric") {
+      el.value = el.value.replace(/[^0-9]/g, "");
+    }
+    persistFields();
+    updateComputed();
+  });
 }
 
 async function convertToJpeg(file) {
@@ -368,12 +460,11 @@ saveButton.addEventListener("click", async () => {
     for (const key of fieldKeys) body.append(key, document.getElementById(key).value);
     body.append("node_id", nodeId);
     body.append("request_id", pendingRequestId || (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`));
-    body.append("captured_at", new Date().toISOString());
     const response = await fetch("/api/samples", { method: "POST", headers: { "X-Capture-Token": token }, body });
     const data = await response.json();
     if (!response.ok) throw new Error(data.detail || "Máy tính không thể lưu mẫu.");
     persistFields();
-    document.getElementById("nextId").textContent = data.next_sample_id;
+    updateSessionDisplay({ next_sample_id: data.next_sample_id, manual: {} });
     clearSelectedImage();
     if (mediaStream) showLiveCamera();
     else previewEmpty.classList.remove("hidden");

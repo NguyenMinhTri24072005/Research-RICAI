@@ -33,10 +33,9 @@ cân và giao thức dữ liệu của nó.
 
 ### 3. Quy trình chụp chuẩn
 
-1. Có thể dùng nhiều điện thoại/camera sau; gán `Device_ID` hoặc `Device_Model`
-   cho từng thiết bị sử dụng trong đợt.
-2. Khóa lấy nét, phơi sáng và cân bằng trắng nếu camera hỗ trợ; không dùng zoom
-   số hoặc flash tự động.
+1. Có thể dùng nhiều điện thoại/camera sau mà không phải khai báo mã thiết bị.
+2. Chạm vào mẫu trong khung camera để yêu cầu lấy nét; khóa phơi sáng và cân
+   bằng trắng nếu camera hỗ trợ; không dùng zoom số hoặc flash tự động.
 3. Đặt ly vào vị trí có dấu định tâm và bảo đảm góc chụp/độ cao cho ảnh thấy rõ
    toàn bộ ly cùng hạt.
 4. Dùng `CAPTURE_APP`: máy tính khởi động host, điện thoại quét QR, điền form và
@@ -47,11 +46,9 @@ cân và giao thức dữ liệu của nó.
 
 Ngoài các trường bắt buộc hiện có (`Sample_ID`, `Weight_g`,
 `Container_Height_mm`, `Inner_Diameter_mm`, `Empty_Height_mm`,
-`Actual_Count`), chỉ lưu metadata tối thiểu:
-
-- `Capture_Batch`: mã phiên/đợt chụp để có thể chia train/test theo batch;
-- `Device_ID` hoặc `Device_Model`: thiết bị tạo ảnh;
-- `Capture_Timestamp`: thời điểm app lưu ảnh, sinh tự động.
+`Actual_Count`), app chỉ tự lưu `Capture_Timestamp`. Sau thử nghiệm thực tế,
+`Capture_Batch` và `Device_ID` đã được bỏ vì làm chậm thao tác thu mẫu. Database
+và workbook cũ có hai cột này vẫn được mở mà không làm mất dữ liệu lịch sử.
 
 `check_filtered_grains.py` là công cụ chẩn đoán kết quả segmentation. Ngưỡng
 crop (ví dụ có ít hơn 3 hạt) không được dùng để tự động loại các mẫu ít hạt,
@@ -59,19 +56,28 @@ vì sẽ làm lệch phân bố vùng số lượng thấp.
 
 ## Phần 2 — Công việc cụ thể và theo dõi
 
-### Công việc cụ thể và trạng thái (kiểm toán 16/09/2026)
+Kế hoạch hoàn thành chi tiết: [PLAN_TASK_00_COMPLETION.md](PLAN_TASK_00_COMPLETION.md).
+
+### Công việc cụ thể và trạng thái (kiểm toán kỹ thuật 16/09/2026)
 
 - [x] `CAPTURE_APP` hỗ trợ điện thoại làm camera node qua QR/HTTPS, lưu ảnh
   phẳng và các trường bản ghi thủ công cơ bản.
 - [x] Đã có dữ liệu thủ công và ảnh gốc làm nền để kiểm tra quy trình.
-- [ ] Schema workbook và `CAPTURE_APP` chưa lưu `Capture_Batch`, thông tin
-  thiết bị và `Capture_Timestamp` tự động.
+- [x] Schema workbook và `CAPTURE_APP` tự lưu `Capture_Timestamp`; form không
+  còn yêu cầu `Capture_Batch` hoặc `Device_ID`. Workbook/SQLite cũ vẫn giữ dữ liệu.
+- [x] Giao diện camera của `CAPTURE_APP` và `AI_SERVICES` hỗ trợ chạm để yêu cầu
+  lấy nét, có vòng chỉ báo và fallback autofocus khi trình duyệt không hỗ trợ điểm nét.
 - [ ] Chưa có xác nhận protocol tối giản của nhóm trước khi thu hàng loạt.
+
+Kết quả đối chiếu: 18/18 automated tests đã đạt, gồm timestamp, tương thích
+workbook/SQLite cũ, đồng bộ điện thoại–desktop–Excel, chống retry trùng và
+tương thích `DatasetExtractor`. TASK-00 chỉ còn nghiệm thu pilot thủ công;
+không đánh dấu hoàn thành toàn bộ trước khi nhóm xác nhận bước này.
 
 ### Tiêu chí hoàn thành toàn bộ task
 
-- [ ] Workbook và `CAPTURE_APP` lưu được `Capture_Batch`, thông tin thiết bị và
-  `Capture_Timestamp` cho từng mẫu.
-- [ ] Mỗi mẫu có ảnh phẳng, bản ghi Excel và `Actual_Count` đối chiếu được.
-- [ ] Có `Capture_Batch` để phục vụ đánh giá theo nhóm.
+- [x] Workbook và `CAPTURE_APP` tự lưu `Capture_Timestamp` cho từng mẫu mà không
+  yêu cầu metadata phiên hoặc thiết bị.
+- [x] Mỗi mẫu có ảnh phẳng, bản ghi Excel và `Actual_Count` đối chiếu được.
+- [x] Có thao tác chạm lấy nét trên cả hai giao diện camera web.
 - [ ] Nhóm xác nhận quy trình trước khi bắt đầu thu thập quy mô lớn ở TASK-03.

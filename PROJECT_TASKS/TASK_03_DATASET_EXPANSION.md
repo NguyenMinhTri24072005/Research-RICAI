@@ -42,15 +42,13 @@ Chi tiết thiết lập và cách quản lý metadata thuộc [TASK-00](TASK_00
 | Giống/hình dạng khác | Đa dạng | 10 | Kiểm tra độ bao phủ hình thái |
 | **Tổng pilot** |  | **55** | Kiểm tra protocol trước khi mở rộng |
 
-Mỗi phiên phải có `Capture_Batch` và `Device_ID` hoặc `Device_Model`.
-`Capture_Timestamp` được app tạo khi lưu ảnh. Các nhóm này được giữ lại để tách
-train/test theo batch hoặc thiết bị ở TASK-04, tránh ảnh cùng điều kiện xuất
-hiện đồng thời ở train và test.
+`Capture_Timestamp` được app tạo khi lưu ảnh. Không yêu cầu nhập mã phiên hoặc
+mã thiết bị; khi đánh giá có thể gom mẫu theo ngày chụp lấy từ timestamp.
 
 ### 4. Quy trình thao tác
 
 1. Chạy [`run_capture_app.bat`](../DATASET_BUILDER/CAPTURE_APP/run_capture_app.bat), chọn thư mục lưu ảnh phẳng và file Excel đích, rồi quét QR bằng điện thoại.
-2. Khi mở phiên, chọn `Capture_Batch` và thiết bị. Với từng mẫu, nhập `Weight_g`, `Container_Height_mm`, `Inner_Diameter_mm`, `Empty_Height_mm` và `Actual_Count`. `Rice_Height_mm` là giá trị suy ra từ kích thước ly và khoảng trống, không nhập trùng.
+2. Với từng mẫu, nhập `Weight_g`, `Container_Height_mm`, `Inner_Diameter_mm`, `Empty_Height_mm` và `Actual_Count`. `Rice_Height_mm` là giá trị suy ra từ kích thước ly và khoảng trống, không nhập trùng.
 3. Chụp/lưu. Ảnh nằm trực tiếp trong thư mục đã chọn với mã tăng dần, ví dụ `M0058.jpg`, `M0059.jpg`; không tạo cấu trúc con kiểu `M001/M001A`.
 4. Chạy [`AI_DATASET_EXTRACTION_PIPELINE.ipynb`](../DATASET_BUILDER/AI_DATASET_EXTRACTION_PIPELINE.ipynb) để bóc tách hạt và tạo đặc trưng.
 5. Chạy `check_filtered_grains.py` để kiểm tra pipeline khi cần. Mốc “ít hơn 3 hạt crop” là **cảnh báo để kiểm tra ảnh/pipeline**, không phải quy tắc tự động loại mẫu ít hạt vì sẽ làm lệch phân bố dữ liệu.
@@ -67,8 +65,8 @@ hiện đồng thời ở train và test.
   ảnh–Excel một-một.
 - [ ] Chưa đạt bằng chứng tối thiểu 100 mẫu vật lý hợp lệ: workbook thủ công
   hiện có 92 mã mẫu gốc, trong đó 35 bản ghi trống `Actual_Count`.
-- [ ] Thiếu `Capture_Batch` và thông tin thiết bị, nên chưa thể xác nhận dữ liệu
-  đủ điều kiện cho benchmark theo batch/thiết bị.
+- [ ] Chưa chốt cách chia train/test theo ngày chụp từ `Capture_Timestamp` hoặc
+  random split cố định khi số ngày chụp không đủ.
 
 ### Tiêu chí hoàn thành toàn bộ task
 

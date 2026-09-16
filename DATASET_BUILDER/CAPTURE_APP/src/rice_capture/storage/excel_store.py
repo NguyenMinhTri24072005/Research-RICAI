@@ -137,6 +137,9 @@ class WorkbookStore:
             self.update_cell(row_number, header, value)
             return
 
+        if header == "Capture_Timestamp":
+            raise ValueError("Capture_Timestamp được máy tính tự tạo khi lưu mẫu.")
+
         value = parse_number(raw_value, header, integer=header == "Actual_Count")
         if header in {"Container_Height_mm", "Empty_Height_mm"}:
             headers = self.headers
@@ -188,4 +191,3 @@ class WorkbookStore:
         if row_number == self.sheet.max_row and row_number >= 2:
             self.sheet.delete_rows(row_number, 1)
             self.dirty = True
-

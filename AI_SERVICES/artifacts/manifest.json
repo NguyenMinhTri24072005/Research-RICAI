@@ -1,0 +1,103 @@
+{
+  "schema_version": "31v1",
+  "bundle_id": "rice_vision_extratrees_31v1_20260824",
+  "description": "Extra Trees Regressor 31-feature bundle for rice seed count estimation",
+  "provenance": {
+    "training_date": "2026-08-24",
+    "training_source": "LINEAR_REGRESSION_MODEL/RICE_SEED_DECISION_TREE_TRAINER.ipynb",
+    "dataset_path": "DATASET_BUILDER/4_Final_Dataset/final_linear_regression_dataset.csv",
+    "dataset_fingerprint_note": "55 samples, 31 features, target=Actual_Count, filter=Image_Status==FOUND",
+    "verified": false,
+    "verification_note": "Timestamps of scaler.joblib (16:17), best_tree_ensemble_model.joblib (16:23), and best_tree_model_info.json (16:23) on 2026-08-24 are consistent with a single training session. Binary provenance not cryptographically verified."
+  },
+  "target_variable": "Actual_Count",
+  "model": {
+    "family": "ExtraTreesRegressor",
+    "relative_path": "LINEAR_REGRESSION_MODEL/models/best_tree_ensemble_model.joblib",
+    "expected_n_features": 31,
+    "reported_metrics": {
+      "r2_test": 0.9999,
+      "mae_test": 0.45,
+      "mape_test": 0.34
+    }
+  },
+  "preprocessing": {
+    "type": "scaler",
+    "scaler_relative_path": "LINEAR_REGRESSION_MODEL/models/scaler.joblib",
+    "scaler_params_relative_path": "LINEAR_REGRESSION_MODEL/models/scaler_params.json",
+    "scaler_type": "sklearn.preprocessing.StandardScaler",
+    "note": "Scaler fitted on X_train only (train/test split with random_state=42, test_size=0.20)"
+  },
+  "ols_fallback": {
+    "relative_path": "LINEAR_REGRESSION_MODEL/models/best_linear_regression_model.joblib",
+    "equation_json_path": "LINEAR_REGRESSION_MODEL/models/regression_equation.json",
+    "provenance_note": "OLS trained separately on 2026-08-20 by train_linear_regression.py. Uses population std (ddof=0) on full X before split. Different preprocessing than tree bundle — NOT interchangeable scaler.",
+    "verified": false
+  },
+  "features": [
+    {"index": 0,  "name": "Bulk_Rice_Volume_mm3",       "group": "container", "unit": "mm³"},
+    {"index": 1,  "name": "Rice_Height_mm",             "group": "container", "unit": "mm"},
+    {"index": 2,  "name": "Weight_g",                   "group": "container", "unit": "g"},
+    {"index": 3,  "name": "Empty_Height_mm",            "group": "container", "unit": "mm"},
+    {"index": 4,  "name": "Pixels_Per_mm",              "group": "container", "unit": "px/mm"},
+    {"index": 5,  "name": "Container_Detected_Diam_px", "group": "container", "unit": "px"},
+    {"index": 6,  "name": "Inner_Diameter_mm",          "group": "container", "unit": "mm"},
+    {"index": 7,  "name": "Container_Height_mm",        "group": "container", "unit": "mm"},
+    {"index": 8,  "name": "Whole_Grains_Count",         "group": "surface",   "unit": "count"},
+    {"index": 9,  "name": "Uniformity_Rate_Pct",        "group": "surface",   "unit": "%"},
+    {"index": 10, "name": "Estimated_Total_Seeds_Hybrid","group": "surface",   "unit": "count"},
+    {"index": 11, "name": "Grain_Length_mm_Mean",        "group": "length",    "unit": "mm"},
+    {"index": 12, "name": "Grain_Length_mm_Min",         "group": "length",    "unit": "mm"},
+    {"index": 13, "name": "Grain_Length_mm_Max",         "group": "length",    "unit": "mm"},
+    {"index": 14, "name": "Grain_Length_mm_Std",         "group": "length",    "unit": "mm"},
+    {"index": 15, "name": "Grain_Width_mm_Mean",         "group": "width",     "unit": "mm"},
+    {"index": 16, "name": "Grain_Width_mm_Min",          "group": "width",     "unit": "mm"},
+    {"index": 17, "name": "Grain_Width_mm_Max",          "group": "width",     "unit": "mm"},
+    {"index": 18, "name": "Grain_Width_mm_Std",          "group": "width",     "unit": "mm"},
+    {"index": 19, "name": "Grain_Thickness_mm_Mean",     "group": "thickness", "unit": "mm"},
+    {"index": 20, "name": "Grain_Thickness_mm_Min",      "group": "thickness", "unit": "mm"},
+    {"index": 21, "name": "Grain_Thickness_mm_Max",      "group": "thickness", "unit": "mm"},
+    {"index": 22, "name": "Grain_Thickness_mm_Std",      "group": "thickness", "unit": "mm"},
+    {"index": 23, "name": "Grain_Area_mm2_Mean",         "group": "area",      "unit": "mm²"},
+    {"index": 24, "name": "Grain_Area_mm2_Min",          "group": "area",      "unit": "mm²"},
+    {"index": 25, "name": "Grain_Area_mm2_Max",          "group": "area",      "unit": "mm²"},
+    {"index": 26, "name": "Grain_Area_mm2_Std",          "group": "area",      "unit": "mm²"},
+    {"index": 27, "name": "Grain_Volume_mm3_Mean",       "group": "volume",    "unit": "mm³"},
+    {"index": 28, "name": "Grain_Volume_mm3_Min",        "group": "volume",    "unit": "mm³"},
+    {"index": 29, "name": "Grain_Volume_mm3_Max",        "group": "volume",    "unit": "mm³"},
+    {"index": 30, "name": "Grain_Volume_mm3_Std",        "group": "volume",    "unit": "mm³"}
+  ],
+  "cv_models": {
+    "yolo": {
+      "description": "YOLO-seg for grain segmentation via SAHI",
+      "candidate_paths": [
+        "RESULTS/all-new-data-v1.yolov8_yolov8s-seg_trained/weights/best.pt",
+        "RESULTS/35_special_images_segmentation.v1i.yolov8_v1_trained/weights/best.pt"
+      ]
+    },
+    "cnn": {
+      "description": "DenseNet121 grain classifier (hat_nguyen vs hat_khuyet_tat)",
+      "candidate_paths": [
+        "RESULTS/CNN_DenseNet121_Trained/best_v3_step2.keras",
+        "RESULTS/CNN_DenseNet121_Trained/best_rice_densenet121.keras"
+      ],
+      "class_order": ["hat_khuyet_tat", "hat_nguyen"],
+      "input_size": [224, 224],
+      "preprocessing_note": "Letterbox padding to 224x224, RGB [0,255] float32. Model has internal Lambda(preprocess_input) — do NOT apply preprocess_input externally."
+    }
+  },
+  "pipeline_config": {
+    "packing_fraction": 0.82,
+    "packing_fraction_note": "Extractor default=0.62, notebook=0.80, runtime=0.82. Training data used extractor value. This discrepancy is a known risk — see audit.",
+    "sahi_slice_size": 640,
+    "sahi_overlap_ratio": 0.20,
+    "sahi_overlap_note": "Extractor default=0.25, runtime=0.20. Minor discrepancy.",
+    "cleaner_passes": 1,
+    "cleaner_note": "Extractor uses 2 passes (step1: ksize=5,neck=0.20; step2: ksize=3,neck=0.15). Runtime uses 1 pass (ksize=3,neck=0.15).",
+    "cnn_threshold": 0.50,
+    "thickness_ratio_hat_nguyen": 0.85,
+    "grain_stat_ddof": 0,
+    "volume_aggregation": "median_px3",
+    "volume_aggregation_note": "Extractor uses mean mm³ for Estimated_Total_Seeds_Hybrid. Runtime uses median px³ for ai_est. The Hybrid feature fed to regression is computed differently."
+  }
+}

@@ -5,6 +5,7 @@ localStorage.setItem("riceVision.nodeId", nodeId);
 
 const input = document.getElementById("cameraInput");
 const video = document.getElementById("cameraVideo");
+const cameraStage = video.closest(".camera-stage");
 const canvas = document.getElementById("captureCanvas");
 const preview = document.getElementById("preview");
 const previewEmpty = document.getElementById("previewEmpty");
@@ -63,8 +64,7 @@ function resetFlashControl() {
 }
 
 function updateFlashControl() {
-  const capabilities = activeVideoTrack()?.getCapabilities?.() || {};
-  const supported = Boolean(capabilities.torch);
+  const supported = facingMode === "environment";
   flashToggle.classList.toggle("hidden", !supported);
   flashToggle.disabled = !supported;
   if (!supported) {
@@ -77,8 +77,7 @@ function updateFlashControl() {
 
 async function setFlash(enabled, silent = false) {
   const track = activeVideoTrack();
-  const capabilities = track?.getCapabilities?.() || {};
-  if (!track || !capabilities.torch) {
+  if (!track) {
     resetFlashControl();
     return;
   }
@@ -88,7 +87,7 @@ async function setFlash(enabled, silent = false) {
     flashToggle.textContent = enabled ? "TẮT FLASH" : "BẬT FLASH";
     flashToggle.classList.toggle("flash-on", enabled);
   } catch (error) {
-    if (!silent) setStatus("Không thể điều khiển đèn flash.", "error");
+    if (!silent) setStatus("Trình duyệt hoặc camera này không hỗ trợ bật flash bằng web.", "error");
   }
 }
 
@@ -204,6 +203,82 @@ aspectRatioSelect.addEventListener("change", async () => {
 
 flashToggle.addEventListener("click", () => { void setFlash(!flashEnabled); });
 
+function pointInsideVideo(clientX, clientY) {
+  const rect = video.getBoundingClientRect();
+  if (!rect.width || !rect.height) return null;
+  const sourceWidth = video.videoWidth || rect.width;
+  const sourceHeight = video.videoHeight || rect.height;
+  const scale = Math.min(rect.width / sourceWidth, rect.height / sourceHeight);
+  const renderedWidth = sourceWidth * scale;
+  const renderedHeight = sourceHeight * scale;
+  const left = rect.left + (rect.width - renderedWidth) / 2;
+  const top = rect.top + (rect.height - renderedHeight) / 2;
+  if (clientX < left || clientX > left + renderedWidth || clientY < top || clientY > top + renderedHeight) {
+    return null;
+  }
+  return {
+    x: Math.min(1, Math.max(0, (clientX - left) / renderedWidth)),
+    y: Math.min(1, Math.max(0, (clientY - top) / renderedHeight)),
+  };
+}
+
+function showFocusRing(clientX, clientY) {
+  const stageRect = cameraStage.getBoundingClientRect();
+  const focusRing = document.createElement("span");
+  focusRing.className = "focus-ring";
+  focusRing.style.left = `${clientX - stageRect.left}px`;
+  focusRing.style.top = `${clientY - stageRect.top}px`;
+  cameraStage.appendChild(focusRing);
+  requestAnimationFrame(() => focusRing.classList.add("visible"));
+  setTimeout(() => {
+    focusRing.classList.remove("visible");
+    setTimeout(() => focusRing.remove(), 220);
+  }, 650);
+}
+
+async function focusCameraAt(event) {
+  const track = activeVideoTrack();
+  if (!track) return;
+  const point = pointInsideVideo(event.clientX, event.clientY);
+  if (!point) return;
+  showFocusRing(event.clientX, event.clientY);
+
+  const capabilities = track.getCapabilities?.() || {};
+  const focusModes = Array.isArray(capabilities.focusMode) ? capabilities.focusMode : [];
+  const supportsPoint = capabilities.pointsOfInterest === true
+    || navigator.mediaDevices.getSupportedConstraints?.().pointsOfInterest === true;
+
+  if (supportsPoint) {
+    try {
+      const pointConstraints = { pointsOfInterest: [point] };
+      if (focusModes.includes("single-shot")) pointConstraints.focusMode = "single-shot";
+      await track.applyConstraints({ advanced: [pointConstraints] });
+      cameraNotice.textContent = "Đã lấy nét tại điểm chạm. Giữ máy ổn định rồi chụp ảnh.";
+      return;
+    } catch (error) {
+      console.debug("Camera không nhận điểm lấy nét, chuyển sang autofocus:", error);
+    }
+  }
+  const fallbackMode = focusModes.includes("single-shot")
+    ? "single-shot"
+    : (focusModes.includes("continuous") ? "continuous" : null);
+  if (fallbackMode) {
+    try {
+      await track.applyConstraints({ advanced: [{ focusMode: fallbackMode }] });
+      cameraNotice.textContent = "Camera đã chạy lấy nét tự động tại vùng trung tâm.";
+      return;
+    } catch (error) {
+      console.debug("Camera không cho đổi chế độ lấy nét:", error);
+    }
+  }
+  cameraNotice.textContent = "Điện thoại này tự điều khiển lấy nét; hãy giữ máy ổn định sau khi chạm.";
+}
+
+video.addEventListener("pointerup", event => {
+  event.preventDefault();
+  void focusCameraAt(event);
+});
+
 function revokePreviewUrl() {
   if (previewUrl) URL.revokeObjectURL(previewUrl);
   previewUrl = null;
@@ -227,7 +302,7 @@ function showLiveCamera() {
   takePhotoButton.disabled = false;
   switchCameraButton.disabled = false;
   aspectRatioSelect.disabled = false;
-  cameraNotice.textContent = "Camera trực tiếp. Căn giữa cốc lúa rồi bấm Chụp ảnh.";
+  cameraNotice.textContent = "Camera trực tiếp. Chạm vào mẫu để lấy nét rồi bấm Chụp ảnh.";
 }
 
 function showCapturedImage(file, message) {

@@ -91,7 +91,9 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .capture-button { color: #1e40af; background: #dbeafe; }
 .camera-notice { margin: -4px 0 12px; color: #64748b; font-size: .84rem; line-height: 1.45; }
 .camera-stage { position: relative; display: grid; width: 100%; min-height: 240px; overflow: hidden; place-items: center; border-radius: 14px; background: #0f172a; }
-.camera-view { display: block; width: 100%; max-height: 64vh; object-fit: contain; background: #0f172a; }
+.camera-view { display: block; width: 100%; max-height: 64vh; object-fit: contain; background: #0f172a; touch-action: manipulation; cursor: crosshair; }
+.focus-ring { position: absolute; z-index: 3; width: 58px; height: 58px; border: 2px solid #facc15; border-radius: 50%; pointer-events: none; opacity: 0; transform: translate(-50%, -50%) scale(1.45); transition: opacity .18s ease, transform .22s ease; box-shadow: 0 0 0 1px rgba(0, 0, 0, .35), 0 0 12px rgba(250, 204, 21, .55); }
+.focus-ring.visible { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 .preview-empty { display: grid; width: 100%; min-height: 240px; place-items: center; border: 1px dashed #64748b; border-radius: 14px; color: #94a3b8; background: #1e293b; }
 .camera-settings { margin-top: 10px; }
 .camera-setting { display: grid; grid-template-columns: 1fr; gap: 6px; }

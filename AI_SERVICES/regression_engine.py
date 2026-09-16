@@ -13,64 +13,23 @@ Muc dich:
 
 from __future__ import annotations
 
-import json
-import math
-import os
-from pathlib import Path
+import numpy as np
 from typing import Any, Dict, List, Optional, Tuple
 
-import numpy as np
-import warnings
+# Import from feature_schema
+from feature_schema import (
+    ALL_31_FEATURES,
+    validate_feature_vector,
+    feature_vector_to_ordered_list,
+)
 
-# Bo qua InconsistentVersionWarning tu scikit-learn khi unpickle tren phien ban moi hon
-try:
-    from sklearn.exceptions import InconsistentVersionWarning
-    warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
-except ImportError:
-    pass
-
-# ---------------------------------------------------------------------------
-# 31 Features theo dung thu tu da dung khi train model
-# ---------------------------------------------------------------------------
-ALL_31_FEATURES: List[str] = [
-    # Group 1: Container & Bulk (8 bien)
-    "Bulk_Rice_Volume_mm3",
-    "Rice_Height_mm",
-    "Weight_g",
-    "Empty_Height_mm",
-    "Pixels_Per_mm",
-    "Container_Detected_Diam_px",
-    "Inner_Diameter_mm",
-    "Container_Height_mm",
-    # Group 2: Surface & Estimation (3 bien)
-    "Whole_Grains_Count",
-    "Uniformity_Rate_Pct",
-    "Estimated_Total_Seeds_Hybrid",
-    # Group 3: Length 2a (4 bien)
-    "Grain_Length_mm_Mean",
-    "Grain_Length_mm_Min",
-    "Grain_Length_mm_Max",
-    "Grain_Length_mm_Std",
-    # Group 4: Width 2b (4 bien)
-    "Grain_Width_mm_Mean",
-    "Grain_Width_mm_Min",
-    "Grain_Width_mm_Max",
-    "Grain_Width_mm_Std",
-    # Group 5: Thickness 2c (4 bien)
-    "Grain_Thickness_mm_Mean",
-    "Grain_Thickness_mm_Min",
-    "Grain_Thickness_mm_Max",
-    "Grain_Thickness_mm_Std",
-    # Group 6: 2D Area (4 bien)
-    "Grain_Area_mm2_Mean",
-    "Grain_Area_mm2_Min",
-    "Grain_Area_mm2_Max",
-    "Grain_Area_mm2_Std",
-    # Group 7: 3D Volume (4 bien)
-    "Grain_Volume_mm3_Mean",
-    "Grain_Volume_mm3_Min",
-    "Grain_Volume_mm3_Max",
-    "Grain_Volume_mm3_Std",
+# Export ALL_31_FEATURES for backward compatibility
+__all__ = [
+    "ALL_31_FEATURES",
+    "assemble_31_features",
+    "predict_from_tree",
+    "predict_from_equation",
+    "predict_regression",
 ]
 
 # ---------------------------------------------------------------------------
@@ -111,16 +70,11 @@ _OLS_COEFFICIENTS = {
     "Grain_Volume_mm3_Std": 0.006517007819043831,
 }
 
-# ---------------------------------------------------------------------------
-# Cache cho tree model (lazy load)
-# ---------------------------------------------------------------------------
-_TREE_CACHE: Dict[str, Any] = {"model": None, "scaler": None, "loaded": False}
 
-
-def _safe_stat(values: List[float], func, default: float = 0.0) -> float:
-    """Tinh toan thong ke an toan, tra ve default neu list rong."""
+def _safe_stat(values: List[float], func) -> Optional[float]:
+    """Tinh toan thong ke an toan, tra ve None neu list rong."""
     if not values:
-        return default
+        return None
     return float(func(values))
 
 
@@ -135,7 +89,7 @@ def assemble_31_features(
     uniformity_res: Dict[str, Any],
     form_inputs: Dict[str, float],
     hybrid_estimate: float = 0.0,
-) -> Dict[str, float]:
+) -> Dict[str, Optional[float]]:
     """
     Dung vector 31 bien tu ket qua pipeline.
 
@@ -155,36 +109,45 @@ def assemble_31_features(
 
     Returns
     -------
-    dict[str, float]
-        Vector 31 bien theo dung thu tu ALL_31_FEATURES.
+    dict[str, Optional[float]]
+        Vector 31 bien. Co the chua None neu thieu gia tri.
     """
     # --- Trich xuat thong so hat ---
-    lengths = [g["length_mm"] for g in whole_grains if "length_mm" in g]
-    widths = [g["width_mm"] for g in whole_grains if "width_mm" in g]
-    thicknesses = [g["thickness_mm"] for g in whole_grains if "thickness_mm" in g]
-    areas = [g["area_mm2"] for g in whole_grains if "area_mm2" in g]
-    volumes = [g["volume_mm3"] for g in whole_grains if "volume_mm3" in g]
+    lengths = [float(g["length_mm"]) for g in whole_grains if "length_mm" in g]
+    widths = [float(g["width_mm"]) for g in whole_grains if "width_mm" in g]
+    thicknesses = [float(g["thickness_mm"]) for g in whole_grains if "thickness_mm" in g]
+    areas = [float(g["area_mm2"]) for g in whole_grains if "area_mm2" in g]
+    volumes = [float(g["volume_mm3"]) for g in whole_grains if "volume_mm3" in g]
 
     # --- Tinh Rice_Height_mm ---
-    container_height_mm = form_inputs.get("container_height_mm", 0.0)
-    empty_height_mm = form_inputs.get("empty_height_mm", 0.0)
-    rice_height_mm = container_height_mm - empty_height_mm
-    if rice_height_mm < 0:
-        rice_height_mm = container_res.get("rice_height_mm", 0.0)
+    container_height_mm = form_inputs.get("container_height_mm")
+    empty_height_mm = form_inputs.get("empty_height_mm")
+    
+    rice_height_mm = None
+    if container_height_mm is not None and empty_height_mm is not None:
+        rice_height_mm = container_height_mm - empty_height_mm
+        if rice_height_mm < 0:
+            rice_height_mm = container_res.get("rice_height_mm")
+    else:
+        rice_height_mm = container_res.get("rice_height_mm")
+
+    container_diam_px = container_res.get("inner_w_px")
+    if container_diam_px is not None:
+        container_diam_px = float(container_diam_px)
 
     features = {
         # Group 1: Container & Bulk
-        "Bulk_Rice_Volume_mm3": container_res.get("bulk_rice_volume_mm3", 0.0),
+        "Bulk_Rice_Volume_mm3": container_res.get("bulk_rice_volume_mm3"),
         "Rice_Height_mm": rice_height_mm,
-        "Weight_g": form_inputs.get("weight_g", 0.0),
+        "Weight_g": form_inputs.get("weight_g"),
         "Empty_Height_mm": empty_height_mm,
-        "Pixels_Per_mm": container_res.get("pixels_per_mm", 0.0),
-        "Container_Detected_Diam_px": float(container_res.get("inner_w_px", 0)),
-        "Inner_Diameter_mm": form_inputs.get("inner_diameter_mm", 0.0),
+        "Pixels_Per_mm": container_res.get("pixels_per_mm"),
+        "Container_Detected_Diam_px": container_diam_px,
+        "Inner_Diameter_mm": form_inputs.get("inner_diameter_mm"),
         "Container_Height_mm": container_height_mm,
         # Group 2: Surface & Estimation
         "Whole_Grains_Count": float(len(whole_grains)),
-        "Uniformity_Rate_Pct": uniformity_res.get("uniformity_rate_pct", 0.0),
+        "Uniformity_Rate_Pct": uniformity_res.get("uniformity_rate_pct"),
         "Estimated_Total_Seeds_Hybrid": hybrid_estimate,
         # Group 3: Length 2a
         "Grain_Length_mm_Mean": _safe_stat(lengths, np.mean),
@@ -213,58 +176,21 @@ def assemble_31_features(
         "Grain_Volume_mm3_Std": _safe_stat(volumes, np.std),
     }
 
+    # Validate — log warnings nhưng không chặn (app.py quyết định policy)
+    validation = validate_feature_vector(features, require_grains=False)
+    if validation.warnings:
+        for w in validation.warnings:
+            print(f"[REGRESSION] Warning: {w}")
+    if validation.missing_features:
+        print(f"[REGRESSION] Missing features: {validation.missing_features}")
+    if validation.non_finite_features:
+        print(f"[REGRESSION] Non-finite features: {validation.non_finite_features}")
+
     return features
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 2. NAP MO HINH EXTRA TREES
-# ═══════════════════════════════════════════════════════════════════════════
-
-
-def load_tree_model(
-    model_path: Optional[Path] = None,
-    scaler_path: Optional[Path] = None,
-) -> Tuple[Any, Any]:
-    """
-    Nap Extra Trees Regressor va StandardScaler tu file joblib.
-    Su dung lazy cache: chi nap 1 lan.
-
-    Returns
-    -------
-    (model, scaler) hoac (None, None) neu khong tim thay file.
-    """
-    if _TREE_CACHE["loaded"]:
-        return _TREE_CACHE["model"], _TREE_CACHE["scaler"]
-
-    if model_path is None or not Path(model_path).exists():
-        _TREE_CACHE["loaded"] = True
-        return None, None
-
-    try:
-        import joblib
-
-        model = joblib.load(model_path)
-        scaler = None
-        if scaler_path and Path(scaler_path).exists():
-            scaler = joblib.load(scaler_path)
-
-        _TREE_CACHE["model"] = model
-        _TREE_CACHE["scaler"] = scaler
-        _TREE_CACHE["loaded"] = True
-
-        print(f"[REGRESSION] Da nap Extra Trees tu: {model_path}")
-        if scaler:
-            print(f"[REGRESSION] Da nap Scaler tu: {scaler_path}")
-        return model, scaler
-
-    except Exception as e:
-        print(f"[REGRESSION] Khong the nap tree model: {e}")
-        _TREE_CACHE["loaded"] = True
-        return None, None
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 3. SUY LUAN
+# 2. SUY LUAN
 # ═══════════════════════════════════════════════════════════════════════════
 
 
@@ -277,10 +203,8 @@ def predict_from_tree(
     Suy luan bang Extra Trees Regressor (primary).
     Thuc hien scaler.transform() roi model.predict().
     """
-    # Xay dung vector theo dung thu tu
-    feature_vector = np.array(
-        [[features_dict.get(f, 0.0) for f in ALL_31_FEATURES]]
-    )
+    ordered_list = feature_vector_to_ordered_list(features_dict, default=0.0)
+    feature_vector = np.array([ordered_list])
 
     if scaler is not None:
         feature_vector = scaler.transform(feature_vector)
@@ -293,7 +217,6 @@ def predict_from_equation(features_dict: Dict[str, float]) -> float:
     """
     Suy luan bang phuong trinh OLS tuyen tinh (fallback).
     y = intercept + sum(w_i * x_i)
-    Khong can scikit-learn hay joblib.
     """
     result = _OLS_INTERCEPT
     for feature_name, coeff in _OLS_COEFFICIENTS.items():
@@ -307,29 +230,15 @@ def predict_regression(
     scaler: Any = None,
 ) -> Tuple[float, str]:
     """
-    Ham tong hop: tu dong chon Extra Trees (primary) hoac OLS (fallback).
-
-    Returns
-    -------
-    (predicted_count, method_name)
-        - predicted_count: so hat du doan (lam tron)
-        - method_name: "ExtraTrees" hoac "OLS_Equation"
+    Suy luan mo hinh tree, hoac throw exception neu that bai.
+    Khong fallback ngam sang OLS, de ung dung chu dong goi OLS neu can.
     """
-    # Uu tien 1: Extra Trees
-    if model is not None:
-        try:
-            pred = predict_from_tree(model, scaler, features_dict)
-            # Dam bao gia tri khong am
-            pred = max(0.0, pred)
-            return round(pred, 1), "ExtraTrees"
-        except Exception as e:
-            print(f"[REGRESSION] Extra Trees loi, fallback sang OLS: {e}")
-
-    # Uu tien 2: OLS Equation
+    if model is None:
+        raise ValueError("Model is None. Cannot predict using tree.")
+        
     try:
-        pred = predict_from_equation(features_dict)
+        pred = predict_from_tree(model, scaler, features_dict)
         pred = max(0.0, pred)
-        return round(pred, 1), "OLS_Equation"
+        return round(pred, 1), "ExtraTrees"
     except Exception as e:
-        print(f"[REGRESSION] OLS cung that bai: {e}")
-        return 0.0, "failed"
+        raise RuntimeError(f"Tree model prediction failed: {e}") from e

@@ -115,6 +115,7 @@ class CaptureCoordinator:
             "Empty_Height_mm": row["empty_height_mm"],
             "Rice_Height_mm": row["rice_height_mm"],
             "Actual_Count": row["actual_count"],
+            "Capture_Timestamp": row.get("captured_at") or "",
         }
 
     def save_jpeg(
@@ -144,7 +145,10 @@ class CaptureCoordinator:
             self._advance_to_available_locked()
             config = self._candidate_locked()
             sample_id = config.sample_id
-            record = make_manual_record(sample_id, values)
+            record_values = dict(values)
+            # Host timestamp là nguồn chính thức, không phụ thuộc đồng hồ điện thoại.
+            record_values["Capture_Timestamp"] = datetime.now().astimezone().isoformat(timespec="seconds")
+            record = make_manual_record(sample_id, record_values)
             image_path = self._image_dir / f"{sample_id}.jpg"
             if image_path.exists():
                 raise ValueError(f"Ảnh đã tồn tại: {image_path}")
@@ -157,8 +161,12 @@ class CaptureCoordinator:
                     source_type=source_type,
                     node_id=node_id,
                     request_id=request_id,
-                    captured_at=captured_at or datetime.now().isoformat(timespec="seconds"),
-                    extra={"width": width, "height": height},
+                    captured_at=record["Capture_Timestamp"],
+                    extra={
+                        "width": width,
+                        "height": height,
+                        "client_captured_at": captured_at or None,
+                    },
                 )
             except Exception:
                 try:
@@ -186,4 +194,3 @@ class CaptureCoordinator:
 
     def notify_node(self, event_type: str, node_id: str, label: str = "Điện thoại") -> None:
         self.events.put({"type": event_type, "node_id": node_id, "label": label})
-

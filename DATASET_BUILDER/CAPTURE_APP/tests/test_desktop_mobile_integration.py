@@ -61,9 +61,16 @@ class DesktopMobileIntegrationTests(unittest.TestCase):
                     time.sleep(0.02)
                 self.assertTrue(app.workbook_store.contains_sample_id("M001"))
                 self.assertEqual(app.manual_vars["Weight_g"].get(), "125.5")
+                self.assertNotIn("Capture_Batch", app.manual_vars)
+                self.assertNotIn("Device_ID", app.manual_vars)
                 self.assertEqual(app.sample_number_var.get(), 2)
                 self.assertTrue((root_dir / "images" / "M001.jpg").exists())
                 self.assertTrue((root_dir / "records" / "manual_data.xlsx").exists())
+                workbook_record = dict(app.workbook_store.rows())[2]
+                self.assertEqual(workbook_record["Sample_ID"], "M001")
+                self.assertNotIn("Capture_Batch", workbook_record)
+                self.assertNotIn("Device_ID", workbook_record)
+                self.assertIn("+", workbook_record["Capture_Timestamp"])
                 self.assertEqual(app.coordinator.database.pending_excel_records(), [])
             finally:
                 if app is not None:
