@@ -1,0 +1,10 @@
+UI, input: ảnh
+tại sao được con số đó
+chạy nhiều regression, MSE
+thêm dữ liệu cho regression
+thêm camera nhỏ, fix chiều cao chụp.
+mô hình RNN 
+mỗi người có các mô hình khác nhau để làm bài toán regression, so sánh để làm báo.
+few-shost learning -> regression, transfer thành các loại hạt khác (khoảng vài chục hình để dự đoán được)
+
+

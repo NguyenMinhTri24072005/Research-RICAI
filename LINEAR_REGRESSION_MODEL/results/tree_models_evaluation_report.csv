@@ -1,0 +1,7 @@
+﻿Mô_Hình_Hồi_Quy,R2_Train,R2_CV_5Fold,R2_Test,Adj_R2_Test,MSE_Test (hạt^2),MAE_Test (hạt),RMSE_Test (hạt),MAPE_Test (%),Max_Error (hạt)
+3. Extra Trees (Cực kỳ ngẫu nhiên),1.0,0.9998,0.9999,0.9996,1.02,0.45,1.01,0.34,4.65
+4. Gradient Boosting (Boosting),1.0,0.9998,0.9998,0.9995,1.17,0.58,1.08,0.58,3.97
+1. Decision Tree (Cây quyết định gốc),1.0,0.9985,0.9997,0.9992,1.96,0.39,1.4,0.34,5.0
+2. Random Forest (Bagging),0.9999,0.9994,0.9994,0.9985,3.89,1.4,1.97,1.15,6.6
+6. HistGradientBoosting (Tối ưu lớn),0.9998,0.9969,0.9986,0.9962,9.84,2.1,3.14,1.74,9.54
+5. AdaBoost (Adaptive Boosting),0.9972,0.9955,0.9973,0.9929,18.29,3.4,4.28,2.54,10.75

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#245842">
+  <title>Rice Capture Node</title>
+  <link rel="stylesheet" href="/static/styles.css?v=3">
+</head>
+<body>
+  <header>
+    <div>
+      <p class="eyebrow">MOBILE CAPTURE NODE</p>
+      <h1>Rice Dataset Capture</h1>
+    </div>
+    <span id="connectionBadge" class="badge pending">Đang kết nối</span>
+  </header>
+
+  <main>
+    <section class="card id-card">
+      <span>Mã ảnh kế tiếp</span>
+      <strong id="nextId">—</strong>
+      <small>Mã chính thức được máy tính xác nhận sau khi lưu.</small>
+    </section>
+
+    <section class="card">
+      <h2>Thông số mẫu</h2>
+      <div class="fields">
+        <label>Khối lượng <span>g</span><input id="Weight_g" inputmode="decimal" type="number" min="0" step="any" required></label>
+        <label>Chiều cao ly <span>mm</span><input id="Container_Height_mm" inputmode="decimal" type="number" min="0" step="any" required></label>
+        <label>Đường kính trong <span>mm</span><input id="Inner_Diameter_mm" inputmode="decimal" type="number" min="0" step="any" required></label>
+        <label>Chiều cao khoảng trống <span>mm</span><input id="Empty_Height_mm" inputmode="decimal" type="number" min="0" step="any" required></label>
+        <label>Số hạt thực tế <span>hạt</span><input id="Actual_Count" inputmode="numeric" type="number" min="0" step="1" required></label>
+      </div>
+      <div class="computed">Chiều cao lớp gạo: <strong id="riceHeight">—</strong> mm</div>
+    </section>
+
+    <section class="card">
+      <h2>Ảnh mẫu</h2>
+      <p id="cameraNotice" class="camera-notice">Bấm Bật camera để xem trực tiếp trong khung.</p>
+      <div class="camera-stage">
+        <video id="cameraVideo" class="camera-view hidden" autoplay muted playsinline></video>
+        <img id="preview" class="camera-view hidden" alt="Ảnh vừa chụp">
+        <div id="previewEmpty" class="preview-empty">Camera chưa bật</div>
+      </div>
+      <canvas id="captureCanvas" class="hidden"></canvas>
+      <div class="camera-settings">
+        <label class="camera-setting" for="aspectRatio">
+          Tỷ lệ khung hình
+          <select id="aspectRatio">
+            <option value="4:3" selected>4:3 — ưu tiên chụp mẫu</option>
+            <option value="16:9">16:9 — màn hình rộng</option>
+            <option value="native">Theo camera</option>
+          </select>
+        </label>
+      </div>
+      <div class="camera-controls">
+        <button id="startCamera" class="camera-primary" type="button">BẬT CAMERA</button>
+        <button id="takePhoto" class="camera-primary" type="button" disabled>CHỤP ẢNH</button>
+        <button id="switchCamera" class="secondary" type="button" disabled>Đổi camera</button>
+        <button id="flashToggle" class="secondary hidden" type="button" disabled>BẬT FLASH</button>
+        <button id="clearImage" class="secondary hidden" type="button">Chụp lại</button>
+      </div>
+      <details id="fallbackPanel" class="fallback-panel">
+        <summary>Camera hệ thống (dự phòng)</summary>
+        <p>Dùng khi trình duyệt không hỗ trợ camera trong khung. Màn hình camera hệ thống sẽ tạm che form.</p>
+        <label class="capture-button" for="cameraInput">MỞ CAMERA HỆ THỐNG</label>
+        <input id="cameraInput" class="hidden" type="file" accept="image/*" capture="environment">
+      </details>
+    </section>
+
+    <button id="saveButton" class="save" type="button" disabled>LƯU MẪU VÀ GỬI VỀ MÁY TÍNH</button>
+    <p id="status" class="status">Hãy chụp ảnh và nhập đầy đủ thông số.</p>
+  </main>
+
+  <script src="/static/capture.js?v=3"></script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+{
+  "model_name": "2. Ordinary Least Squares (OLS)",
+  "target_variable": "Actual_Count",
+  "number_of_features": 31,
+  "r2_score_test": 0.999,
+  "mae_test": 1.91,
+  "mape_test": 2.02,
+  "intercept": -120.0382943054218,
+  "features": [
+    {
+      "name": "Bulk_Rice_Volume_mm3",
+      "standardized_weight": 4.041490326378232,
+      "unscaled_coefficient": 0.0009464250517212867,
+      "mean": 8286.977536945817,
+      "scale": 4270.269810618255
+    },
+    {
+      "name": "Rice_Height_mm",
+      "standardized_weight": -3.4132462223810087,
+      "unscaled_coefficient": -0.38582191648388264,
+      "mean": 23.79310344827587,
+      "scale": 8.846688268740674
+    },
+    {
+      "name": "Weight_g",
+      "standardized_weight": 91.4261188590076,
+      "unscaled_coefficient": 39.6233414875361,
+      "mean": 4.218029556650252,
+      "scale": 2.307380332569038
+    },
+    {
+      "name": "Empty_Height_mm",
+      "standardized_weight": 4.43583151458501,
+      "unscaled_coefficient": 0.5583980698754893,
+      "mean": 11.730541871921192,
+      "scale": 7.943851803739407
+    },
+    {
+      "name": "Pixels_Per_mm",
+      "standardized_weight": 18.040053330392755,
+      "unscaled_coefficient": 1.154820515651178,
+      "mean": 67.02926108374383,
+      "scale": 15.62152134110673
+    },
+    {
+      "name": "Container_Detected_Diam_px",
+      "standardized_weight": -17.751888856632707,
+      "unscaled_coefficient": -0.04919910600746634,
+      "mean": 1359.0147783251232,
+      "scale": 360.81730537824654
+    },
+    {
+      "name": "Inner_Diameter_mm",
+      "standardized_weight": 3.15138348559825,
+      "unscaled_coefficient": 1.2606910685238584,
+      "mean": 20.336945812807958,
+      "scale": 2.4997269864759186
+    },
+    {
+      "name": "Container_Height_mm",
+      "standardized_weight": 3.1513834823932823,
+      "unscaled_coefficient": 1.9698297925652095,
+      "mean": 35.52364532019705,
+      "scale": 1.5998252713445842
+    },
+    {
+      "name": "Whole_Grains_Count",
+      "standardized_weight": 0.3360003960707395,
+      "unscaled_coefficient": 0.08405378563407165,
+      "mean": 8.566502463054187,
+      "scale": 3.9974451303540097
+    },
+    {
+      "name": "Uniformity_Rate_Pct",
+      "standardized_weight": -0.18065033740960268,
+      "unscaled_coefficient": -0.025703714334778867,
+      "mean": 96.81502463054187,
+      "scale": 7.028180248843278
+    },
+    {
+      "name": "Estimated_Total_Seeds_Hybrid",
+      "standardized_weight": 0.022730292316668836,
+      "unscaled_coefficient": 0.00025299307465455356,
+      "mean": 153.70935960591132,
+      "scale": 89.84551196788944
+    },
+    {
+      "name": "Grain_Length_mm_Mean",
+      "standardized_weight": -969.2832116542021,
+      "unscaled_coefficient": -114.5325161777479,
+      "mean": 7.644472906403944,
+      "scale": 8.462952216555953
+    },
+    {
+      "name": "Grain_Length_mm_Min",
+      "standardized_weight": 6803.452856221597,
+      "unscaled_coefficient": 1171.311753642038,
+      "mean": 5.648315270935958,
+      "scale": 5.8084048376251385
+    },
+    {
+      "name": "Grain_Length_mm_Max",
+      "standardized_weight": 5270.992267450881,
+      "unscaled_coefficient": 469.4544519621923,
+      "mean": 9.682950738916258,
+      "scale": 11.227909854554712
+    },
+    {
+      "name": "Grain_Length_mm_Std",
+      "standardized_weight": 315.4190153038469,
+      "unscaled_coefficient": 189.20844150177598,
+      "mean": 1.2836354679802946,
+      "scale": 1.6670451529557484
+    },
+    {
+      "name": "Grain_Width_mm_Mean",
+      "standardized_weight": -6.213302061095085,
+      "unscaled_coefficient": -2.3244221812461037,
+      "mean": 2.4476945812807878,
+      "scale": 2.6730523014387106
+    },
+    {
+      "name": "Grain_Width_mm_Min",
+      "standardized_weight": 5.572403964765649,
+      "unscaled_coefficient": 2.5568315863498023,
+      "mean": 2.0303694581280785,
+      "scale": 2.179417680270821
+    },
+    {
+      "name": "Grain_Width_mm_Max",
+      "standardized_weight": 0.302875312906684,
+      "unscaled_coefficient": 0.09289271571035551,
+      "mean": 2.9729359605911334,
+      "scale": 3.260485072382484
+    },
+    {
+      "name": "Grain_Width_mm_Std",
+      "standardized_weight": 1.0167485097838491,
+      "unscaled_coefficient": 3.0412187448544157,
+      "mean": 0.2923990147783251,
+      "scale": 0.33432271568894373
+    },
+    {
+      "name": "Grain_Thickness_mm_Mean",
+      "standardized_weight": 974.7893473935839,
+      "unscaled_coefficient": 135.50886687278884,
+      "mean": 6.497862068965516,
+      "scale": 7.193546591373118
+    },
+    {
+      "name": "Grain_Thickness_mm_Min",
+      "standardized_weight": -6800.224858564881,
+      "unscaled_coefficient": -1377.3771112898262,
+      "mean": 4.801073891625616,
+      "scale": 4.937082809657627
+    },
+    {
+      "name": "Grain_Thickness_mm_Max",
+      "standardized_weight": -5282.0137536414295,
+      "unscaled_coefficient": -553.4549519373832,
+      "mean": 8.230487684729063,
+      "scale": 9.54371035104412
+    },
+    {
+      "name": "Grain_Thickness_mm_Std",
+      "standardized_weight": -310.52412887802654,
+      "unscaled_coefficient": -219.14112355879118,
+      "mean": 1.0910738916256157,
+      "scale": 1.4170052787683145
+    },
+    {
+      "name": "Grain_Area_mm2_Mean",
+      "standardized_weight": 18.638961353378278,
+      "unscaled_coefficient": 0.16405810156564238,
+      "mean": 29.75358620689653,
+      "scale": 113.61195317696956
+    },
+    {
+      "name": "Grain_Area_mm2_Min",
+      "standardized_weight": -16.79854915868875,
+      "unscaled_coefficient": -0.21826057179973116,
+      "mean": 19.972403940886693,
+      "scale": 76.965569274246
+    },
+    {
+      "name": "Grain_Area_mm2_Max",
+      "standardized_weight": 6.426380544068327,
+      "unscaled_coefficient": 0.04054252345237438,
+      "mean": 41.33971921182263,
+      "scale": 158.50963375818102
+    },
+    {
+      "name": "Grain_Area_mm2_Std",
+      "standardized_weight": -8.83986973845449,
+      "unscaled_coefficient": -0.33632687072716155,
+      "mean": 6.756743842364531,
+      "scale": 26.283566696119436
+    },
+    {
+      "name": "Grain_Volume_mm3_Mean",
+      "standardized_weight": -19.802804630132158,
+      "unscaled_coefficient": -0.00493315054514439,
+      "mean": 754.1350541871919,
+      "scale": 4014.230753534107
+    },
+    {
+      "name": "Grain_Volume_mm3_Min",
+      "standardized_weight": 10.26714356521649,
+      "unscaled_coefficient": 0.0053977642119641105,
+      "mean": 344.53767487684746,
+      "scale": 1902.1104223966342
+    },
+    {
+      "name": "Grain_Volume_mm3_Max",
+      "standardized_weight": -2.43536420218116,
+      "unscaled_coefficient": -0.0003464764847389859,
+      "mean": 1317.255256157636,
+      "scale": 7028.945136105886
+    },
+    {
+      "name": "Grain_Volume_mm3_Std",
+      "standardized_weight": 10.065333424260318,
+      "unscaled_coefficient": 0.006517007819043831,
+      "mean": 287.3969162561578,
+      "scale": 1544.4715893769012
+    }
+  ]
+}

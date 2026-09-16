@@ -1,0 +1,45 @@
+# Normalize source, configuration, documentation, and notebooks to LF.
+* text=auto eol=lf
+
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Images, archives, datasets, documents, audio, and model artifacts are binary.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.bmp binary
+*.tif binary
+*.tiff binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.7z binary
+*.xlsx binary
+*.xls binary
+*.m4a binary
+*.mp3 binary
+*.wav binary
+*.mp4 binary
+*.avi binary
+*.mov binary
+*.mkv binary
+*.dcm binary
+*.nii binary
+*.nii.gz binary
+*.mhd binary
+*.raw binary
+*.pth binary
+*.pt binary
+*.ckpt binary
+*.onnx binary
+*.h5 binary
+*.hdf5 binary
+*.keras binary
+*.joblib binary
+*.pkl binary
+*.pickle binary
+*.cer binary
+

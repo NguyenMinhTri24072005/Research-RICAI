@@ -1,0 +1,6 @@
+CAPTURE_APP/.venv/
+CAPTURE_APP/runtime/
+CAPTURE_APP/.dataset_capture_settings.json
+CAPTURE_APP/__pycache__/
+CAPTURE_APP/tests/__pycache__/
+CAPTURE_APP/src/**/__pycache__/

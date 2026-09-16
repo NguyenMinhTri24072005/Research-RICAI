@@ -1,0 +1,125 @@
+# Python bytecode, test output, type-checker output, and coverage
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Secrets and local credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+credentials.json
+secrets.json
+*service-account*.json
+*service_account*.json
+
+# IDE and operating-system files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.suo
+*.user
+*.sw?
+
+# Jupyter transient state (not notebooks themselves)
+.ipynb_checkpoints/
+
+# JavaScript dependencies, builds, and logs
+node_modules/
+dist/
+dist-ssr/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Raw and packaged datasets
+/DATASETS/
+/DATASET_BUILDER/1_Raw_Images/
+/DATASET_BUILDER/2_Manual_Records/
+/TEST_IMAGES/
+/WAITING_IMAGES/
+
+# Private/local research media
+/NOTES/*.m4a
+
+# Generated and preprocessed data
+/DATASET_BUILDER/3_AI_Extracted/
+/DATASET_BUILDER/4_Final_Dataset/
+/DETECTED_OBJECTS/
+/AI_SERVICES/RICE_ESTIMATION_APPLICATION/backend/uploads/
+*.npy
+*.npz
+
+# Medical and scientific imaging data
+*.dcm
+*.nii
+*.nii.gz
+*.mhd
+*.raw
+
+# Model weights, checkpoints, and serialized estimators
+/MODELS/
+checkpoints/
+weights/
+models/checkpoints/
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.h5
+*.hdf5
+*.keras
+*.joblib
+*.pkl
+*.pickle
+
+# Experiment outputs and service runtime state
+runs/
+outputs/
+logs/
+lightning_logs/
+wandb/
+tensorboard/
+runtime/
+/AI_SERVICES/capture_server/certificates/
+
+# Ignore bulky top-level training results, but retain small textual summaries
+/RESULTS/**
+!/RESULTS/**/
+!/RESULTS/**/*.csv
+!/RESULTS/**/*.json
+!/RESULTS/**/*.yaml
+!/RESULTS/**/*.yml
+!/RESULTS/**/*.txt
+!/RESULTS/**/*.md
+
+# Generated project snapshots
+/AI_SERVICES/archive_legacy/COMBINE_FOR_AI_Project.txt
+
+# Temporary files and caches
+.cache/
+tmp/
+temp/
+*.tmp
+*.cache

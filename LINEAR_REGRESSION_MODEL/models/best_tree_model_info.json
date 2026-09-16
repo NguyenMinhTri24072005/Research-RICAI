@@ -1,0 +1,166 @@
+{
+  "model_name": "3. Extra Trees (Cực kỳ ngẫu nhiên)",
+  "target_variable": "Actual_Count",
+  "number_of_features": 31,
+  "r2_score_test": 0.9999,
+  "mse_test": 1.02,
+  "mae_test": 0.45,
+  "mape_test": 0.34,
+  "feature_importances": [
+    {
+      "name": "Container_Height_mm",
+      "importance_score": 0.31952183560367814,
+      "importance_percentage": 31.952183560367814
+    },
+    {
+      "name": "Inner_Diameter_mm",
+      "importance_score": 0.2799553729162287,
+      "importance_percentage": 27.995537291622867
+    },
+    {
+      "name": "Weight_g",
+      "importance_score": 0.15939158052048732,
+      "importance_percentage": 15.939158052048732
+    },
+    {
+      "name": "Bulk_Rice_Volume_mm3",
+      "importance_score": 0.1415316501712784,
+      "importance_percentage": 14.153165017127838
+    },
+    {
+      "name": "Rice_Height_mm",
+      "importance_score": 0.055127965610431776,
+      "importance_percentage": 5.512796561043178
+    },
+    {
+      "name": "Empty_Height_mm",
+      "importance_score": 0.043693407977718514,
+      "importance_percentage": 4.3693407977718515
+    },
+    {
+      "name": "Container_Detected_Diam_px",
+      "importance_score": 0.00030457252128367115,
+      "importance_percentage": 0.030457252128367116
+    },
+    {
+      "name": "Pixels_Per_mm",
+      "importance_score": 0.00026985225292464423,
+      "importance_percentage": 0.026985225292464422
+    },
+    {
+      "name": "Estimated_Total_Seeds_Hybrid",
+      "importance_score": 4.715259863867164e-05,
+      "importance_percentage": 0.004715259863867164
+    },
+    {
+      "name": "Whole_Grains_Count",
+      "importance_score": 1.9099211290950588e-05,
+      "importance_percentage": 0.0019099211290950588
+    },
+    {
+      "name": "Grain_Width_mm_Std",
+      "importance_score": 1.2405516702220836e-05,
+      "importance_percentage": 0.0012405516702220837
+    },
+    {
+      "name": "Grain_Volume_mm3_Min",
+      "importance_score": 1.2100577042466469e-05,
+      "importance_percentage": 0.001210057704246647
+    },
+    {
+      "name": "Grain_Length_mm_Std",
+      "importance_score": 1.067058188760031e-05,
+      "importance_percentage": 0.0010670581887600311
+    },
+    {
+      "name": "Grain_Area_mm2_Min",
+      "importance_score": 1.0128430566683487e-05,
+      "importance_percentage": 0.0010128430566683486
+    },
+    {
+      "name": "Grain_Volume_mm3_Max",
+      "importance_score": 9.23698111944746e-06,
+      "importance_percentage": 0.0009236981119447459
+    },
+    {
+      "name": "Grain_Length_mm_Max",
+      "importance_score": 9.143881722753522e-06,
+      "importance_percentage": 0.0009143881722753522
+    },
+    {
+      "name": "Grain_Length_mm_Mean",
+      "importance_score": 8.742550859054323e-06,
+      "importance_percentage": 0.0008742550859054323
+    },
+    {
+      "name": "Grain_Thickness_mm_Max",
+      "importance_score": 8.084037465781243e-06,
+      "importance_percentage": 0.0008084037465781243
+    },
+    {
+      "name": "Grain_Thickness_mm_Std",
+      "importance_score": 6.173434845567156e-06,
+      "importance_percentage": 0.0006173434845567155
+    },
+    {
+      "name": "Grain_Volume_mm3_Mean",
+      "importance_score": 5.2972906563621736e-06,
+      "importance_percentage": 0.0005297290656362173
+    },
+    {
+      "name": "Grain_Area_mm2_Max",
+      "importance_score": 5.247967652113226e-06,
+      "importance_percentage": 0.0005247967652113226
+    },
+    {
+      "name": "Grain_Thickness_mm_Min",
+      "importance_score": 5.066659453605067e-06,
+      "importance_percentage": 0.0005066659453605068
+    },
+    {
+      "name": "Grain_Thickness_mm_Mean",
+      "importance_score": 5.054095038783451e-06,
+      "importance_percentage": 0.000505409503878345
+    },
+    {
+      "name": "Grain_Area_mm2_Std",
+      "importance_score": 4.907929058113558e-06,
+      "importance_percentage": 0.0004907929058113558
+    },
+    {
+      "name": "Grain_Area_mm2_Mean",
+      "importance_score": 4.864021913153549e-06,
+      "importance_percentage": 0.00048640219131535487
+    },
+    {
+      "name": "Grain_Width_mm_Max",
+      "importance_score": 4.642950522629063e-06,
+      "importance_percentage": 0.0004642950522629063
+    },
+    {
+      "name": "Grain_Length_mm_Min",
+      "importance_score": 4.465375984692939e-06,
+      "importance_percentage": 0.00044653759846929387
+    },
+    {
+      "name": "Grain_Width_mm_Mean",
+      "importance_score": 3.941198174828792e-06,
+      "importance_percentage": 0.0003941198174828792
+    },
+    {
+      "name": "Grain_Width_mm_Min",
+      "importance_score": 3.6245638299035664e-06,
+      "importance_percentage": 0.00036245638299035665
+    },
+    {
+      "name": "Grain_Volume_mm3_Std",
+      "importance_score": 2.6293996853467353e-06,
+      "importance_percentage": 0.00026293996853467353
+    },
+    {
+      "name": "Uniformity_Rate_Pct",
+      "importance_score": 1.0831718580215623e-06,
+      "importance_percentage": 0.00010831718580215624
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+Step: v3_step3
+                precision    recall  f1-score   support
+
+hat_khuyet_tat     0.9873    0.8789    0.9300      1065
+    hat_nguyen     0.6239    0.9469    0.7522       226
+
+      accuracy                         0.8908      1291
+     macro avg     0.8056    0.9129    0.8411      1291
+  weighted avg     0.9237    0.8908    0.8988      1291

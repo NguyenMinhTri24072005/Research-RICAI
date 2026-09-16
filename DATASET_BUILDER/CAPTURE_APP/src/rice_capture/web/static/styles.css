@@ -1,0 +1,67 @@
+:root {
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  color: #17251f;
+  background: #eef3f0;
+  font-synthesis: none;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; }
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: calc(18px + env(safe-area-inset-top)) 18px 18px;
+  color: white;
+  background: linear-gradient(135deg, #173e2d, #2f7657);
+}
+h1 { margin: 2px 0 0; font-size: 1.35rem; }
+h2 { margin: 0 0 15px; font-size: 1.05rem; }
+.eyebrow { margin: 0; font-size: .68rem; font-weight: 800; letter-spacing: .12em; opacity: .75; }
+.badge { padding: 7px 10px; border-radius: 999px; font-size: .75rem; font-weight: 700; white-space: nowrap; }
+.badge.pending { color: #493900; background: #ffe69b; }
+.badge.online { color: #0e412d; background: #c5f1dc; }
+.badge.offline { color: #64231f; background: #ffd3cf; }
+main { width: min(100%, 680px); margin: 0 auto; padding: 16px 14px calc(30px + env(safe-area-inset-bottom)); }
+.card { margin-bottom: 13px; padding: 18px; border: 1px solid #dbe5df; border-radius: 17px; background: white; box-shadow: 0 5px 18px rgba(18, 51, 37, .06); }
+.id-card { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 12px; }
+.id-card strong { grid-row: span 2; font: 800 1.9rem ui-monospace, SFMono-Regular, Consolas, monospace; color: #246247; }
+.id-card small { color: #637169; }
+.fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+label { display: grid; grid-template-columns: 1fr auto; gap: 6px; color: #36463e; font-size: .87rem; font-weight: 650; }
+label span { color: #728078; font-weight: 500; }
+input { grid-column: 1 / -1; width: 100%; border: 1px solid #cbd7d0; border-radius: 11px; padding: 12px; color: #14231c; background: #fbfdfc; font-size: 1rem; outline: none; }
+input:focus { border-color: #2d7655; box-shadow: 0 0 0 3px rgba(45, 118, 85, .13); }
+.computed { margin-top: 14px; padding-top: 13px; border-top: 1px solid #e4ebe7; color: #4d5d54; }
+.capture-button, button { display: block; width: 100%; border: 0; border-radius: 12px; padding: 14px; text-align: center; font: 750 .9rem Inter, "Segoe UI", sans-serif; cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: .55; }
+.capture-button { color: #194431; background: #dcefe5; }
+.camera-notice { margin: -4px 0 12px; color: #66746c; font-size: .84rem; line-height: 1.45; }
+.camera-stage { position: relative; display: grid; width: 100%; min-height: 240px; overflow: hidden; place-items: center; border-radius: 14px; background: #101914; }
+.camera-view { display: block; width: 100%; max-height: 64vh; object-fit: contain; background: #101914; }
+.preview-empty { display: grid; width: 100%; min-height: 240px; place-items: center; border: 1px dashed #718078; border-radius: 14px; color: #c4cec8; background: #18251e; }
+.camera-settings { margin-top: 10px; }
+.camera-setting { display: grid; grid-template-columns: 1fr; gap: 6px; }
+.camera-setting select { width: 100%; border: 1px solid #cbd7d0; border-radius: 11px; padding: 12px; color: #14231c; background: #fbfdfc; font: 600 1rem Inter, "Segoe UI", sans-serif; }
+.camera-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-top: 10px; }
+.camera-primary { color: white; background: #276c4d; }
+.secondary { color: #2f5745; background: #edf3ef; }
+.secondary.flash-on { color: #543c00; background: #ffe397; }
+.fallback-panel { margin-top: 13px; padding-top: 12px; border-top: 1px solid #e1e9e4; color: #55645c; font-size: .84rem; }
+.fallback-panel summary { cursor: pointer; font-weight: 700; }
+.fallback-panel p { margin: 9px 0; line-height: 1.45; }
+.save { position: sticky; bottom: 10px; color: white; background: #276c4d; box-shadow: 0 8px 22px rgba(23, 78, 54, .25); }
+.save:disabled { cursor: not-allowed; box-shadow: none; color: #809087; background: #d7dfda; }
+.status { min-height: 24px; margin: 10px 3px 0; text-align: center; color: #58675f; font-size: .86rem; }
+.status.error { color: #a2322b; }
+.status.success { color: #1d724b; }
+.hidden { display: none !important; }
+
+@media (max-width: 480px) {
+  .fields { grid-template-columns: 1fr; }
+  header { align-items: flex-start; }
+  .id-card { grid-template-columns: 1fr; }
+  .id-card strong { grid-row: auto; }
+  .camera-stage, .preview-empty { min-height: 300px; }
+}
