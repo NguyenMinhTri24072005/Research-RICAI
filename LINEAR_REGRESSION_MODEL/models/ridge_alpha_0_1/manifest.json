@@ -1,0 +1,36 @@
+{
+  "bundle_id": "rice_vision_ridge_alpha_0_1_20260917_093236_436fb9",
+  "run_id": "20260917_093236_436fb9",
+  "model_id": "ridge_alpha_0_1",
+  "schema_version": "31v1",
+  "schema_hash": "dee4b46be6aaef6cb4f696696aaa11cbcfa1e9d718deea96ca9ec5238046f5a8",
+  "dataset_sha256": "a9fddb014fce8899ceda9fc392cc1ed1ad602fa7c5d30330978b00176c3bf78b",
+  "fit_scope": "outer_train",
+  "benchmark_type": "PROVISIONAL",
+  "files": {
+    "pipeline": {
+      "path": "pipeline.joblib",
+      "sha256": "5e0f271c424bee3a8ab05d672e8598ed7bd470b2c422718aa3150ea0c2514ec8"
+    },
+    "model": {
+      "path": "model.joblib",
+      "sha256": "ecbaed58da7842a312c0ca9b7d80bc1ffe70eda0526eaa1c9918ed7532228d04"
+    },
+    "scaler": {
+      "path": "scaler.joblib",
+      "sha256": "549597d1accb9b1a863a46735c9077d4d07db05a9f8690a99ddfe83eb483e6fc"
+    },
+    "config": {
+      "path": "config.json",
+      "sha256": "793e04b8c21ae637af6392e5e48ee3ed69e234ca5affa6bdebfc950e95f8e60a"
+    },
+    "metrics": {
+      "path": "metrics.json",
+      "sha256": "c48a6ebb943c591650e967018244a96822dd4e099e595dd25ba75b48072d1800"
+    },
+    "feature_schema": {
+      "path": "feature_schema.json",
+      "sha256": "6a97e25a67a13024e52016700eaa01e245853013539905923d6e18c9c674dcb2"
+    }
+  }
+}

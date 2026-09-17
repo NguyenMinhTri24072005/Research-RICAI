@@ -1,0 +1,17 @@
+{
+  "model_id": "ard",
+  "display_name": "8. ARD Regression (Bayesian Sparse)",
+  "model_class": "ARDRegression",
+  "family": "Linear",
+  "source_notebook": "Trainer v2",
+  "params": {
+    "max_iter": 300
+  },
+  "preprocessing": "StandardScaler in Pipeline",
+  "library_versions": {
+    "python": "3.13.15",
+    "scikit-learn": "1.6.1",
+    "numpy": "2.1.3",
+    "pandas": "2.2.3"
+  }
+}

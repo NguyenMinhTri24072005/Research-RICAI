@@ -1,0 +1,21 @@
+# ==============================================================================
+# LINEAR_REGRESSION_MODEL — Training Environment Dependencies
+# ==============================================================================
+# Verified with Python 3.12.10 (64-bit) on Windows
+# Kernel: ricai-training
+# ==============================================================================
+
+numpy==2.5.3
+pandas==3.0.5
+scikit-learn==1.9.1
+scipy==1.18.1
+joblib==1.6.0
+matplotlib==3.11.2
+seaborn==0.13.2
+openpyxl==3.1.5
+nbformat==5.11.1
+nbconvert==7.17.1
+ipykernel==7.3.0
+
+# Optional extensions:
+# xgboost (optional; if installed, version should be tracked in manifest)

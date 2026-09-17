@@ -1,0 +1,9 @@
+{
+  "dataset_path": "/content/drive/MyDrive/NGHI\u00caN C\u1ee8U KHOA H\u1eccC/GROUP_MEMBERS/NGUYEN MINH TRI/MAIN_SOURCES/DATASET_BUILDER/4_Final_Dataset/final_linear_regression_dataset.csv",
+  "dataset_sha256": "a9fddb014fce8899ceda9fc392cc1ed1ad602fa7c5d30330978b00176c3bf78b",
+  "initial_rows": 285,
+  "found_rows": 254,
+  "clean_rows": 254,
+  "features_count": 31,
+  "target_column": "Actual_Count"
+}

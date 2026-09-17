@@ -1,0 +1,19 @@
+{
+  "model_id": "kernel_ridge_rbf",
+  "display_name": "9. Kernel Ridge (RBF Kernel)",
+  "model_class": "KernelRidge",
+  "family": "Kernel",
+  "source_notebook": "Trainer v2",
+  "params": {
+    "kernel": "rbf",
+    "alpha": 1.0,
+    "gamma": null
+  },
+  "preprocessing": "StandardScaler in Pipeline",
+  "library_versions": {
+    "python": "3.13.15",
+    "scikit-learn": "1.6.1",
+    "numpy": "2.1.3",
+    "pandas": "2.2.3"
+  }
+}

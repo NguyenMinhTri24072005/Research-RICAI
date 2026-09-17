@@ -1,0 +1,21 @@
+{
+  "model_id": "bayesian_ridge",
+  "display_name": "4. Bayesian Ridge Regression",
+  "model_class": "BayesianRidge",
+  "family": "Linear",
+  "source_notebook": "Trainer v1/v2",
+  "params": {
+    "n_iter": 300,
+    "alpha_1": 1e-06,
+    "alpha_2": 1e-06,
+    "lambda_1": 1e-06,
+    "lambda_2": 1e-06
+  },
+  "preprocessing": "StandardScaler in Pipeline",
+  "library_versions": {
+    "python": "3.13.15",
+    "scikit-learn": "1.6.1",
+    "numpy": "2.1.3",
+    "pandas": "2.2.3"
+  }
+}

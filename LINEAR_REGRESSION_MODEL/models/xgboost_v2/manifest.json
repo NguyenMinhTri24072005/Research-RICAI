@@ -1,0 +1,36 @@
+{
+  "bundle_id": "rice_vision_xgboost_v2_20260917_093236_436fb9",
+  "run_id": "20260917_093236_436fb9",
+  "model_id": "xgboost_v2",
+  "schema_version": "31v1",
+  "schema_hash": "dee4b46be6aaef6cb4f696696aaa11cbcfa1e9d718deea96ca9ec5238046f5a8",
+  "dataset_sha256": "a9fddb014fce8899ceda9fc392cc1ed1ad602fa7c5d30330978b00176c3bf78b",
+  "fit_scope": "outer_train",
+  "benchmark_type": "PROVISIONAL",
+  "files": {
+    "pipeline": {
+      "path": "pipeline.joblib",
+      "sha256": "9f3838aeb9a76e922fc410a1fa2cdcc6a8d26caa3cf659a7d05521a8864e51c3"
+    },
+    "model": {
+      "path": "model.joblib",
+      "sha256": "c02ccaa03f69bdc7729addc2f0560339cc081ba75666f18e9b5c32b01995c4bc"
+    },
+    "scaler": {
+      "path": "scaler.joblib",
+      "sha256": "549597d1accb9b1a863a46735c9077d4d07db05a9f8690a99ddfe83eb483e6fc"
+    },
+    "config": {
+      "path": "config.json",
+      "sha256": "90cc33530cf35e539e861ffd6136fdc99aa34069356546725dfc6068b32a6738"
+    },
+    "metrics": {
+      "path": "metrics.json",
+      "sha256": "7180c4218f2c1957e93782756100f54f5b98709a0ddd331f116608df3ba12815"
+    },
+    "feature_schema": {
+      "path": "feature_schema.json",
+      "sha256": "6a97e25a67a13024e52016700eaa01e245853013539905923d6e18c9c674dcb2"
+    }
+  }
+}

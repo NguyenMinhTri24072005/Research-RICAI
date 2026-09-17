@@ -1,0 +1,19 @@
+{
+  "model_id": "elastic_net",
+  "display_name": "6. ElasticNet (L1 + L2)",
+  "model_class": "ElasticNet",
+  "family": "Linear",
+  "source_notebook": "Trainer v1/v2",
+  "params": {
+    "alpha": 0.01,
+    "l1_ratio": 0.5,
+    "random_state": 42
+  },
+  "preprocessing": "StandardScaler in Pipeline",
+  "library_versions": {
+    "python": "3.13.15",
+    "scikit-learn": "1.6.1",
+    "numpy": "2.1.3",
+    "pandas": "2.2.3"
+  }
+}

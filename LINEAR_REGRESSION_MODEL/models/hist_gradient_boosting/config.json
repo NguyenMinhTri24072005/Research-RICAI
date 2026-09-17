@@ -1,0 +1,17 @@
+{
+  "model_id": "hist_gradient_boosting",
+  "display_name": "19. HistGradientBoosting",
+  "model_class": "HistGradientBoostingRegressor",
+  "family": "Tree Ensemble",
+  "source_notebook": "Decision Tree Trainer",
+  "params": {
+    "random_state": 42
+  },
+  "preprocessing": "StandardScaler in Pipeline",
+  "library_versions": {
+    "python": "3.13.15",
+    "scikit-learn": "1.6.1",
+    "numpy": "2.1.3",
+    "pandas": "2.2.3"
+  }
+}

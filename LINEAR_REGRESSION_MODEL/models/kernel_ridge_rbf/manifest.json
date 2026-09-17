@@ -1,0 +1,36 @@
+{
+  "bundle_id": "rice_vision_kernel_ridge_rbf_20260917_093236_436fb9",
+  "run_id": "20260917_093236_436fb9",
+  "model_id": "kernel_ridge_rbf",
+  "schema_version": "31v1",
+  "schema_hash": "dee4b46be6aaef6cb4f696696aaa11cbcfa1e9d718deea96ca9ec5238046f5a8",
+  "dataset_sha256": "a9fddb014fce8899ceda9fc392cc1ed1ad602fa7c5d30330978b00176c3bf78b",
+  "fit_scope": "outer_train",
+  "benchmark_type": "PROVISIONAL",
+  "files": {
+    "pipeline": {
+      "path": "pipeline.joblib",
+      "sha256": "29d50c98c7f8ce2687919087e634df047d87b1ed3b383de601b99c033c20255f"
+    },
+    "model": {
+      "path": "model.joblib",
+      "sha256": "2b907b965937edaa18f8b084e727f546936865d2cd22f712d394345698aaa9cf"
+    },
+    "scaler": {
+      "path": "scaler.joblib",
+      "sha256": "549597d1accb9b1a863a46735c9077d4d07db05a9f8690a99ddfe83eb483e6fc"
+    },
+    "config": {
+      "path": "config.json",
+      "sha256": "afba6fb483591621c683cc047658d08a486cad9ee191de823813778da2ba7cfe"
+    },
+    "metrics": {
+      "path": "metrics.json",
+      "sha256": "9379ffebf6c5623f6d32c458bd2710c6824c382e8c20688868392560fbb7633b"
+    },
+    "feature_schema": {
+      "path": "feature_schema.json",
+      "sha256": "6a97e25a67a13024e52016700eaa01e245853013539905923d6e18c9c674dcb2"
+    }
+  }
+}

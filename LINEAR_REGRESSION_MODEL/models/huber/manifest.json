@@ -1,0 +1,36 @@
+{
+  "bundle_id": "rice_vision_huber_20260917_093236_436fb9",
+  "run_id": "20260917_093236_436fb9",
+  "model_id": "huber",
+  "schema_version": "31v1",
+  "schema_hash": "dee4b46be6aaef6cb4f696696aaa11cbcfa1e9d718deea96ca9ec5238046f5a8",
+  "dataset_sha256": "a9fddb014fce8899ceda9fc392cc1ed1ad602fa7c5d30330978b00176c3bf78b",
+  "fit_scope": "outer_train",
+  "benchmark_type": "PROVISIONAL",
+  "files": {
+    "pipeline": {
+      "path": "pipeline.joblib",
+      "sha256": "bb2f3c500042504a7a6bd8fd02a0d38159cc7fdd1e8a0b2fd75f586d089b6cde"
+    },
+    "model": {
+      "path": "model.joblib",
+      "sha256": "c60202a08af330785a3efcc35bb42e0c0ab7b2b9a3fdac652bb8155b8286caa2"
+    },
+    "scaler": {
+      "path": "scaler.joblib",
+      "sha256": "549597d1accb9b1a863a46735c9077d4d07db05a9f8690a99ddfe83eb483e6fc"
+    },
+    "config": {
+      "path": "config.json",
+      "sha256": "85ce58da43cbd77bf198182ff2ddb0f47c4ed35168301495d7441ad77dd32fef"
+    },
+    "metrics": {
+      "path": "metrics.json",
+      "sha256": "763e488e40931ef1c9cfe69d26db08dec0c5274929751e6ba2b34a28bcb07e7c"
+    },
+    "feature_schema": {
+      "path": "feature_schema.json",
+      "sha256": "6a97e25a67a13024e52016700eaa01e245853013539905923d6e18c9c674dcb2"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "model_id": "gradient_boosting_v2",
+  "display_name": "12. Gradient Boosting (v2, 500 trees)",
+  "model_class": "GradientBoostingRegressor",
+  "family": "Tree Ensemble",
+  "source_notebook": "Trainer v2",
+  "params": {
+    "n_estimators": 500,
+    "learning_rate": 0.03,
+    "max_depth": 3,
+    "subsample": 0.8,
+    "random_state": 42
+  },
+  "preprocessing": "StandardScaler in Pipeline",
+  "library_versions": {
+    "python": "3.13.15",
+    "scikit-learn": "1.6.1",
+    "numpy": "2.1.3",
+    "pandas": "2.2.3"
+  }
+}

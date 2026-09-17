@@ -1,0 +1,18 @@
+{
+  "model_id": "ada_boost",
+  "display_name": "18. AdaBoost (50 trees)",
+  "model_class": "AdaBoostRegressor",
+  "family": "Tree Ensemble",
+  "source_notebook": "Decision Tree Trainer",
+  "params": {
+    "n_estimators": 50,
+    "random_state": 42
+  },
+  "preprocessing": "StandardScaler in Pipeline",
+  "library_versions": {
+    "python": "3.13.15",
+    "scikit-learn": "1.6.1",
+    "numpy": "2.1.3",
+    "pandas": "2.2.3"
+  }
+}

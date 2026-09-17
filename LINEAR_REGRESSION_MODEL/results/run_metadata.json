@@ -1,0 +1,11 @@
+{
+  "run_id": "20260917_093236_436fb9",
+  "timestamp_utc": "2026-09-17 09:33:31Z",
+  "dataset_sha256": "a9fddb014fce8899ceda9fc392cc1ed1ad602fa7c5d30330978b00176c3bf78b",
+  "random_seed": 42,
+  "test_size": 0.2,
+  "cv_folds": 5,
+  "split_mode": "GROUPED",
+  "selected_model_id": "ard",
+  "total_trained_models": 18
+}
