@@ -105,9 +105,9 @@ None currently identified for the locally verified TASK-01 contract. Project-lev
 ## Important Files
 
 - `AI_SERVICES/src/rice_ai/settings.py`
-- `AI_SERVICES/src/rice_ai/api/app.py`
-- `AI_SERVICES/src/rice_ai/regression/feature_schema.py`
-- `AI_SERVICES/src/rice_ai/regression/loader.py`
+- `AI_SERVICES/src/rice_ai/api/application.py`
+- `AI_SERVICES/src/rice_ai/estimation/feature_schema.py`
+- `AI_SERVICES/src/rice_ai/models/regression_loader.py`
 - `AI_SERVICES/src/rice_ai/pipeline/estimators.py`
 - `AI_SERVICES/src/notebooks/API_Server.ipynb`
 - `AI_SERVICES/src/notebooks/README.md`
