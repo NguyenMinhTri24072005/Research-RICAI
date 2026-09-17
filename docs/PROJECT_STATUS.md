@@ -1,6 +1,6 @@
 # Project Status
 
-Updated: 2026-09-17 16:58:03 +07:00
+Updated: 2026-09-17 21:30:02 +07:00
 
 ## Repository Snapshot
 
@@ -9,7 +9,7 @@ Base commit before TASK-01 finalization: `1f1bb70 chore: checkpoint TASK-01 regr
 Working tree before finalization: TASK-01 source, tests, reports, plan, and documentation changes were reviewed and preserved.
 Latest commit before this artifact publication checkpoint: `ba9bd0c chore: consolidate regression training and update project status`.
 Working tree before artifact publication: source/consolidation checkpoint already committed; remaining detailed outputs and scratch scripts were untracked, and regression `.joblib` binaries were ignored.
-Publication scope: the preceding source/documentation checkpoint is extended with complete regression bundles, including model/scaler/pipeline `.joblib` files, scaler parameters, equations, detailed predictions, plots, and both `scratch/` generator scripts. The regression `.joblib` exception in `.gitignore` makes subsequent retraining changes visible to Git. Virtual environments, caches, credentials, and private raw datasets remain ignored.
+Publication scope: the preceding source/documentation checkpoint is extended with complete regression bundles, including model/scaler/pipeline `.joblib` files, scaler parameters, equations, detailed predictions, and plots. The regression `.joblib` exception in `.gitignore` makes subsequent retraining changes visible to Git. Virtual environments, caches, credentials, and private raw datasets remain ignored.
 
 ## Current Phase
 
@@ -29,6 +29,7 @@ TASK-01 is verified as the deployed 31-feature Extra Trees inference contract on
 - Retained the four active root deployment files: `best_tree_ensemble_model.joblib`, `scaler.joblib`, `best_tree_model_info.json`, and `scaler_params.json`. Their protected SHA-256 checks and the AI Services manifest check passed.
 - Aligned README, consolidation plan, and tests with the direct model-folder layout. Removed test assertions for the legacy model/equation already deleted by request.
 - Cleared stale notebook execution outputs/counts for rerunning. Cleaned Windows `desktop.ini` files from models/results and the training venv's schema package, where they prevented `nbformat` imports.
+- Removed scratch/ and its two obsolete notebook-generator scripts. They duplicated each other and could overwrite the consolidated notebook with the former run-ID output structure.
 
 ### Saved Training Results — PROVISIONAL
 
@@ -57,7 +58,6 @@ Executed in the preceding Codex work; not rerun during this documentation-only u
 - Legacy CLI helpers remain. `inference_linear_regression.py` still defaults to the deleted `models/regression_equation.json`; review these helpers before using them. The consolidated notebook is the current training entrypoint.
 - Full notebook export/reload execution with the new layout is pending; current verification is static/synthetic plus integrity checks of moved bundles.
 - Regression model/scaler/pipeline binaries are included in this publication checkpoint. Loading them still requires a compatible environment; file publication does not reproduce training.
-- `scratch/build_trainer_notebook.py` and `scratch/generate_notebook.py` are historical notebook generators and still contain the old run-directory layout. They are published as archival scripts; executing them can overwrite the current notebook with outdated source. Use the consolidated notebook as the training entrypoint.
 
 ## Task Overview
 
