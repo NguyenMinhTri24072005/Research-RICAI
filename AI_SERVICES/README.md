@@ -28,19 +28,12 @@ Python FastAPI (Port 8000)           Tesla T4 GPU qua Ngrok Tunnel
 ### Cấu Trúc Thư Mục
 ```text
 AI_SERVICES/
-├── app.py                           # FastAPI Inference Server (Tầng Backend AI chính)
-├── API_Server.ipynb                 # Notebook khởi chạy Server trên Google Colab qua Ngrok
+├── app.py                           # FastAPI compatibility entry point
+├── src/
+│   ├── rice_ai/                     # Backend theo các miền nghiệp vụ
+│   └── notebooks/API_Server.ipynb    # Notebook Colab khởi chạy server qua Ngrok
+├── artifacts/                       # Bundles CNN, YOLO và regression
 ├── .env                             # File cấu hình (NGROK_AUTH_TOKEN, NGROK_DOMAIN, AI_SERVER_URL)
-├── modules/                         # [LÕI THUẬT TOÁN TỰ CHỨA]
-│   ├── __init__.py                  # Export các module sản phẩm
-│   ├── container_detector.py        # Module 1: Đo miệng ly, tính tỷ lệ px/mm & thể tích ly
-│   ├── grain_segmenter.py           # Module 2: Bóc tách polygon hạt lúa (SAHI + YOLO-seg)
-│   ├── grain_crop_cleaner.py        # Làm sạch ảnh crop, bẻ cầu dính (Watershed + Morphology)
-│   ├── grain_classifier.py          # Module 3: Phân loại hạt nguyên / khuyết tật (DenseNet121)
-│   ├── ellipsoid_geometry.py        # Module 4: Khớp elip 3D & thể tích hạt (V = 4/3 π a b c)
-│   ├── regression_engine.py         # Module 5: Hồi quy dự đoán số lượng hạt (Extra Trees / OLS)
-│   └── uniformity_evaluator.py      # Module 6: Đánh giá độ đồng đều mẻ lúa (chuẩn IQR)
-│
 ├── capture_server/                  # [MÁY CHỦ BẮT HÌNH ẢNH CAMERA ĐIỆN THOẠI]
 │   ├── app.py                       # FastAPI WebSocket Server cho Web Phone Camera
 │   └── web/                         # Frontend giao diện chụp ảnh cho điện thoại
@@ -118,7 +111,7 @@ Tài liệu này hướng dẫn chi tiết **2 phương pháp vận hành hệ t
    NGROK_DOMAIN=your-subdomain.ngrok-free.app   # (Nếu có static domain, để trống nếu không)
    ```
 2. Đảm bảo file `.env` đã được đồng bộ lên thư mục `AI_SERVICES` trên Google Drive.
-3. Mở trình duyệt, truy cập [Google Colab](https://colab.research.google.com/) và mở file notebook: `AI_SERVICES/API_Server.ipynb` trên Drive.
+3. Mở trình duyệt, truy cập [Google Colab](https://colab.research.google.com/) và mở file notebook: `AI_SERVICES/src/notebooks/API_Server.ipynb` trên Drive.
 4. Chọn menu **Runtime** $\to$ **Change runtime type** $\to$ Chọn **T4 GPU** $\to$ Bấm **Save**.
 5. Chạy lần lượt các Cell:
    - **Cell 1**: Kết nối Google Drive & cài đặt thư viện cần thiết.
@@ -186,11 +179,14 @@ npm run dev
   {
     "status": "success",
     "estimation": {
-      "final": 182,
-      "ai_est": 180,
-      "weight_est": 185,
-      "hybrid": true,
-      "median_grain_vol_px3": 1450.2
+      "final": 85,
+      "regression_est": 85.2,
+      "geometry_est": 282,
+      "weight_est": null,
+      "method_used": "regression_ExtraTrees",
+      "feature_schema_version": "31v1",
+      "model_bundle": "regression_ExtraTrees",
+      "ai_est": 282
     },
     "metrics_summary": {
       "total_grains_detected": 42,
@@ -201,6 +197,123 @@ npm run dev
       "avg_length_mm": 6.82,
       "avg_width_mm": 2.15,
       "avg_thickness_mm": 1.83
+    },
+    "features_used": {
+      "Container_Inner_Diameter_mm": 17.8,
+      "Estimated_Total_Seeds_Hybrid": 167.0
+    },
+    "timings_ms": {
+      "decode_ms": 15.2,
+      "container_ms": 120.4,
+      "sahi_ms": 1450.0,
+      "features_ms": 45.1,
+      "regression_ms": 2.5,
+      "total_ms": 1820.0
     }
   }
   ```
+
+---
+
+## 🏛️ 5. Kiến Trúc Mô-đun Hóa Mới (`src/rice_ai`)
+
+Hệ thống được tái cấu trúc thành thư viện Python hướng module sạch (`src/rice_ai`):
+
+```text
+src/rice_ai/
+├── __init__.py
+├── settings.py                 # Nguồn sự thật cấu hình (env -> fallback -> candidates)
+├── contracts.py                # Data dataclasses & PipelineError
+├── estimation/                 # Lớp logic ước lượng số lượng
+│   ├── feature_schema.py       # Khế ước 31 đặc trưng (31v1), chuẩn hóa ddof=0, hybrid 0.62
+│   ├── geometry.py             # Ước lượng hình học xếp chặt (0.82 packing fraction)
+│   ├── weight.py               # Ước lượng mẫu theo khối lượng
+│   ├── regression.py           # Suy luận mô hình hồi quy bất kỳ (scikit-learn / ensemble)
+│   └── fusion.py               # Chiến lược ưu tiên tổng hợp (auto, regression, geometry, weight)
+├── models/                     # Quản lý vòng đời và nạp mô hình
+│   ├── regression_loader.py    # Nạp bundle thư mục (canonical pair hoặc legacy adapter)
+│   └── vision_models.py        # Quản lý lazy load thread-safe cho YOLO SAHI & CNN
+├── vision/                     # Xử lý ảnh và thị giác máy tính
+│   ├── container_detector.py   # Nhận diện cốc & tính px/mm
+│   ├── grain_segmenter.py      # Cắt lát SAHI & bóc tách hạt
+│   ├── grain_crop_cleaner.py   # Làm sạch hạt, gỡ dính (Watershed/Morphology)
+│   ├── grain_classifier.py     # Phân loại hạt nguyên/lỗi (DenseNet121 Keras 3)
+│   ├── ellipsoid_geometry.py   # Khớp ellipsoid 3D tính thể tích
+│   └── uniformity_evaluator.py # Tính toán phân phối kích thước hạt
+├── pipeline/                   # Điều phối luồng xử lý
+│   ├── image_io.py             # Giải mã ảnh & thư mục làm việc tạm
+│   ├── container.py            # Bước 2: Đo đạc vật chứa
+│   ├── grains.py               # Bước 3: Phát hiện, bóc tách và phân loại hạt
+│   ├── features.py             # Bước 4: Trích xuất vector 31 đặc trưng
+│   └── runner.py               # RicePipeline: Điều phối tuần tự từng bước
+└── api/                        # Giao diện HTTP FastAPI
+    ├── application.py          # Factory create_app() & Lifespan
+    ├── routes.py               # /health, /api/status, /predict
+    └── schemas.py              # Pydantic schemas cho request/response
+```
+
+---
+
+## ⚙️ 6. Cấu Hình Đổi Mô Hình Không Cần Sửa Code
+
+Bạn có thể thay đổi bất kỳ mô hình nào (YOLO, CNN hoặc Hồi quy) chỉ bằng cách cập nhật file `.env` và khởi động lại dịch vụ:
+
+| Biến Môi Trường | Mô Tả | Ví Dụ Giá Trị |
+| :--- | :--- | :--- |
+| `YOLO_DEVICE` | Thiết bị tính toán cho YOLO | `auto` (cuda nếu có, ngược lại cpu)<br>`cpu`<br>`cuda`<br>`cuda:0` |
+| `YOLO_MODEL_PATH` | Đường dẫn file trọng số YOLO (`.pt`) | `artifacts/yolo/best.pt`<br>`../YOLO_SEGMENTATION_TRAINING_WORKFLOW/runs/.../best.pt` |
+| `CNN_MODEL_PATH` | Đường dẫn file trọng số CNN (`.keras`) | `artifacts/cnn/best_model.keras`<br>`../CNN_CLASSIFICATION_MODEL/runs/.../best_model.keras` |
+| `REGRESSION_MODEL_DIR` | Thư mục chứa mô hình hồi quy | `artifacts/regression/production`<br>`../LINEAR_REGRESSION_MODEL/models/ard`<br>`../LINEAR_REGRESSION_MODEL/models` |
+| `MAX_CONCURRENT_INFERENCES` | Số lượng request inference đồng thời tối đa | `1` (khuyến nghị cho GPU/CPU duy nhất) |
+
+---
+
+## 🚀 7. Vận Hành Trên Google Colab GPU (Tesla T4)
+
+Notebook runtime chính thức của hệ thống được quản lý tại:
+**`AI_SERVICES/src/notebooks/API_Server.ipynb`**
+
+- Xem hướng dẫn chi tiết tại: [`src/notebooks/README.md`](src/notebooks/README.md).
+- Gồm 8 cell có cấu trúc rõ ràng: Hướng dẫn → Mount & Root → Cài đặt thư viện (`requirements-colab.txt`) → Nạp Settings → Preflight kiểm tra model → Khởi chạy server & ngrok tunnel → Smoke test → Dừng/Restart an toàn.
+- Đổi model chỉ cần sửa `.env` trên Drive và chạy lại từ Cell 4.
+
+---
+
+## 📦 8. Khế Ước Kho Mô Hình (`artifacts/`)
+
+Thư mục `AI_SERVICES/artifacts/` đóng vai trò kho lưu trữ chuẩn hóa khi deploy độc lập:
+- `artifacts/yolo/`: Chứa file `best.pt`.
+- `artifacts/cnn/`: Chứa file `best_model.keras`.
+- `artifacts/regression/`: Chứa các thư mục bundle hồi quy con:
+  - **Canonical Bundle**: Gồm 3 tệp tách biệt:
+    1. `model.joblib`: Model scikit-learn thuần (chỉ chứa `predict`, không bọc Pipeline).
+    2. `scaler.joblib`: StandardScaler / RobustScaler / MinMaxScaler (hoặc `"preprocessing": "none"` trong config.json).
+    3. `config.json`: Metadata chứa `features` (đúng 31 đặc trưng), `schema_version: "31v1"`.
+  - **Legacy Adapter**: Tương thích tự động với thư mục cũ chứa `best_tree_ensemble_model.joblib` và `scaler_params.json`.
+
+---
+
+## 🛠️ 9. Kiểm Tra Tiền Trạm (Preflight Verification)
+
+Trước khi khởi động server, bạn có thể kiểm tra tính toàn vẹn của bất kỳ bundle mô hình hồi quy nào:
+
+```powershell
+# Kiểm tra thư mục mặc định
+& AI_SERVICES/.venv/Scripts/python.exe AI_SERVICES/scripts/verify_artifacts.py
+
+# Kiểm tra thư mục bundle cụ thể (ví dụ mô hình ARD Regression mới nhất)
+& AI_SERVICES/.venv/Scripts/python.exe AI_SERVICES/scripts/verify_artifacts.py --model-dir ../LINEAR_REGRESSION_MODEL/models/ard
+```
+
+---
+
+## 🧪 10. Chạy Bộ Kiểm Thử Tự Động (Test Suites)
+
+```powershell
+# 1. Chạy toàn bộ unit test suite (75 tests, ~11 giây)
+$env:PYTHONIOENCODING="utf-8"
+& AI_SERVICES/.venv/Scripts/python.exe -m unittest AI_SERVICES.tests.test_settings AI_SERVICES.tests.test_regression_loader AI_SERVICES.tests.test_feature_schema AI_SERVICES.tests.test_regression_engine AI_SERVICES.tests.test_estimators AI_SERVICES.tests.test_pipeline AI_SERVICES.tests.test_api_endpoints AI_SERVICES.tests.test_vision_models AI_SERVICES.tests.test_api_lifecycle AI_SERVICES.tests.test_colab_notebook -v
+
+# 2. Chạy kiểm thử tích hợp đầy đủ với ảnh chụp thật M001A
+& AI_SERVICES/.venv/Scripts/python.exe -m unittest AI_SERVICES.tests.test_real_pipeline -v
+```

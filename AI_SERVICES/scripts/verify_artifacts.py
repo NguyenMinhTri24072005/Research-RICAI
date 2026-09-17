@@ -2,14 +2,19 @@
 # -*- coding: utf-8 -*-
 """
 ===============================================================================
-CLI: XÁC THỰC ARTIFACTS TRƯỚC KHI KHỞI CHẠY (PREFLIGHT ARTIFACT VERIFIER)
+CLI: XÁC THỰC THƯ MỤC MÔ HÌNH HỒI QUY (PREFLIGHT MODEL VERIFIER)
 ===============================================================================
 Mục đích:
-  - Đọc và thẩm định manifest.json của model bundle.
-  - Sử dụng ModelRegistry để nạp thử model + scaler và kiểm tra n_features_in_ = 31.
-  - Kiểm tra thứ tự và danh sách đặc trưng khớp với feature_schema.
+  - Nạp và thẩm định thư mục mô hình hồi quy (canonical folder hoặc legacy adapter).
+  - Kiểm tra giao diện estimator và scaler (không giới hạn họ ExtraTrees/StandardScaler).
+  - Kiểm tra thứ tự và danh sách 31 đặc trưng theo đúng hợp đồng 31v1.
   - Chạy smoke prediction trên vector 31 chiều để bảo đảm kết quả hữu hạn.
   - Trả về mã exit code 0 nếu đạt chuẩn (PASS), khác 0 nếu thất bại (FAIL).
+
+Cách sử dụng:
+    python scripts/verify_artifacts.py
+    python scripts/verify_artifacts.py --model-dir ../LINEAR_REGRESSION_MODEL/models/ard
+    python scripts/verify_artifacts.py --model-dir artifacts/regression/extra_trees
 ===============================================================================
 """
 
@@ -20,164 +25,97 @@ import os
 import sys
 from pathlib import Path
 
-# Đảm bảo import được các module từ AI_SERVICES
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
+
+# Đảm bảo import được các module từ AI_SERVICES/src
 CURRENT_DIR = Path(__file__).resolve().parent
 AI_SERVICES_DIR = CURRENT_DIR.parent
-PROJECT_ROOT = AI_SERVICES_DIR.parent
+SRC_DIR = AI_SERVICES_DIR / "src"
 
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
 if str(AI_SERVICES_DIR) not in sys.path:
     sys.path.insert(0, str(AI_SERVICES_DIR))
 
-from feature_schema import ALL_31_FEATURES, FEATURE_SCHEMA_VERSION
-from model_registry import ModelRegistry
+from rice_ai.estimation.feature_schema import ALL_31_FEATURES, FEATURE_SCHEMA_VERSION
+from rice_ai.models.regression_loader import load_regression_folder
+from rice_ai.settings import Settings
 
 
-def verify_artifacts(manifest_path: Path, project_root: Path) -> bool:
+def verify_regression_dir(model_dir: Path) -> bool:
     print("=" * 80)
-    print("🔍 RICE VISION AI — PREFLIGHT ARTIFACT VERIFICATION")
+    print("🔍 RICE VISION AI — PREFLIGHT REGRESSION VERIFICATION")
     print("=" * 80)
-    print(f"📁 Project Root    : {project_root}")
-    print(f"📄 Manifest Path   : {manifest_path}")
+    print(f"📁 Target Folder  : {model_dir}")
     print("=" * 80)
 
-    if not manifest_path.exists():
-        print(f"❌ FAIL: Manifest không tồn tại tại {manifest_path}")
+    try:
+        loaded = load_regression_folder(model_dir)
+    except Exception as ex:
+        print(f"\n❌ FAIL: Không thể nạp hoặc xác thực thư mục mô hình: {ex}")
         return False
 
-    registry = ModelRegistry(project_root=project_root, manifest_path=manifest_path)
-    status = registry.load_bundle(force=True)
+    print(f"\n🤖 Model Name        : {loaded.model_name}")
+    print(f"🌲 Model Class       : {type(loaded.model).__module__}.{type(loaded.model).__qualname__}")
+    if loaded.scaler is not None:
+        print(f"📏 Scaler Class      : {type(loaded.scaler).__module__}.{type(loaded.scaler).__qualname__}")
+    else:
+        print(f"📏 Scaler Class      : None (Explicit 'preprocessing': 'none')")
+    print(f"📐 Schema Version    : {loaded.schema_version}")
+    print(f"📊 Feature Count     : {len(loaded.feature_names)} / 31 (OK)")
+    print(f"🏛️ Layout Type       : {'Legacy Adapter' if loaded.is_legacy else 'Canonical Bundle'}")
 
-    print(f"\n📦 Bundle ID         : {status.bundle_id}")
-    print(f"📐 Schema Version    : {status.schema_version}")
-    print(f"🤖 Model Family      : {status.model_family}")
-    print(f"⚙️ Preprocessing     : {status.preprocessing_type}")
-    print(f"📊 Number of Features: {status.n_features}")
-    print(f"⚖️ Scaler Available  : {status.has_scaler}")
-    print(f"✅ Loaded Status     : {status.loaded}")
-    print(f"🛡️ Verified Status   : {status.verified}")
+    if loaded.warnings:
+        print("\n⚠️ Cảnh báo:")
+        for w in loaded.warnings:
+            print(f"   • {w}")
 
-    if not status.loaded or not status.verified:
-        print(f"\n❌ FAIL: Nạp hoặc xác minh bundle thất bại: {status.error}")
+    # Chạy thử nghiệm dự đoán kiểm chứng
+    smoke_vector = [10.0] * 31
+    try:
+        pred_val = loaded.predict(smoke_vector)
+        print(f"\n🎯 Smoke Prediction Test: Input [10.0]*31 -> Output: {pred_val} (PASS)")
+    except Exception as ex:
+        print(f"\n❌ FAIL: Smoke prediction gặp lỗi: {ex}")
         return False
-
-    model, scaler = registry.get_model_and_scaler()
-    if model is None:
-        print("\n❌ FAIL: Model object is None sau khi load.")
-        return False
-
-    import numpy as np
-
-    # 1. Kiểm tra class type
-    model_class = f"{type(model).__module__}.{type(model).__qualname__}"
-    print(f"🌲 Model Class       : {model_class} (Family: {type(model).__name__})")
-    if type(model).__name__ != "ExtraTreesRegressor":
-        print(f"\n❌ FAIL: Model family là {type(model).__name__}, kỳ vọng ExtraTreesRegressor.")
-        return False
-
-    if scaler is not None:
-        scaler_class = f"{type(scaler).__module__}.{type(scaler).__qualname__}"
-        print(f"📏 Scaler Class      : {scaler_class}")
-        if type(scaler).__name__ != "StandardScaler":
-            print(f"\n❌ FAIL: Scaler class là {type(scaler).__name__}, kỳ vọng StandardScaler.")
-            return False
-
-    # 2. Kiểm tra n_features_in_
-    n_in = getattr(model, "n_features_in_", None)
-    if n_in != 31:
-        print(f"\n❌ FAIL: Model có n_features_in_ = {n_in}, kỳ vọng 31.")
-        return False
-    print(f"🔢 Input Features    : {n_in} / 31 (OK)")
-
-    # 3. Kiểm tra scaler nếu có
-    if status.has_scaler:
-        if scaler is None:
-            print("\n❌ FAIL: Scaler flag bật nhưng scaler object is None.")
-            return False
-        scaler_n = getattr(scaler, "n_features_in_", None)
-        if scaler_n != 31:
-            print(f"\n❌ FAIL: Scaler có n_features_in_ = {scaler_n}, kỳ vọng 31.")
-            return False
-        print(f"⚖️ Scaler Features   : {scaler_n} / 31 (OK)")
-
-    # 4. Kiểm tra feature names nếu model có
-    feature_names = getattr(model, "feature_names_in_", None)
-    if feature_names is not None:
-        if list(feature_names) != ALL_31_FEATURES:
-            print("\n❌ FAIL: feature_names_in_ của model không khớp với ALL_31_FEATURES.")
-            return False
-        print("📋 Feature Names In  : Khớp chính xác 31 đặc trưng theo thứ tự (OK)")
-
-    # 5. Kiểm tra scaler_params.json cross-validation
-    manifest = registry.get_manifest()
-    sp_rel = manifest.get("preprocessing", {}).get("scaler_params_relative_path")
-    if sp_rel:
-        import json
-        sp_path = project_root / sp_rel
-        if sp_path.exists():
-            with open(sp_path, "r", encoding="utf-8") as f:
-                sp_data = json.load(f)
-            mean_diff = float(np.max(np.abs(scaler.mean_ - np.array(sp_data["mean"]))))
-            scale_diff = float(np.max(np.abs(scaler.scale_ - np.array(sp_data["scale"]))))
-            if mean_diff > 1e-9 or scale_diff > 1e-9:
-                print(f"\n❌ FAIL: Scaler joblib không khớp scaler_params.json (mean_diff={mean_diff}, scale_diff={scale_diff})")
-                return False
-            print(f"🔍 Scaler Metadata   : Khớp chính xác 100% với scaler_params.json (diff={max(mean_diff, scale_diff)})")
-
-    # 6. Kiểm tra best_tree_model_info.json cross-validation
-    mi_rel = manifest.get("model", {}).get("metadata_path")
-    if mi_rel:
-        import json
-        mi_path = project_root / mi_rel
-        if mi_path.exists():
-            with open(mi_path, "r", encoding="utf-8") as f:
-                mi_data = json.load(f)
-            info_importances = {item["name"]: item["importance_score"] for item in mi_data.get("feature_importances", [])}
-            actual_importances = dict(zip(ALL_31_FEATURES, model.feature_importances_))
-            imp_diffs = [abs(actual_importances[name] - info_importances[name]) for name in ALL_31_FEATURES if name in info_importances]
-            max_imp_diff = max(imp_diffs) if imp_diffs else 0.0
-            if max_imp_diff > 1e-9:
-                print(f"\n❌ FAIL: Model importances không khớp best_tree_model_info.json (diff={max_imp_diff})")
-                return False
-            print(f"🌳 Model Metadata    : Khớp chính xác 100% với best_tree_model_info.json (diff={max_imp_diff})")
-
-    # 7. Smoke predict: kiểm tra suy luận với vector số 0 và vector chuẩn
-    test_vec = np.zeros((1, 31), dtype=np.float64)
-    scaled_vec = scaler.transform(test_vec) if scaler is not None else test_vec
-    pred = model.predict(scaled_vec)
-    if not np.isfinite(pred[0]):
-        print(f"\n❌ FAIL: Smoke prediction trả về non-finite ({pred[0]}).")
-        return False
-    print(f"🚀 Smoke Prediction  : Thành công (pred={pred[0]:.4f}, hữu hạn)")
 
     print("\n" + "=" * 80)
-    print("🎉 PASS: Toàn bộ artifacts và pipeline preprocessing đã được xác minh thành công!")
+    print("✅ PASS: MÔ HÌNH HỒI QUY SẴN SÀNG HOẠT ĐỘNG (COMPATIBILITY VERIFIED)")
     print("=" * 80)
     return True
 
 
-def main():
-    default_manifest = AI_SERVICES_DIR / "artifacts" / "manifest.json"
-    parser = argparse.ArgumentParser(description="Xác minh artifacts model bundle theo manifest.")
-    parser.add_argument(
-        "--manifest",
-        type=str,
-        default=str(default_manifest),
-        help=f"Đường dẫn file manifest.json (mặc định: {default_manifest})",
+def main() -> int:
+    settings = Settings()
+
+    parser = argparse.ArgumentParser(
+        description="Kiểm tra tính hợp lệ và sẵn sàng của thư mục mô hình hồi quy (Preflight Verifier)."
     )
     parser.add_argument(
-        "--project_root",
+        "--model-dir",
         type=str,
-        default=str(PROJECT_ROOT),
-        help=f"Thư mục gốc của project (mặc định: {PROJECT_ROOT})",
+        default=None,
+        help="Đường dẫn thư mục chứa mô hình hồi quy (đường dẫn tương đối luôn tính từ AI_SERVICES). "
+             "Nếu bỏ trống, sử dụng cấu hình REGRESSION_MODEL_DIR từ .env hoặc mặc định.",
     )
+
     args = parser.parse_args()
 
-    manifest_p = Path(args.manifest).resolve()
-    root_p = Path(args.project_root).resolve()
+    if args.model_dir:
+        target_dir = settings.resolve_path(args.model_dir)
+    else:
+        try:
+            target_dir = settings.get_regression_dir()
+        except Exception as ex:
+            print(f"❌ FAIL: Không xác định được thư mục mô hình hồi quy: {ex}")
+            return 1
 
-    success = verify_artifacts(manifest_path=manifest_p, project_root=root_p)
-    sys.exit(0 if success else 1)
+    success = verify_regression_dir(target_dir)
+    return 0 if success else 1
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

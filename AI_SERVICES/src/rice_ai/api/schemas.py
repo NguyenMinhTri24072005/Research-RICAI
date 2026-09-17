@@ -1,26 +1,10 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-===============================================================================
-SCHEMAS — Định nghĩa kiểu dữ liệu API Request/Response/Error
-===============================================================================
-Mục đích:
-  - Chuẩn hóa cấu trúc response JSON cho /predict, /api/status, lỗi.
-  - Định nghĩa mã lỗi có ý nghĩa (error codes) thay vì HTTP 200 + status=error.
-  - Dùng chung cho app.py, gateway server.js, React frontend, mobile UI.
-===============================================================================
-"""
-
+"""API Request, Response and Error Schemas."""
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Error Codes
-# ─────────────────────────────────────────────────────────────────────────────
 
 class ErrorCode(str, Enum):
     """Mã lỗi chuẩn trả về cho client."""
@@ -36,10 +20,6 @@ class ErrorCode(str, Enum):
     EMPTY_SAMPLE = "EMPTY_SAMPLE"
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Estimation Method
-# ─────────────────────────────────────────────────────────────────────────────
-
 class EstimationMethod(str, Enum):
     """Phương pháp ước lượng thực sự được sử dụng."""
     REGRESSION_EXTRA_TREES = "regression_ExtraTrees"
@@ -49,10 +29,6 @@ class EstimationMethod(str, Enum):
     HYBRID = "hybrid"
     NONE = "none"
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Model / Component Status
-# ─────────────────────────────────────────────────────────────────────────────
 
 class ComponentStatus(str, Enum):
     CONFIGURED = "configured"
@@ -67,10 +43,6 @@ class ServiceReadiness(str, Enum):
     DEGRADED = "degraded"
     NOT_READY = "not_ready"
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Response structures
-# ─────────────────────────────────────────────────────────────────────────────
 
 @dataclass
 class ErrorDetail:
@@ -141,10 +113,11 @@ class PredictResponse:
     request_id: Optional[str] = None
     estimation: Optional[EstimationResult] = None
     metrics_summary: Optional[Dict[str, Any]] = None
-    features_used: Optional[Dict[str, float]] = None
+    features_used: Optional[Dict[str, Optional[float]]] = None
     warnings: List[str] = field(default_factory=list)
     timings_ms: Optional[TimingInfo] = None
     error: Optional[ErrorDetail] = None
+    debug_info: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {"status": self.status}
@@ -155,13 +128,19 @@ class PredictResponse:
         if self.metrics_summary:
             d["metrics_summary"] = self.metrics_summary
         if self.features_used:
-            d["features_used"] = {k: round(v, 4) for k, v in self.features_used.items()}
+            # Hỗ trợ an toàn giá trị None (không làm tròn None)
+            d["features_used"] = {
+                k: (round(v, 4) if v is not None else None)
+                for k, v in self.features_used.items()
+            }
         if self.warnings:
             d["warnings"] = self.warnings
         if self.timings_ms:
             d["timings_ms"] = self.timings_ms.to_dict()
         if self.error:
             d["error"] = self.error.to_dict()
+        if self.debug_info is not None:
+            d["debug_info"] = self.debug_info
         return d
 
 
@@ -169,7 +148,7 @@ class PredictResponse:
 class ComponentInfo:
     """Trạng thái một component."""
     status: str = "not_found"
-    path: Optional[str] = None  # Chỉ trả tên file, không trả absolute path
+    path: Optional[str] = None  # Chỉ trả tên file hoặc basename, không lộ absolute path
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {"status": self.status}
@@ -183,7 +162,7 @@ class StatusResponse:
     """Response chuẩn của /api/status."""
     service: str = "Rice Vision AI Inference API"
     readiness: str = "not_ready"
-    version: str = "2.1.0"
+    version: str = "2.2.0"
     schema_version: str = "31v1"
     bundle_id: Optional[str] = None
     components: Dict[str, ComponentInfo] = field(default_factory=dict)

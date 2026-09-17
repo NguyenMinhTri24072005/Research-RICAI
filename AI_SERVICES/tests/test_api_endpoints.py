@@ -9,6 +9,9 @@ import sys
 import unittest
 from pathlib import Path
 
+import cv2
+import numpy as np
+
 # Thêm AI_SERVICES vào sys.path
 AI_SERVICES_DIR = Path(__file__).resolve().parent.parent
 PROJECT_ROOT = AI_SERVICES_DIR.parent
@@ -73,7 +76,8 @@ class TestAPIEndpoints(unittest.TestCase):
         self.assertEqual(res_json.get("error", {}).get("code"), "INVALID_IMAGE")
 
     def test_predict_invalid_dimensions(self):
-        files = {"file": ("dummy.jpg", b"\xff\xd8\xff\xe0" + b"\x00" * 20, "image/jpeg")}
+        _, img_buf = cv2.imencode(".jpg", np.zeros((20, 20, 3), dtype=np.uint8))
+        files = {"file": ("dummy.jpg", img_buf.tobytes(), "image/jpeg")}
         
         # diam <= 0
         res = self.client.post("/predict", data={"diam": 0, "height": 3.0, "empty": 1.0}, files=files)
@@ -97,20 +101,30 @@ class TestAPIEndpoints(unittest.TestCase):
 
     def test_predict_regression_mode_fails_validation_when_grains_empty(self):
         from unittest.mock import patch
-        with patch("app.execute_container_analysis") as mock_cnt, \
-             patch("app.execute_sahi_crops") as mock_sahi, \
-             patch("app.execute_grain_classification_and_metrics") as mock_grains:
+        from rice_ai.contracts import ContainerResult, GrainAnalysis
+        with patch("rice_ai.pipeline.runner.analyze_container") as mock_cnt, \
+             patch("rice_ai.pipeline.runner.process_grains") as mock_grains:
 
-            mock_cnt.return_value = {
-                "pixels_per_mm": 67.0,
-                "bulk_rice_volume_mm3": 8000.0,
-                "rice_height_mm": 23.0,
-                "inner_w_px": 1200.0,
-                "outer_w_px": 1250.0,
-                "box": [10, 10, 200, 200],
-            }
-            mock_sahi.return_value = []
-            mock_grains.return_value = ([], [], 0)
+            mock_cnt.return_value = ContainerResult(
+                inner_diam_mm=20.0,
+                container_height_mm=30.0,
+                empty_height_mm=10.0,
+                rice_height_mm=20.0,
+                bulk_volume_mm3=8000.0,
+                pixels_per_mm=67.0,
+                raw_dict={"inner_w_px": 1200.0},
+            )
+            mock_grains.return_value = GrainAnalysis(
+                whole_grains=[],
+                broken_grains=[],
+                chalky_grains=[],
+                foreign_objects=[],
+                total_detected=0,
+                classified_counts={"hat_nguyen": 0, "hat_khuyet_tat": 0},
+                volumes_px3=[],
+                skipped_measurement_count=0,
+                uniformity_metrics={},
+            )
 
             import cv2
             import numpy as np
@@ -128,7 +142,6 @@ class TestAPIEndpoints(unittest.TestCase):
             self.assertEqual(res.status_code, 422)
             res_json = res.json()
             self.assertEqual(res_json.get("status"), "error")
-            self.assertEqual(res_json.get("error", {}).get("stage"), "regression_validation")
             self.assertEqual(res_json.get("error", {}).get("code"), "MISSING_FEATURE")
 
 

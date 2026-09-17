@@ -1,10 +1,12 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 End-to-end integration test with real image fixture (Sample M001a)
+Strict regression assertion with lifespan context and legacy API keys validation.
 Ground Truth: Actual_Count = 85
 """
 
+import math
 import sys
 import unittest
 from pathlib import Path
@@ -19,17 +21,14 @@ from app import app, MODEL_PATHS
 
 
 class TestRealPipeline(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.client = TestClient(app)
-        cls.fixture_path = PROJECT_ROOT / "DATASET_BUILDER" / "1_Raw_Images" / "M001" / "M001A.jpg"
-        cls.ground_truth_count = 85
+    def setUp(self):
+        self.fixture_path = PROJECT_ROOT / "DATASET_BUILDER" / "1_Raw_Images" / "M001" / "M001A.jpg"
+        self.ground_truth_count = 85
 
     def test_real_image_inference(self):
         if not self.fixture_path.exists():
             self.skipTest(f"Fixture image không tồn tại tại {self.fixture_path}")
 
-        # Kiểm tra xem YOLO và CNN weights có tồn tại không
         yolo_path = MODEL_PATHS.get("yolo")
         cnn_path = MODEL_PATHS.get("cnn")
         if not yolo_path or not yolo_path.exists():
@@ -42,13 +41,14 @@ class TestRealPipeline(unittest.TestCase):
             "height": 3.39,
             "empty": 1.09,
             "weight_total": 2.69,
-            "estimator_mode": "auto",
+            "estimator_mode": "regression",
             "debug": "true",
         }
 
-        with open(self.fixture_path, "rb") as img_file:
-            files = {"file": ("M001A.jpg", img_file, "image/jpeg")}
-            res = self.client.post("/predict", data=data, files=files)
+        with TestClient(app) as client:
+            with open(self.fixture_path, "rb") as img_file:
+                files = {"file": ("M001A.jpg", img_file, "image/jpeg")}
+                res = client.post("/predict", data=data, files=files)
 
         self.assertEqual(res.status_code, 200, f"Inference failed with body: {res.text}")
         payload = res.json()
@@ -59,8 +59,15 @@ class TestRealPipeline(unittest.TestCase):
 
         estimation = payload["estimation"]
         final_est = estimation.get("final")
+        reg_est = estimation.get("regression_est")
+        geo_est = estimation.get("geometry_est")
+        method_used = estimation.get("method_used")
+
         self.assertIsNotNone(final_est, "Ước lượng final_est không được là None")
         self.assertGreater(final_est, 0, "final_est phải > 0")
+        self.assertIsNotNone(reg_est, "Ước lượng regression_est không được là None trong regression mode")
+        self.assertTrue(math.isfinite(reg_est), "regression_est phải là số hữu hạn")
+        self.assertTrue(method_used.startswith("regression"), f"Phương pháp sử dụng phải là regression, nhận: {method_used}")
 
         # So sánh với Ground Truth
         abs_err = abs(final_est - self.ground_truth_count)
@@ -68,24 +75,38 @@ class TestRealPipeline(unittest.TestCase):
 
         hybrid_f11 = payload.get("debug_info", {}).get("features_vector", {}).get("Estimated_Total_Seeds_Hybrid")
 
-        print("\n" + "=" * 70)
+        print("\\n" + "=" * 70)
         print("🎯 KẾT QUẢ KIỂM THỬ TÍCH HỢP TRÊN FIXTURE M001a:")
         print(f"   • Ground Truth (Actual_Count): {self.ground_truth_count} hạt")
         print(f"   • Ước lượng của hệ thống      : {final_est} hạt")
-        print(f"   • Phương pháp sử dụng         : {estimation.get('method_used')}")
-        print(f"   • Hồi quy Extra Trees         : {estimation.get('regression_est')}")
-        print(f"   • Hình học (Geometry/AI)      : {estimation.get('geometry_est')}")
+        print(f"   • Phương pháp sử dụng         : {method_used}")
+        print(f"   • Hồi quy                     : {reg_est}")
+        print(f"   • Hình học (Geometry/AI)      : {geo_est}")
         print(f"   • Cân mẫu (Weight)            : {estimation.get('weight_est')}")
         print(f"   • Feature 11 (Trained Hybrid) : {hybrid_f11}")
         print(f"   • Sai số tuyệt đối            : {abs_err} hạt")
         print(f"   • Tỷ lệ sai số (MAPE)         : {pct_err:.2f}%")
         print("=" * 70)
 
-        # Kiểm tra timings
+        # Kiểm tra metrics_summary tương thích client cũ
+        self.assertIn("metrics_summary", payload)
+        summary = payload["metrics_summary"]
+        self.assertIn("whole_grains_surface", summary)
+        self.assertIn("total_grains_detected", summary)
+        self.assertIn("avg_length_mm", summary)
+        self.assertIn("avg_width_mm", summary)
+        self.assertIn("avg_thickness_mm", summary)
+        self.assertIn("regression_model", summary)
+        self.assertIn("estimator_mode", summary)
+
+        # Kiểm tra timings từng stage thực
         self.assertIn("timings_ms", payload)
         timings = payload["timings_ms"]
         self.assertGreater(timings.get("total_ms", 0), 0)
         self.assertGreater(timings.get("container_ms", 0), 0)
+        self.assertGreater(timings.get("segmentation_ms", 0), 0)
+        self.assertGreater(timings.get("cleaning_ms", 0), 0)
+        self.assertGreater(timings.get("classification_ms", 0), 0)
 
         # Kiểm tra debug_info
         self.assertIn("debug_info", payload)

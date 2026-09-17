@@ -1,0 +1,41 @@
+{
+  "timestamp": "2026-09-18T02:24:25Z",
+  "environment": {
+    "python": "3.12.10",
+    "scikit-learn": "1.9.1",
+    "numpy": "2.0.2",
+    "joblib": "1.6.0",
+    "pydantic": "2.13.5",
+    "fastapi": "0.141.1",
+    "keras": "3.15.1",
+    "torch": "2.14.0",
+    "ultralytics": "8.4.150",
+    "sahi": "0.12.6"
+  },
+  "active_models_baseline": {
+    "yolo": "RESULTS/all-new-data-v1.yolov8_yolov8s-seg_trained/weights/best.pt",
+    "cnn": "RESULTS/CNN_DenseNet121_Trained/best_v3_step2.keras",
+    "regression": "LINEAR_REGRESSION_MODEL/models/best_tree_ensemble_model.joblib",
+    "scaler": "LINEAR_REGRESSION_MODEL/models/scaler.joblib"
+  },
+  "baseline_test_suite": {
+    "total_tests": 34,
+    "passed": 34,
+    "failed": 0,
+    "errors": 0,
+    "duration_sec": 205.112
+  },
+  "m001a_baseline_evidence": {
+    "sample_id": "M001A",
+    "ground_truth": 85,
+    "final_prediction": 85,
+    "method_used": "regression_ExtraTrees",
+    "regression_raw": 85.2,
+    "geometry_est": 282,
+    "weight_est": null,
+    "feature_11_trained_hybrid": 167.0,
+    "absolute_error": 0,
+    "mape_percent": 0.0,
+    "total_time_ms": 190892
+  }
+}

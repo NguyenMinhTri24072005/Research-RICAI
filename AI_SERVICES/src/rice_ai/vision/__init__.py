@@ -1,7 +1,4 @@
-"""
-Rice Vision AI — Production Modules (Self-Contained Package)
-"""
-
+"""Computer Vision algorithms for container detection, grain segmentation, cleaning, and classification."""
 from .container_detector import detect_container_and_scale, draw_container_overlay
 from .grain_segmenter import segment_grains_sahi
 from .grain_classifier import GrainClassifier
