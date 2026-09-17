@@ -1,15 +1,15 @@
 # Project Status
 
-Updated: 2026-09-17 16:54:10 +07:00
+Updated: 2026-09-17 16:58:03 +07:00
 
 ## Repository Snapshot
 
 Branch: `main`
 Base commit before TASK-01 finalization: `1f1bb70 chore: checkpoint TASK-01 regression verification`
 Working tree before finalization: TASK-01 source, tests, reports, plan, and documentation changes were reviewed and preserved.
-Latest commit before this publication checkpoint: `d0c0eb6 fix: verify TASK-01 training-inference contract`.
-Working tree before publication: DIRTY — notebook consolidation, approved legacy deletions, new training bundles/results, and pre-existing `scratch/`.
-Publication scope: training source, documentation, tests, approved legacy deletions, global textual reports, and per-model configuration/schema/metrics/manifests/CV summaries. Serialized model/scaler artifacts, detailed predictions, plots, venv, and `scratch/` remain local and are excluded from this checkpoint.
+Latest commit before this artifact publication checkpoint: `ba9bd0c chore: consolidate regression training and update project status`.
+Working tree before artifact publication: source/consolidation checkpoint already committed; remaining detailed outputs and scratch scripts were untracked, and regression `.joblib` binaries were ignored.
+Publication scope: the preceding source/documentation checkpoint is extended with complete regression bundles, including model/scaler/pipeline `.joblib` files, scaler parameters, equations, detailed predictions, plots, and both `scratch/` generator scripts. The regression `.joblib` exception in `.gitignore` makes subsequent retraining changes visible to Git. Virtual environments, caches, credentials, and private raw datasets remain ignored.
 
 ## Current Phase
 
@@ -56,7 +56,8 @@ Executed in the preceding Codex work; not rerun during this documentation-only u
 - `RUN_CONFIG` assigns a Colab `DATA_PATH_OVERRIDE` and immediately resets it to `None`. Its default root still uses `GROUP_MEMBERS`, while the user also supplied a `MEMBERS` root earlier. Resolve the intended path/configuration before the next Colab run.
 - Legacy CLI helpers remain. `inference_linear_regression.py` still defaults to the deleted `models/regression_equation.json`; review these helpers before using them. The consolidated notebook is the current training entrypoint.
 - Full notebook export/reload execution with the new layout is pending; current verification is static/synthetic plus integrity checks of moved bundles.
-- Published manifests describe locally retained artifacts; `.joblib` files are excluded by Git policy. A GitHub checkout alone does not contain the trained model/scaler binaries.
+- Regression model/scaler/pipeline binaries are included in this publication checkpoint. Loading them still requires a compatible environment; file publication does not reproduce training.
+- `scratch/build_trainer_notebook.py` and `scratch/generate_notebook.py` are historical notebook generators and still contain the old run-directory layout. They are published as archival scripts; executing them can overwrite the current notebook with outdated source. Use the consolidated notebook as the training entrypoint.
 
 ## Task Overview
 

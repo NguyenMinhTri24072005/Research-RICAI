@@ -123,3 +123,6 @@ tmp/
 temp/
 *.tmp
 *.cache
+
+# Track the regression bundles explicitly requested for publication
+!/LINEAR_REGRESSION_MODEL/models/**/*.joblib
