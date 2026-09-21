@@ -8,7 +8,7 @@ def filter_grains_by_size(
     enabled: bool = True
 ) -> Dict[str, Any]:
     """
-    Filter grain measurements based on IQR (both lower and upper bounds)
+    Filter grain measurements based on IQR (LOWER bound only)
     for BOTH Area (area_mm2) and Volume (volume_3d_mm3 or volume_mm3).
     Returns a dict with kept measurements, rejected ones (with reason), and statistics.
     """
@@ -72,14 +72,12 @@ def filter_grains_by_size(
     q3_a = float(np.percentile(areas, 75))
     iqr_a = q3_a - q1_a
     lower_bound_a = q1_a - k * iqr_a
-    upper_bound_a = q3_a + k * iqr_a
     
     # Tính toán IQR cho Volume
     q1_v = float(np.percentile(volumes, 25))
     q3_v = float(np.percentile(volumes, 75))
     iqr_v = q3_v - q1_v
     lower_bound_v = q1_v - k * iqr_v
-    upper_bound_v = q3_v + k * iqr_v
         
     kept = []
     rejected = []
@@ -93,15 +91,15 @@ def filter_grains_by_size(
         
         if area is not None and not np.isnan(area):
             a_val = float(area)
-            if a_val < lower_bound_a or a_val > upper_bound_a:
+            if a_val < lower_bound_a:
                 is_rejected = True
-                reason += f"Area ({a_val:.2f}) ngoài vùng [{lower_bound_a:.2f}, {upper_bound_a:.2f}]. "
+                reason += f"Area ({a_val:.2f}) < mức tối thiểu ({lower_bound_a:.2f}). "
                 
         if vol is not None and not np.isnan(vol):
             v_val = float(vol)
-            if v_val < lower_bound_v or v_val > upper_bound_v:
+            if v_val < lower_bound_v:
                 is_rejected = True
-                reason += f"Volume ({v_val:.2f}) ngoài vùng [{lower_bound_v:.2f}, {upper_bound_v:.2f}]."
+                reason += f"Volume ({v_val:.2f}) < mức tối thiểu ({lower_bound_v:.2f})."
                 
         if is_rejected:
             rej = m.copy()
