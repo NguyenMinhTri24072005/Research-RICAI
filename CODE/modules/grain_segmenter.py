@@ -81,7 +81,7 @@ def segment_grains_sahi(
         local_mask = np.zeros(img_bgr.shape[:2], dtype=np.uint8)
         for polygon in obj.mask.segmentation:
             pts = np.array(polygon, np.int32).reshape((-1, 1, 2))
-            cv2.fillPoly(local_mask, [pts], 255, lineType=cv2.LINE_AA)
+            cv2.fillPoly(local_mask, [pts], 255, lineType=cv2.LINE_8)
 
         ys, xs = np.where(local_mask == 255)
         if len(ys) == 0 or len(ys) < min_area_px:

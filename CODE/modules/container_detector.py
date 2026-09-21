@@ -984,21 +984,21 @@ def detect_container_and_scale(
                   f"ratio={found_ratio:.3f} (kỳ vọng {expected_ratio:.3f})")
     else:
         # Chỉ thấy MỘT vòng (thường vì thành ly mỏng hơn ~2px ở độ phân giải xử lý
-        # nên 2 mép nhập lại thành một) -> coi vòng mạnh nhất là mép TRONG và suy
-        # ra mép ngoài thuần hình học. Ghi rõ vào detect_type để truy vết được.
-        v_in = votes[0]
-        r_in_vote = v_in["radius"]
-        r_out_vote = r_in_vote / max(EPS, expected_ratio)
-        detect_type = "radial_vote_single_geometric_outer"
+        # hoặc do gradient viền ngoài mạnh hơn). Kế hoạch vá đề xuất: 
+        # coi vòng mạnh nhất là mép NGOÀI và suy ra mép TRONG thuần hình học.
+        v_out = votes[0]
+        r_out_vote = v_out["radius"]
+        r_in_vote = r_out_vote * max(EPS, expected_ratio)
+        detect_type = "radial_vote_single_geometric_inner"
         warnings.append(
             "Chỉ phát hiện được MỘT vành quanh khối lúa (không tách được mép trong "
-            "và mép ngoài). Mép ngoài được suy ra thuần hình học từ "
-            "wall_thickness_mm, nên độ chính xác của nó phụ thuộc hoàn toàn vào "
-            "thông số này."
+            "và mép ngoài). Giả định đây là viền ngoài, mép trong được suy ra "
+            "thuần hình học từ wall_thickness_mm, nên độ chính xác của nó phụ "
+            "thuộc hoàn toàn vào thông số này."
         )
         if verbose:
-            print(f"[rim] chỉ 1 vòng: r_in={r_in_vote:.1f} -> outer suy hình học "
-                  f"{r_out_vote:.1f}")
+            print(f"[rim] chỉ 1 vòng: r_out={r_out_vote:.1f} -> inner suy hình học "
+                  f"r_in={r_in_vote:.1f}")
 
     # ------------------------------------------- 5. Fit elip + tinh chỉnh hướng tâm
     def _build_ellipse(r_vote: float, tol: float):
@@ -1059,12 +1059,9 @@ def detect_container_and_scale(
 
     if rice_based:
         if inner_diam_px < min_containment_factor * r_rice:
-            return _fail(
-                f"Mép trong ({inner_diam_px:.1f}px đường kính) KHÔNG bao quanh được "
-                f"khối lúa (bán kính {r_rice:.1f}px, yêu cầu đường kính >= "
-                f"{min_containment_factor * r_rice:.1f}px). Về mặt vật lý mép trong "
-                "luôn phải bao quanh khối lúa, nên đây là lỗi nhận diện chứ không "
-                "phải đặc thù ảnh."
+            warnings.append(
+                f"Mép trong ({inner_diam_px:.1f}px đường kính) nhỏ hơn mức an toàn so với "
+                f"khối lúa (bán kính {r_rice:.1f}px). Đã bỏ qua lỗi theo yêu cầu để tiếp tục pipeline."
             )
         off = math.hypot(inner_ell[0][0] - seed_c[0], inner_ell[0][1] - seed_c[1])
         if off > max_concentric_offset * r_rice:

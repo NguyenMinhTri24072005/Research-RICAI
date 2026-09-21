@@ -57,7 +57,7 @@ def filter_grains_by_size(
         if vol is not None and not np.isnan(vol):
             volumes.append(float(vol))
             
-    if len(areas) == 0 or len(volumes) == 0:
+    if len(areas) == 0 and len(volumes) == 0:
         return {
             "kept": measurements.copy(),
             "rejected": [],
@@ -68,17 +68,27 @@ def filter_grains_by_size(
         }
 
     # Tính toán IQR cho Area
-    q1_a = float(np.percentile(areas, 25))
-    q3_a = float(np.percentile(areas, 75))
-    iqr_a = q3_a - q1_a
-    lower_bound_a = q1_a - k * iqr_a
+    lower_bound_a = 4.0 # Fallback
+    if len(areas) > 0:
+        q1_a = float(np.percentile(areas, 25))
+        q3_a = float(np.percentile(areas, 75))
+        iqr_a = q3_a - q1_a
+        if iqr_a > 0:
+            lb = q1_a - k * iqr_a
+            if lb > 0:
+                lower_bound_a = lb
     
     # Tính toán IQR cho Volume
-    q1_v = float(np.percentile(volumes, 25))
-    q3_v = float(np.percentile(volumes, 75))
-    iqr_v = q3_v - q1_v
-    lower_bound_v = q1_v - k * iqr_v
-        
+    lower_bound_v = 4.0 # Fallback
+    if len(volumes) > 0:
+        q1_v = float(np.percentile(volumes, 25))
+        q3_v = float(np.percentile(volumes, 75))
+        iqr_v = q3_v - q1_v
+        if iqr_v > 0:
+            lb = q1_v - k * iqr_v
+            if lb > 0:
+                lower_bound_v = lb
+
     kept = []
     rejected = []
     

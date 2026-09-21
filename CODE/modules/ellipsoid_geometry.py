@@ -36,7 +36,7 @@ import numpy as np
 
 
 THICKNESS_RATIO = {
-    "hat_nguyen": 1,      # Đo thực tế bằng thước kẹp: dày ≈ 80% chiều rộng
+    "hat_nguyen": 0.80,      # Đo thực tế bằng thước kẹp: dày ≈ 80% chiều rộng
     "hat_khuyet_tat": 0.90,
     "undefined": 0.50,
 }
@@ -106,6 +106,7 @@ def compute_single_grain_metrics(
     scaled_mask = cv2.resize(
         mask, None, fx=scale_factor, fy=scale_factor, interpolation=cv2.INTER_CUBIC
     )
+    _, scaled_mask = cv2.threshold(scaled_mask, 127, 255, cv2.THRESH_BINARY)
 
     # 3. Tìm viền contour lớn nhất
     contours, _ = cv2.findContours(scaled_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
@@ -140,10 +141,13 @@ def compute_single_grain_metrics(
         b_px = ma / 2.0  # Bán trục ngắn
         fit_method = "fitEllipse"
     else:
-        h, w = mask.shape[:2]
+        bx, by, bw, bh = cv2.boundingRect(largest_cnt)
+        w = bw / scale_factor
+        h = bh / scale_factor
         a_px = max(w, h) / 2.0
         b_px = min(w, h) / 2.0
-        cx, cy = w / 2.0, h / 2.0
+        cx = (bx + bw / 2.0) / scale_factor
+        cy = (by + bh / 2.0) / scale_factor
         ellipse_params = ((cx, cy), (a_px * 2, b_px * 2), 0.0)
         fit_method = "BoundingFallback"
 
@@ -281,17 +285,17 @@ def draw_grain_ellipse_overlay(
             cos_t, sin_t = math.cos(theta_rad), math.sin(theta_rad)
 
             # Trục dài 2a
-            x_maj1 = int(round(cx + (MA / 2.0) * sin_t))
-            y_maj1 = int(round(cy - (MA / 2.0) * cos_t))
-            x_maj2 = int(round(cx - (MA / 2.0) * sin_t))
-            y_maj2 = int(round(cy + (MA / 2.0) * cos_t))
+            x_maj1 = int(round(cx + (MA / 2.0) * cos_t))
+            y_maj1 = int(round(cy + (MA / 2.0) * sin_t))
+            x_maj2 = int(round(cx - (MA / 2.0) * cos_t))
+            y_maj2 = int(round(cy - (MA / 2.0) * sin_t))
             cv2.line(vis, (x_maj1, y_maj1), (x_maj2, y_maj2), (0, 255, 0), 2, lineType=cv2.LINE_AA)
 
             # Trục ngắn 2b
-            x_min1 = int(round(cx + (ma / 2.0) * cos_t))
-            y_min1 = int(round(cy + (ma / 2.0) * sin_t))
-            x_min2 = int(round(cx - (ma / 2.0) * cos_t))
-            y_min2 = int(round(cy - (ma / 2.0) * sin_t))
+            x_min1 = int(round(cx - (ma / 2.0) * sin_t))
+            y_min1 = int(round(cy + (ma / 2.0) * cos_t))
+            x_min2 = int(round(cx + (ma / 2.0) * sin_t))
+            y_min2 = int(round(cy - (ma / 2.0) * cos_t))
             cv2.line(vis, (x_min1, y_min1), (x_min2, y_min2), (255, 60, 60), 2, lineType=cv2.LINE_AA)
 
             # Vẽ tâm hạt lúa
