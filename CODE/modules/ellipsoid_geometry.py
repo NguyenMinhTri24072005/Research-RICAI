@@ -24,7 +24,7 @@ import numpy as np
 
 
 THICKNESS_RATIO = {
-    "hat_nguyen": 1,      # Đo thực tế bằng thước kẹp: dày ≈ 80% chiều rộng
+    "hat_nguyen": 0.80,   # Đo thực tế bằng thước kẹp: dày ≈ 80% chiều rộng
     "hat_khuyet_tat": 0.90,
     "undefined": 0.50,
 }
