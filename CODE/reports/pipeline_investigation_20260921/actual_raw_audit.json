@@ -1,0 +1,213 @@
+{
+  "image": "CODE\\reports\\pipeline_investigation_20260921\\actual_case_raw.jpg",
+  "sha256": "b51a23add18ca7302de6e4bb4aaa48e6385ab1984729588505e17409d10d1638",
+  "shape_hwc": [
+    8160,
+    6120,
+    3
+  ],
+  "inputs": {
+    "inner_diameter_mm": 32.7,
+    "true_rice_diameter_mm": 22.0,
+    "container_height_mm": 48.7,
+    "empty_height_mm": 23.3,
+    "packing_fraction": 0.55,
+    "actual_count": 450
+  },
+  "bulk_volume_recomputed_mm3": 9655.370861542871,
+  "saved_notebook": {
+    "pixels_per_mm": 88.84,
+    "mean_grain_volume_mm3": 6.618,
+    "physical_count": 802
+  },
+  "notebook_detector_current": {
+    "runs": [
+      {
+        "pixels_per_mm": 88.83847481863837,
+        "inner_w_px": 2905,
+        "outer_w_px": 3172,
+        "container_w_px": 2905,
+        "bulk_rice_volume_mm3": 21331.387414337147,
+        "rice_height_mm": 25.400000000000002,
+        "detect_type": "geometric_concentric_rim",
+        "outer_confidence": 0.2241297091082499,
+        "inner_confidence": null,
+        "crop_bbox": [
+          1316,
+          2365,
+          4992,
+          6041
+        ]
+      },
+      {
+        "pixels_per_mm": 88.83847481863837,
+        "inner_w_px": 2905,
+        "outer_w_px": 3172,
+        "container_w_px": 2905,
+        "bulk_rice_volume_mm3": 21331.387414337147,
+        "rice_height_mm": 25.400000000000002,
+        "detect_type": "geometric_concentric_rim",
+        "outer_confidence": 0.1888412017167382,
+        "inner_confidence": null,
+        "crop_bbox": [
+          1316,
+          2365,
+          4992,
+          6041
+        ]
+      },
+      {
+        "pixels_per_mm": 88.83847481863837,
+        "inner_w_px": 2905,
+        "outer_w_px": 3172,
+        "container_w_px": 2905,
+        "bulk_rice_volume_mm3": 21331.387414337147,
+        "rice_height_mm": 25.400000000000002,
+        "detect_type": "geometric_concentric_rim",
+        "outer_confidence": 0.25464949928469244,
+        "inner_confidence": null,
+        "crop_bbox": [
+          1316,
+          2365,
+          4992,
+          6041
+        ]
+      },
+      {
+        "pixels_per_mm": 88.83847481863837,
+        "inner_w_px": 2905,
+        "outer_w_px": 3172,
+        "container_w_px": 2905,
+        "bulk_rice_volume_mm3": 21331.387414337147,
+        "rice_height_mm": 25.400000000000002,
+        "detect_type": "geometric_concentric_rim",
+        "outer_confidence": 0.2412970910824988,
+        "inner_confidence": null,
+        "crop_bbox": [
+          1316,
+          2365,
+          4992,
+          6041
+        ]
+      },
+      {
+        "pixels_per_mm": 88.83847481863837,
+        "inner_w_px": 2905,
+        "outer_w_px": 3172,
+        "container_w_px": 2905,
+        "bulk_rice_volume_mm3": 21331.387414337147,
+        "rice_height_mm": 25.400000000000002,
+        "detect_type": "geometric_concentric_rim",
+        "outer_confidence": 0.2641869337148307,
+        "inner_confidence": null,
+        "crop_bbox": [
+          1316,
+          2365,
+          4992,
+          6041
+        ]
+      }
+    ],
+    "scale_mean": 88.83847481863837,
+    "scale_range": 0.0,
+    "scale_population_std": 0.0,
+    "ratio_to_saved_notebook_scale": 0.9999828322674288,
+    "grain_volume_counterfactual_from_scale_only_mm3": 6.617659157689088,
+    "physical_count_counterfactual_from_scale_only": 802
+  },
+  "ai_services_detector_current": {
+    "runs": [
+      {
+        "pixels_per_mm": 28.059723156840857,
+        "inner_w_px": 918,
+        "outer_w_px": 1002,
+        "container_w_px": 918,
+        "bulk_rice_volume_mm3": 21331.387414337147,
+        "rice_height_mm": 25.400000000000002,
+        "detect_type": "geometric_concentric_rim",
+        "outer_confidence": null,
+        "inner_confidence": null,
+        "crop_bbox": [
+          2129,
+          3793,
+          3289,
+          4953
+        ]
+      },
+      {
+        "pixels_per_mm": 28.059723156840857,
+        "inner_w_px": 918,
+        "outer_w_px": 1002,
+        "container_w_px": 918,
+        "bulk_rice_volume_mm3": 21331.387414337147,
+        "rice_height_mm": 25.400000000000002,
+        "detect_type": "geometric_concentric_rim",
+        "outer_confidence": null,
+        "inner_confidence": null,
+        "crop_bbox": [
+          2129,
+          3793,
+          3289,
+          4953
+        ]
+      },
+      {
+        "pixels_per_mm": 28.059723156840857,
+        "inner_w_px": 918,
+        "outer_w_px": 1002,
+        "container_w_px": 918,
+        "bulk_rice_volume_mm3": 21331.387414337147,
+        "rice_height_mm": 25.400000000000002,
+        "detect_type": "geometric_concentric_rim",
+        "outer_confidence": null,
+        "inner_confidence": null,
+        "crop_bbox": [
+          2129,
+          3793,
+          3289,
+          4953
+        ]
+      },
+      {
+        "pixels_per_mm": 28.059723156840857,
+        "inner_w_px": 918,
+        "outer_w_px": 1002,
+        "container_w_px": 918,
+        "bulk_rice_volume_mm3": 21331.387414337147,
+        "rice_height_mm": 25.400000000000002,
+        "detect_type": "geometric_concentric_rim",
+        "outer_confidence": null,
+        "inner_confidence": null,
+        "crop_bbox": [
+          2129,
+          3793,
+          3289,
+          4953
+        ]
+      },
+      {
+        "pixels_per_mm": 28.059723156840857,
+        "inner_w_px": 918,
+        "outer_w_px": 1002,
+        "container_w_px": 918,
+        "bulk_rice_volume_mm3": 21331.387414337147,
+        "rice_height_mm": 25.400000000000002,
+        "detect_type": "geometric_concentric_rim",
+        "outer_confidence": null,
+        "inner_confidence": null,
+        "crop_bbox": [
+          2129,
+          3793,
+          3289,
+          4953
+        ]
+      }
+    ],
+    "scale_mean": 28.059723156840857,
+    "scale_range": 0.0,
+    "scale_population_std": 0.0,
+    "ratio_to_saved_notebook_scale": 0.3158456005947868,
+    "grain_volume_counterfactual_from_scale_only_mm3": 0.20852170091247452,
+    "physical_count_counterfactual_from_scale_only": 25467
+  }
+}

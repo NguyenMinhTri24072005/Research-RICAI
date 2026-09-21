@@ -10,6 +10,18 @@ Mục đích:
   - Mô hình hóa thể tích 3D hình cầu dẹt/Ellipsoid: V = (4/3) * pi * a * b * c.
   - Quy đổi toàn bộ kích thước sang đơn vị thực tế (mm, mm², mm³).
   - Thống kê các giá trị Min, Max, Mean, Std cho từng mẫu.
+
+CHANGELOG (fix 2026-09-21):
+  - cv2.fitEllipse() trả về (MA, ma) theo RotatedRect, KHÔNG đảm bảo MA >= ma.
+    Trước đây, `ellipse_params` lưu (MA, ma) thô (chưa sort), trong khi a_px/b_px
+    (dùng để tính length_mm/width_mm/volume_mm3) lại được sort qua max()/min().
+    Hàm draw_grain_ellipse_overlay() giả định cứng MA luôn là trục dài (vẽ xanh
+    lá) và ma luôn là trục ngắn (vẽ đỏ) — nếu fitEllipse trả về ngược thứ tự cho
+    một hạt cụ thể, 2 trục vẽ trên hình sẽ bị hoán đổi (dù số liệu in ra vẫn
+    đúng). Đã sửa: sort (MA, ma) ngay sau khi lấy kết quả fitEllipse, kèm xoay
+    góc +90° khi phải hoán đổi. Fix này CHỈ ảnh hưởng tới hiển thị trực quan
+    (ellipse_params) — không làm thay đổi bất kỳ giá trị số nào (length_mm,
+    width_mm, thickness_mm, area_mm2, volume_mm3) vì a_px/b_px vốn đã đúng.
 ===============================================================================
 """
 
@@ -24,7 +36,7 @@ import numpy as np
 
 
 THICKNESS_RATIO = {
-    "hat_nguyen": 0.80,   # Đo thực tế bằng thước kẹp: dày ≈ 80% chiều rộng
+    "hat_nguyen": 1,      # Đo thực tế bằng thước kẹp: dày ≈ 80% chiều rộng
     "hat_khuyet_tat": 0.90,
     "undefined": 0.50,
 }
@@ -113,9 +125,19 @@ def compute_single_grain_metrics(
         ma = sma / scale_factor
         cx = scx / scale_factor
         cy = scy / scale_factor
+
+        # FIX: cv2.fitEllipse không đảm bảo MA >= ma. Phải tự sort ở đây, nếu
+        # không draw_grain_ellipse_overlay() sẽ hoán đổi nhầm trục dài/ngắn
+        # (xanh lá/đỏ) khi vẽ, dù length_mm/width_mm tính ra vẫn đúng nhờ
+        # max()/min() bên dưới. Sort ngay tại nguồn để ellipse_params và
+        # a_px/b_px luôn đồng nhất.
+        if MA < ma:
+            MA, ma = ma, MA
+            angle = (angle + 90.0) % 180.0
+
         ellipse_params = ((cx, cy), (MA, ma), angle)
-        a_px = max(MA, ma) / 2.0  # Bán trục dài
-        b_px = min(MA, ma) / 2.0  # Bán trục ngắn
+        a_px = MA / 2.0  # Bán trục dài
+        b_px = ma / 2.0  # Bán trục ngắn
         fit_method = "fitEllipse"
     else:
         h, w = mask.shape[:2]

@@ -1,0 +1,126 @@
+{
+  "implementation": "CODE/modules/container_detector.py (main notebook import)",
+  "samples": [
+    {
+      "sample_id": "M001a",
+      "run": 1,
+      "image_filename": "M001A.jpg",
+      "actual_count": 85.0,
+      "historical_pixels_per_mm": 37.15,
+      "current_pixels_per_mm": 137.00153245192305,
+      "current_inner_diameter_px": 2439,
+      "detect_type": "geometric_concentric_rim",
+      "outer_confidence": 0.0662729658792651,
+      "inner_confidence": null,
+      "scale_ratio_current_over_historical": 3.687793605704524,
+      "conditional_geometry_count_multiplier_ratio_cubed": 50.15333542386495,
+      "conditional_pct_of_450_to_800_excess": 6319.714554496923,
+      "elapsed_seconds": 0.5613876999705099
+    },
+    {
+      "sample_id": "M010a",
+      "run": 1,
+      "image_filename": "M010A.jpg",
+      "actual_count": 60.0,
+      "historical_pixels_per_mm": 73.59,
+      "current_pixels_per_mm": 83.986603810237,
+      "current_inner_diameter_px": 1495,
+      "detect_type": "geometric_concentric_rim",
+      "outer_confidence": 0.7944915254237288,
+      "inner_confidence": null,
+      "scale_ratio_current_over_historical": 1.1412773992422476,
+      "conditional_geometry_count_multiplier_ratio_cubed": 1.486529906831048,
+      "conditional_pct_of_450_to_800_excess": 62.553845163991895,
+      "elapsed_seconds": 2.840454999997746
+    },
+    {
+      "sample_id": "M014a",
+      "run": 1,
+      "image_filename": "M014A.jpg",
+      "actual_count": 65.0,
+      "historical_pixels_per_mm": 70.71,
+      "current_pixels_per_mm": 83.96934127807617,
+      "current_inner_diameter_px": 1495,
+      "detect_type": "geometric_concentric_rim",
+      "outer_confidence": 0.8404040404040404,
+      "inner_confidence": null,
+      "scale_ratio_current_over_historical": 1.1875172009344672,
+      "conditional_geometry_count_multiplier_ratio_cubed": 1.674633315944784,
+      "conditional_pct_of_450_to_800_excess": 86.7385691929008,
+      "elapsed_seconds": 2.8705228000180796
+    },
+    {
+      "sample_id": "M020a",
+      "run": 1,
+      "image_filename": "M020A.jpg",
+      "actual_count": 100.0,
+      "historical_pixels_per_mm": 73.55,
+      "current_pixels_per_mm": 78.76760981633112,
+      "current_inner_diameter_px": 1402,
+      "detect_type": "geometric_concentric_rim",
+      "outer_confidence": 0.4935483870967742,
+      "inner_confidence": null,
+      "scale_ratio_current_over_historical": 1.0709396304055896,
+      "conditional_geometry_count_multiplier_ratio_cubed": 1.2282731835096934,
+      "conditional_pct_of_450_to_800_excess": 29.349409308389152,
+      "elapsed_seconds": 3.107453999982681
+    },
+    {
+      "sample_id": "M045a",
+      "run": 1,
+      "image_filename": "M045A.jpg",
+      "actual_count": 245.0,
+      "historical_pixels_per_mm": 71.82,
+      "current_pixels_per_mm": 72.65655127237008,
+      "current_inner_diameter_px": 1657,
+      "detect_type": "geometric_concentric_rim",
+      "outer_confidence": 0.16449410304158907,
+      "inner_confidence": null,
+      "scale_ratio_current_over_historical": 1.0116478873902826,
+      "conditional_geometry_count_multiplier_ratio_cubed": 1.0353522623199127,
+      "conditional_pct_of_450_to_800_excess": 4.545290869703066,
+      "elapsed_seconds": 3.0969862999627367
+    },
+    {
+      "sample_id": "M056a",
+      "run": 1,
+      "image_filename": "M056A.jpg",
+      "actual_count": 300.0,
+      "historical_pixels_per_mm": 70.31,
+      "current_pixels_per_mm": 79.92133952296055,
+      "current_inner_diameter_px": 1822,
+      "detect_type": "geometric_concentric_rim",
+      "outer_confidence": 0.499383477188656,
+      "inner_confidence": null,
+      "scale_ratio_current_over_historical": 1.1366994669742647,
+      "conditional_geometry_count_multiplier_ratio_cubed": 1.468713101717275,
+      "conditional_pct_of_450_to_800_excess": 60.26311307793536,
+      "elapsed_seconds": 2.9989397999597713
+    }
+  ],
+  "six_sample_relative_error_pct": {
+    "min": 1.1647887390282552,
+    "max": 268.7793605704524,
+    "median_abs": 13.898843310825615
+  },
+  "repeatability": {
+    "sample_id": "M010a",
+    "runs": 5,
+    "pixels_per_mm_values": [
+      83.986603810237,
+      83.99909987816442,
+      84.06916016798752,
+      84.0398430457482,
+      83.98633443392238
+    ],
+    "range": 0.08282573406513905,
+    "std": 0.032936524759603195
+  },
+  "source_randomness": {
+    "contains_ransac": true,
+    "uses_default_rng_without_explicit_seed": true,
+    "rng_parameter_available": true,
+    "hough_present": true
+  },
+  "required_scale_ratio_if_all_450_to_800_error_is_scale": 1.2114137285547597
+}

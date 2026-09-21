@@ -1,0 +1,28 @@
+{
+  "evidence_kind": "Counterfactual from notebook Cell 3 sample inputs and independently reproduced selected-grain mean. Bottom diameter is inferred under a linear-taper assumption.",
+  "inputs": {
+    "top_inner_diameter_mm": 32.7,
+    "rice_surface_diameter_mm": 22.0,
+    "container_height_mm": 48.7,
+    "empty_height_mm": 23.3,
+    "rice_height_mm": 25.400000000000002,
+    "packing_fraction": 0.55,
+    "mean_grain_volume_mm3": 6.618097055225826,
+    "actual_count": 450
+  },
+  "inferred_bottom_diameter_mm_if_linear_taper": 10.335622317596563,
+  "cylinder": {
+    "bulk_volume_mm3": 9655.370861542871,
+    "physical_count_raw": 802.4140367744084,
+    "physical_count_rounded": 802
+  },
+  "conical_frustum": {
+    "bulk_volume_mm3": 5440.846563341853,
+    "volume_ratio_to_cylinder": 0.563504669200499,
+    "physical_count_raw": 452.1640563544,
+    "physical_count_rounded": 452,
+    "error_to_actual_count": 2.1640563543999747,
+    "percent_of_original_excess_removed": 99.38593355298579
+  },
+  "interpretation": "This demonstrates that a cylinder is sufficient to produce the observed 802 only if the 22-mm rice surface diameter is incorrectly treated as constant down to the bottom. It does not prove the internal wall is exactly linear; caliper or depth-profile measurement is required before deploying frustum geometry."
+}

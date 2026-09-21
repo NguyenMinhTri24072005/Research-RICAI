@@ -1,0 +1,39 @@
+{
+  "evidence_kind": "Inherited saved notebook output; arithmetic independently recomputed in this script",
+  "notebook": "CODE\\RICE_VISION_MAIN_PIPELINE.ipynb",
+  "image_name": "20260920_182343[1].jpg",
+  "actual_count_user_reported": 450.0,
+  "pixels_per_mm": 88.84,
+  "inner_diameter_px": 2905.0,
+  "outer_diameter_px": 3172.0,
+  "bulk_volume_mm3": 9655.37,
+  "surface_detections": 86.0,
+  "cnn_whole_count": 21.0,
+  "mean_grain_volume_mm3": 6.618,
+  "physical_packing_fraction": 0.55,
+  "physical_estimate": 802.0,
+  "regression_estimate": 212.0,
+  "mean_length_mm": 5.02,
+  "mean_width_mm": 1.72,
+  "formula_recomputed": 802,
+  "observed_overestimate_count": 352.0,
+  "observed_overestimate_pct": 78.22222222222221,
+  "mean_grain_volume_needed_for_450_same_bulk_phi": 11.801007777777778,
+  "mean_grain_volume_multiplier_needed": 1.7831682952217858,
+  "packing_fraction_needed_for_450_same_bulk_grain_volume": 0.3084397594292088,
+  "scale_ratio_needed_if_only_px_per_mm_is_wrong": 1.2124223999021606,
+  "implied_correct_pixels_per_mm_if_only_scale_is_wrong": 73.27479268542808,
+  "implied_length_mm_if_only_scale_is_wrong": 6.086360447508846,
+  "implied_width_mm_if_only_scale_is_wrong": 2.085366527831716,
+  "counterfactual_estimate_phi_0_62": 905,
+  "counterfactual_estimate_phi_0_82": 1196,
+  "candidate_attachment": {
+    "path": "C:\\Users\\NGUYEN~1\\AppData\\Local\\Temp\\codex-clipboard-f3867fab-7cfa-4119-96ff-868da9814eb9.png",
+    "sha256": "c2de416a45e19816011ba6b70b2aba0601a3aa553061326d17ae9cf96819f0e7",
+    "size_px": [
+      6120,
+      8160
+    ],
+    "raw_input_identity": "NOT VERIFIED: it contains drawn detections and current detector output did not match saved notebook scale"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "source": "DATASET_BUILDER/4_Final_Dataset/final_linear_regression_dataset.xlsx via historical_removed_rows.csv",
+  "implementation": "CODE/modules/container_detector.py",
+  "results": [
+    {
+      "sample_id": "M029c",
+      "historical_pixels_per_mm": 7.83,
+      "current_pixels_per_mm": 73.6343805413497,
+      "ratio_current_over_historical": 9.404135445893958,
+      "ratio_cubed": 831.6807063422339,
+      "outer_confidence": null,
+      "inner_confidence": 0.6754850088183422,
+      "detect_type": "direct_inner_contour",
+      "elapsed_seconds": 4.290540099958889
+    },
+    {
+      "sample_id": "M037e",
+      "historical_pixels_per_mm": 7.22,
+      "current_pixels_per_mm": 75.16692831349927,
+      "ratio_current_over_historical": 10.41093189937663,
+      "ratio_cubed": 1128.4149126165892,
+      "outer_confidence": 0.8667883211678832,
+      "inner_confidence": null,
+      "detect_type": "geometric_concentric_rim",
+      "elapsed_seconds": 2.977906400046777
+    },
+    {
+      "sample_id": "M038e",
+      "historical_pixels_per_mm": 7.18,
+      "current_pixels_per_mm": 80.41849961391715,
+      "ratio_current_over_historical": 11.200348135643058,
+      "ratio_cubed": 1405.0590144775047,
+      "outer_confidence": 0.48621553884711777,
+      "inner_confidence": null,
+      "detect_type": "geometric_concentric_rim",
+      "elapsed_seconds": 4.040507099998649
+    }
+  ]
+}

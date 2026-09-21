@@ -1,0 +1,662 @@
+{
+  "dataset": "DATASET_BUILDER\\4_Final_Dataset\\final_linear_regression_dataset.csv",
+  "production_resolution": {
+    "settings_directory": "LINEAR_REGRESSION_MODEL\\models",
+    "model_file_layout": "legacy best_tree_ensemble_model.joblib",
+    "is_legacy": true,
+    "model_class": "ExtraTreesRegressor",
+    "scaler_class": "StandardScaler",
+    "model_params": {
+      "bootstrap": false,
+      "ccp_alpha": 0.0,
+      "criterion": "squared_error",
+      "max_depth": null,
+      "max_features": 1.0,
+      "max_leaf_nodes": null,
+      "max_samples": null,
+      "min_impurity_decrease": 0.0,
+      "min_samples_leaf": 1,
+      "min_samples_split": 2,
+      "min_weight_fraction_leaf": 0.0,
+      "monotonic_cst": null,
+      "n_estimators": 100,
+      "n_jobs": null,
+      "oob_score": false,
+      "random_state": 42,
+      "verbose": 0,
+      "warm_start": false
+    },
+    "load_warnings": [
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreeRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator ExtraTreesRegressor from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "LEGACY_LAYOUT: Đang nạp mô hình qua adapter tương thích legacy (best_tree_ensemble_model.joblib)."
+    ],
+    "manifest_reported_metrics": {
+      "r2_test": 0.9999,
+      "mae_test": 0.45,
+      "mape_test": 0.34
+    },
+    "reconstructed_row_holdout_metrics": {
+      "n": 49,
+      "mae": 0.3408163265306123,
+      "rmse": 0.9505100671508451,
+      "bias_pred_minus_actual": 0.018367346938775335,
+      "mape_pct": 0.255166030459444,
+      "r2": 0.9998675724184244
+    }
+  },
+  "feature_importances_actual_loaded_model": [
+    {
+      "feature": "Container_Height_mm",
+      "importance": 0.31952183560367814,
+      "percentage": 31.952183560367814
+    },
+    {
+      "feature": "Inner_Diameter_mm",
+      "importance": 0.2799553729162287,
+      "percentage": 27.995537291622867
+    },
+    {
+      "feature": "Weight_g",
+      "importance": 0.15939158052048732,
+      "percentage": 15.939158052048732
+    },
+    {
+      "feature": "Bulk_Rice_Volume_mm3",
+      "importance": 0.1415316501712784,
+      "percentage": 14.153165017127838
+    },
+    {
+      "feature": "Rice_Height_mm",
+      "importance": 0.055127965610431776,
+      "percentage": 5.512796561043178
+    },
+    {
+      "feature": "Empty_Height_mm",
+      "importance": 0.043693407977718514,
+      "percentage": 4.3693407977718515
+    },
+    {
+      "feature": "Container_Detected_Diam_px",
+      "importance": 0.00030457252128367115,
+      "percentage": 0.030457252128367116
+    },
+    {
+      "feature": "Pixels_Per_mm",
+      "importance": 0.00026985225292464423,
+      "percentage": 0.026985225292464422
+    },
+    {
+      "feature": "Estimated_Total_Seeds_Hybrid",
+      "importance": 4.715259863867164e-05,
+      "percentage": 0.004715259863867164
+    },
+    {
+      "feature": "Whole_Grains_Count",
+      "importance": 1.9099211290950588e-05,
+      "percentage": 0.0019099211290950588
+    },
+    {
+      "feature": "Grain_Width_mm_Std",
+      "importance": 1.2405516702220836e-05,
+      "percentage": 0.0012405516702220837
+    },
+    {
+      "feature": "Grain_Volume_mm3_Min",
+      "importance": 1.2100577042466469e-05,
+      "percentage": 0.001210057704246647
+    },
+    {
+      "feature": "Grain_Length_mm_Std",
+      "importance": 1.067058188760031e-05,
+      "percentage": 0.0010670581887600311
+    },
+    {
+      "feature": "Grain_Area_mm2_Min",
+      "importance": 1.0128430566683487e-05,
+      "percentage": 0.0010128430566683486
+    },
+    {
+      "feature": "Grain_Volume_mm3_Max",
+      "importance": 9.23698111944746e-06,
+      "percentage": 0.0009236981119447459
+    },
+    {
+      "feature": "Grain_Length_mm_Max",
+      "importance": 9.143881722753522e-06,
+      "percentage": 0.0009143881722753522
+    },
+    {
+      "feature": "Grain_Length_mm_Mean",
+      "importance": 8.742550859054323e-06,
+      "percentage": 0.0008742550859054323
+    },
+    {
+      "feature": "Grain_Thickness_mm_Max",
+      "importance": 8.084037465781243e-06,
+      "percentage": 0.0008084037465781243
+    },
+    {
+      "feature": "Grain_Thickness_mm_Std",
+      "importance": 6.173434845567156e-06,
+      "percentage": 0.0006173434845567155
+    },
+    {
+      "feature": "Grain_Volume_mm3_Mean",
+      "importance": 5.2972906563621736e-06,
+      "percentage": 0.0005297290656362173
+    },
+    {
+      "feature": "Grain_Area_mm2_Max",
+      "importance": 5.247967652113226e-06,
+      "percentage": 0.0005247967652113226
+    },
+    {
+      "feature": "Grain_Thickness_mm_Min",
+      "importance": 5.066659453605067e-06,
+      "percentage": 0.0005066659453605068
+    },
+    {
+      "feature": "Grain_Thickness_mm_Mean",
+      "importance": 5.054095038783451e-06,
+      "percentage": 0.000505409503878345
+    },
+    {
+      "feature": "Grain_Area_mm2_Std",
+      "importance": 4.907929058113558e-06,
+      "percentage": 0.0004907929058113558
+    },
+    {
+      "feature": "Grain_Area_mm2_Mean",
+      "importance": 4.864021913153549e-06,
+      "percentage": 0.00048640219131535487
+    },
+    {
+      "feature": "Grain_Width_mm_Max",
+      "importance": 4.642950522629063e-06,
+      "percentage": 0.0004642950522629063
+    },
+    {
+      "feature": "Grain_Length_mm_Min",
+      "importance": 4.465375984692939e-06,
+      "percentage": 0.00044653759846929387
+    },
+    {
+      "feature": "Grain_Width_mm_Mean",
+      "importance": 3.941198174828792e-06,
+      "percentage": 0.0003941198174828792
+    },
+    {
+      "feature": "Grain_Width_mm_Min",
+      "importance": 3.6245638299035664e-06,
+      "percentage": 0.00036245638299035665
+    },
+    {
+      "feature": "Grain_Volume_mm3_Std",
+      "importance": 2.6293996853467353e-06,
+      "percentage": 0.00026293996853467353
+    },
+    {
+      "feature": "Uniformity_Rate_Pct",
+      "importance": 1.0831718580215623e-06,
+      "percentage": 0.00010831718580215624
+    }
+  ],
+  "feature_importance_sums": {
+    "container_first_8_pct": 99.97962375740312,
+    "surface_features_8_to_10_pct": 0.006733498178764378,
+    "grain_morphology_last_20_pct": 0.01364274441811069
+  },
+  "row_split_temporary_models": {
+    "full_31": {
+      "n": 49,
+      "mae": 0.8408163265306128,
+      "rmse": 2.6453270312082044,
+      "bias_pred_minus_actual": -0.6693877551020408,
+      "mape_pct": 0.6913322405922546,
+      "r2": 0.9989742919935289
+    },
+    "baseline_container_8": {
+      "n": 49,
+      "mae": 0.6683673469387752,
+      "rmse": 2.690980778641945,
+      "bias_pred_minus_actual": -0.6438775510204087,
+      "mape_pct": 0.4858956646768915,
+      "r2": 0.9989385826134733
+    },
+    "weight_only": {
+      "n": 49,
+      "mae": 0.4448979591836737,
+      "rmse": 2.2021325471238207,
+      "bias_pred_minus_actual": -0.4448979591836737,
+      "mape_pct": 0.31778425655976694,
+      "r2": 0.9992891926375874
+    },
+    "baseline_features": [
+      "Bulk_Rice_Volume_mm3",
+      "Rice_Height_mm",
+      "Weight_g",
+      "Empty_Height_mm",
+      "Pixels_Per_mm",
+      "Container_Detected_Diam_px",
+      "Inner_Diameter_mm",
+      "Container_Height_mm"
+    ]
+  },
+  "grouped_5fold_temporary_models": {
+    "full_31": {
+      "n": 245,
+      "mae": 3.134081632653061,
+      "rmse": 4.824724799173016,
+      "bias_pred_minus_actual": 0.4063265306122443,
+      "mape_pct": 3.3335081353870937,
+      "r2": 0.9969642615126657
+    },
+    "baseline_container_8": {
+      "n": 245,
+      "mae": 3.0622448979591836,
+      "rmse": 4.757791676046047,
+      "bias_pred_minus_actual": 0.4083673469387743,
+      "mape_pct": 3.2349737932750435,
+      "r2": 0.9970479065016694
+    },
+    "weight_only": {
+      "n": 245,
+      "mae": 2.7157142857142853,
+      "rmse": 4.365620558081388,
+      "bias_pred_minus_actual": 0.32306122448979724,
+      "mape_pct": 2.876559325835297,
+      "r2": 0.997514514489042
+    },
+    "paired_group_bootstrap": {
+      "definition": "baseline absolute error minus full-model absolute error; positive favors 31 features",
+      "n_physical_groups": 57,
+      "mean_mae_improvement_seeds": -0.0507748538011695,
+      "bootstrap_95pct_ci": [
+        -0.2105778508771938,
+        0.11541118421052564
+      ],
+      "ci_excludes_zero": false,
+      "bootstrap_resamples": 10000,
+      "seed": 20260921
+    },
+    "folds": [
+      {
+        "fold": 1,
+        "train_groups": 46,
+        "test_groups": 11,
+        "overlap": [],
+        "full_31": {
+          "n": 49,
+          "mae": 3.409183673469389,
+          "rmse": 4.598086336638719,
+          "bias_pred_minus_actual": 0.880612244897959,
+          "mape_pct": 2.7404730063578064,
+          "r2": 0.9974578066821413
+        },
+        "baseline_container_8": {
+          "n": 49,
+          "mae": 3.3489795918367316,
+          "rmse": 4.635290537533426,
+          "bias_pred_minus_actual": 1.291836734693872,
+          "mape_pct": 2.8565518143867967,
+          "r2": 0.9974165012782856
+        },
+        "weight_only": {
+          "n": 49,
+          "mae": 2.7265306122448933,
+          "rmse": 3.7723213229078576,
+          "bias_pred_minus_actual": -0.01020408163265792,
+          "mape_pct": 2.103451726425345,
+          "r2": 0.9982889145964949
+        }
+      },
+      {
+        "fold": 2,
+        "train_groups": 46,
+        "test_groups": 11,
+        "overlap": [],
+        "full_31": {
+          "n": 49,
+          "mae": 4.333673469387759,
+          "rmse": 6.61162010464631,
+          "bias_pred_minus_actual": 0.7989795918367348,
+          "mape_pct": 4.245151513359487,
+          "r2": 0.994209506857704
+        },
+        "baseline_container_8": {
+          "n": 49,
+          "mae": 4.0897959183673445,
+          "rmse": 6.453491382221577,
+          "bias_pred_minus_actual": 0.7204081632653048,
+          "mape_pct": 3.973020305300803,
+          "r2": 0.9944831746259434
+        },
+        "weight_only": {
+          "n": 49,
+          "mae": 3.6867346938775536,
+          "rmse": 5.971176515527894,
+          "bias_pred_minus_actual": 1.5438775510204106,
+          "mape_pct": 3.810010566400019,
+          "r2": 0.9952769821412808
+        }
+      },
+      {
+        "fold": 3,
+        "train_groups": 46,
+        "test_groups": 11,
+        "overlap": [],
+        "full_31": {
+          "n": 49,
+          "mae": 2.285714285714285,
+          "rmse": 3.476920993039204,
+          "bias_pred_minus_actual": 1.0408163265306152,
+          "mape_pct": 4.060673147755892,
+          "r2": 0.9985753413092828
+        },
+        "baseline_container_8": {
+          "n": 49,
+          "mae": 2.397959183673471,
+          "rmse": 3.6239424917723877,
+          "bias_pred_minus_actual": 0.54897959183674,
+          "mape_pct": 3.989684788492827,
+          "r2": 0.9984523106939076
+        },
+        "weight_only": {
+          "n": 49,
+          "mae": 2.2306122448979613,
+          "rmse": 3.43163553556895,
+          "bias_pred_minus_actual": 0.8306122448979617,
+          "mape_pct": 3.453249310145096,
+          "r2": 0.9986122108104791
+        }
+      },
+      {
+        "fold": 4,
+        "train_groups": 45,
+        "test_groups": 12,
+        "overlap": [],
+        "full_31": {
+          "n": 49,
+          "mae": 2.880612244897954,
+          "rmse": 4.719623601387665,
+          "bias_pred_minus_actual": 1.1132653061224433,
+          "mape_pct": 2.4433820026837685,
+          "r2": 0.9965078627419612
+        },
+        "baseline_container_8": {
+          "n": 49,
+          "mae": 2.886734693877552,
+          "rmse": 4.636253545566238,
+          "bias_pred_minus_actual": 0.8234693877551009,
+          "mape_pct": 2.582740680743639,
+          "r2": 0.9966301471764518
+        },
+        "weight_only": {
+          "n": 49,
+          "mae": 2.791836734693877,
+          "rmse": 4.751047145587153,
+          "bias_pred_minus_actual": -0.26530612244897844,
+          "mape_pct": 2.7014436744200143,
+          "r2": 0.9964612062070068
+        }
+      },
+      {
+        "fold": 5,
+        "train_groups": 45,
+        "test_groups": 12,
+        "overlap": [],
+        "full_31": {
+          "n": 49,
+          "mae": 2.7612244897959197,
+          "rmse": 4.143682183857291,
+          "bias_pred_minus_actual": -1.802040816326531,
+          "mape_pct": 3.1778610067785165,
+          "r2": 0.9976446388577828
+        },
+        "baseline_container_8": {
+          "n": 49,
+          "mae": 2.5877551020408185,
+          "rmse": 3.9270386620278184,
+          "bias_pred_minus_actual": -1.3428571428571465,
+          "mape_pct": 2.7728713774511515,
+          "r2": 0.997884490481523
+        },
+        "weight_only": {
+          "n": 49,
+          "mae": 2.1428571428571423,
+          "rmse": 3.325550437790068,
+          "bias_pred_minus_actual": -0.48367346938774997,
+          "mape_pct": 2.314641351786009,
+          "r2": 0.9984829087346024
+        }
+      }
+    ]
+  },
+  "packing_fraction_reproduction": {
+    "holdout_source": "LINEAR_REGRESSION_MODEL/models/extra_trees/predictions_test.csv",
+    "join_method": "Sample_ID because current dataset row offsets drifted",
+    "saved_source_row_id_matches_current_position": 25,
+    "saved_holdout_rows": 51,
+    "phi_0_82": {
+      "n": 51,
+      "mae": 77.13725490196079,
+      "rmse": 86.84649518253569,
+      "bias_pred_minus_actual": 44.86274509803921,
+      "mape_pct": 57.01225298617912,
+      "r2": -0.2511317391429131
+    },
+    "phi_0_62": {
+      "n": 51,
+      "mae": 47.23529411764706,
+      "rmse": 64.3737554610329,
+      "bias_pred_minus_actual": -6.450980392156863,
+      "mape_pct": 32.203146835267106,
+      "r2": 0.31258953370089626
+    },
+    "phi_0_55": {
+      "n": 51,
+      "mae": 46.431372549019606,
+      "rmse": 66.5081448646204,
+      "bias_pred_minus_actual": -24.352941176470587,
+      "mape_pct": 27.946234727832987,
+      "r2": 0.26624999601399235
+    }
+  },
+  "data_quality": {
+    "raw_rows": 276,
+    "complete_31_feature_rows": 245,
+    "missing_image_rows": 31,
+    "duplicate_sample_ids": {},
+    "complete_rows_whole_grains_lt_8": 99,
+    "thickness_gt_width": {
+      "rows": 245,
+      "denominator": 245,
+      "percentage": 100.0,
+      "median_thickness_to_width_ratio": 2.6905829596412554
+    },
+    "weight_actual_pearson": 0.9986378948251948,
+    "effective_phi_quantiles": {
+      "0.0": 0.21729441420377746,
+      "0.1": 0.3975796233302706,
+      "0.25": 0.45218938460776864,
+      "0.5": 0.5397529375048558,
+      "0.75": 0.6585293040715952,
+      "0.9": 1.227030338124685,
+      "1.0": 9.072120747688935
+    },
+    "cup_types": [
+      {
+        "inner_diameter_mm": 17.8,
+        "container_height_mm": 33.9,
+        "rows": 121,
+        "actual_count_min": 25.0,
+        "actual_count_max": 145.0
+      },
+      {
+        "inner_diameter_mm": 22.8,
+        "container_height_mm": 37.1,
+        "rows": 124,
+        "actual_count_min": 150.0,
+        "actual_count_max": 305.0
+      }
+    ],
+    "actual_count_range_overlap_width": 0.0,
+    "independent_GroupShuffleSplit": {
+      "train_rows": 194,
+      "test_rows": 51,
+      "train_groups": 45,
+      "test_groups": 12,
+      "overlap_groups": []
+    },
+    "saved_grouped_artifact_split": {
+      "train_rows": 203,
+      "test_rows": 51,
+      "train_groups": 45,
+      "test_groups": 12,
+      "overlap_groups": []
+    },
+    "production_legacy_row_split": {
+      "train_rows": 196,
+      "test_rows": 49,
+      "train_groups": 56,
+      "test_groups": 33,
+      "overlap_group_count": 32,
+      "overlap_groups": [
+        "M002",
+        "M003",
+        "M004",
+        "M005",
+        "M006",
+        "M007",
+        "M008",
+        "M010",
+        "M013",
+        "M014",
+        "M015",
+        "M016",
+        "M017",
+        "M020",
+        "M021",
+        "M023",
+        "M024",
+        "M027",
+        "M028",
+        "M033",
+        "M034",
+        "M036",
+        "M038",
+        "M040",
+        "M043",
+        "M044",
+        "M047",
+        "M048",
+        "M050",
+        "M051",
+        "M052",
+        "M057"
+      ]
+    }
+  }
+}
