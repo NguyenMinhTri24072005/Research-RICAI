@@ -1,0 +1,17 @@
+{
+  "known_ellipse_diameter_px": [
+    80,
+    24
+  ],
+  "pixels_per_mm": 10,
+  "measured": {
+    "length_mm": 8.21606903076172,
+    "width_mm": 2.594895935058594,
+    "thickness_mm": 6.983658676147461,
+    "volume_mm3": 77.95889105541143,
+    "k_factor": 0.85
+  },
+  "scale_increase_10pct_volume_ratio": 0.7513148009015778,
+  "scale_increase_10pct_count_ratio_fixed_bulk": 1.331,
+  "note": "Synthetic calculation, not measured biological thickness or accuracy."
+}

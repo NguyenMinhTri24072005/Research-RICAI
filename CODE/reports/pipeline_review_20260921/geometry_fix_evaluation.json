@@ -1,0 +1,22 @@
+{
+  "n_clean_rows": 246,
+  "formula_change": "c = 0.85 * a_px (length) -> c = 0.80 * b_px (width)",
+  "scores": {
+    "phi_082": {
+      "old_mae": 83.9,
+      "new_mae": 561.33,
+      "improvement_pct": -569.0,
+      "old_bias": 52.44,
+      "new_bias": 559.06
+    },
+    "phi_062": {
+      "old_mae": 47.4,
+      "new_mae": 388.41,
+      "improvement_pct": -719.4,
+      "old_bias": -0.04,
+      "new_bias": 383.05
+    }
+  },
+  "volume_ratio_mean": 0.3025,
+  "sanity_thickness_lt_width": true
+}

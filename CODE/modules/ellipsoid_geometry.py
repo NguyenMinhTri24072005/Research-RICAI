@@ -24,9 +24,9 @@ import numpy as np
 
 
 THICKNESS_RATIO = {
-    "hat_nguyen": 0.85,
-    "hat_khuyet_tat": 1.0,
-    "undefined": 0.55,
+    "hat_nguyen": 1,      # Đo thực tế bằng thước kẹp: dày ≈ 80% chiều rộng
+    "hat_khuyet_tat": 0.90,
+    "undefined": 0.50,
 }
 
 
@@ -125,9 +125,11 @@ def compute_single_grain_metrics(
         ellipse_params = ((cx, cy), (a_px * 2, b_px * 2), 0.0)
         fit_method = "BoundingFallback"
 
-    # 5. Tính bán trục c và Thể tích 3D Ellipsoid
+    # 5. Tính bán trục c (chiều dày) và Thể tích 3D Ellipsoid
+    #    Chiều dày hạt lúa tỷ lệ với chiều RỘNG (b_px), không phải chiều DÀI (a_px).
+    #    Hạt lúa: a > b > c (dài > rộng > dày). k=0.80 đo thực tế bằng thước kẹp.
     k = thickness_k if thickness_k is not None else THICKNESS_RATIO.get(label, 1.0)
-    c_px = a_px * k
+    c_px = b_px * k
     vol_px3 = (4.0 / 3.0) * math.pi * a_px * b_px * c_px
 
     # 6. Quy đổi sang kích thước thực tế (mm, mm², mm³)

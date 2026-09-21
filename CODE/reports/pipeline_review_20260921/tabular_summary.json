@@ -1,0 +1,315 @@
+{
+  "dataset": "DATASET_BUILDER\\4_Final_Dataset\\final_linear_regression_dataset.csv",
+  "n_total": 285,
+  "n_valid": 254,
+  "n_invalid": 31,
+  "n_features": 31,
+  "versions": {
+    "numpy": "2.0.2",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.9.1",
+    "joblib": "1.6.0"
+  },
+  "inference_ms": 76.56384999863803,
+  "pipeline_max_diff": 0.0,
+  "holdout_prediction_max_diff": 0.0,
+  "saved_train_rows": 203,
+  "saved_test_rows": 51,
+  "train_groups": 45,
+  "test_groups": 12,
+  "overlap_groups": [],
+  "dataset_summary": {
+    "Actual_Count": {
+      "count": 254.0,
+      "mean": 163.0905511811,
+      "std": 86.6891889655,
+      "min": 25.0,
+      "25%": 85.0,
+      "50%": 157.5,
+      "75%": 245.0,
+      "max": 305.0
+    },
+    "Weight_g": {
+      "count": 254.0,
+      "mean": 4.3256299213,
+      "std": 2.2940042569,
+      "min": 0.6,
+      "25%": 2.34,
+      "50%": 4.13,
+      "75%": 6.46,
+      "max": 8.08
+    },
+    "Inner_Diameter_mm": {
+      "count": 254.0,
+      "mean": 20.3984251969,
+      "std": 2.502993757,
+      "min": 17.8,
+      "25%": 17.8,
+      "50%": 22.8,
+      "75%": 22.8,
+      "max": 22.8
+    },
+    "Container_Height_mm": {
+      "count": 254.0,
+      "mean": 35.562992126,
+      "std": 1.6019160045,
+      "min": 33.9,
+      "25%": 33.9,
+      "50%": 37.1,
+      "75%": 37.1,
+      "max": 37.1
+    },
+    "Whole_Grains_Count": {
+      "count": 254.0,
+      "mean": 8.7007874016,
+      "std": 3.837231711,
+      "min": 1.0,
+      "25%": 6.0,
+      "50%": 9.0,
+      "75%": 11.75,
+      "max": 18.0
+    },
+    "Grain_Length_mm_Mean": {
+      "count": 254.0,
+      "mean": 7.5441141732,
+      "std": 8.0984594533,
+      "min": 4.019,
+      "25%": 5.4315,
+      "50%": 5.8335,
+      "75%": 6.32725,
+      "max": 62.791
+    },
+    "Grain_Width_mm_Mean": {
+      "count": 254.0,
+      "mean": 2.4109173228,
+      "std": 2.5734588014,
+      "min": 1.506,
+      "25%": 1.749,
+      "50%": 1.84,
+      "75%": 1.98,
+      "max": 19.538
+    },
+    "Grain_Thickness_mm_Mean": {
+      "count": 254.0,
+      "mean": 6.4125472441,
+      "std": 6.8837307822,
+      "min": 3.416,
+      "25%": 4.6165,
+      "50%": 4.9585,
+      "75%": 5.3785,
+      "max": 53.373
+    },
+    "Grain_Volume_mm3_Mean": {
+      "count": 254.0,
+      "mean": 688.3657401575,
+      "std": 3800.0491839963,
+      "min": 11.896,
+      "25%": 24.44225,
+      "50%": 28.856,
+      "75%": 35.626,
+      "max": 31932.161
+    }
+  },
+  "feature_importances": [
+    [
+      "Container_Height_mm",
+      0.3288385462011121
+    ],
+    [
+      "Inner_Diameter_mm",
+      0.2725936798349838
+    ],
+    [
+      "Weight_g",
+      0.15613804448148086
+    ],
+    [
+      "Bulk_Rice_Volume_mm3",
+      0.14812269167398004
+    ],
+    [
+      "Rice_Height_mm",
+      0.050037273192755645
+    ],
+    [
+      "Empty_Height_mm",
+      0.043147015615340595
+    ],
+    [
+      "Whole_Grains_Count",
+      0.0004998760121879653
+    ],
+    [
+      "Pixels_Per_mm",
+      0.0002941404378414754
+    ],
+    [
+      "Container_Detected_Diam_px",
+      0.00021763452731151511
+    ],
+    [
+      "Estimated_Total_Seeds_Hybrid",
+      7.66422274337281e-05
+    ],
+    [
+      "Grain_Length_mm_Max",
+      5.232219101096182e-06
+    ],
+    [
+      "Grain_Area_mm2_Mean",
+      4.766567030569534e-06
+    ],
+    [
+      "Grain_Volume_mm3_Mean",
+      4.327914141162069e-06
+    ],
+    [
+      "Grain_Area_mm2_Std",
+      4.244713192398343e-06
+    ],
+    [
+      "Grain_Length_mm_Mean",
+      3.124143692075858e-06
+    ],
+    [
+      "Grain_Volume_mm3_Max",
+      2.569345304093716e-06
+    ],
+    [
+      "Grain_Area_mm2_Min",
+      2.407486044793932e-06
+    ],
+    [
+      "Grain_Thickness_mm_Std",
+      1.711004863185445e-06
+    ],
+    [
+      "Grain_Thickness_mm_Mean",
+      1.344691390234727e-06
+    ],
+    [
+      "Grain_Thickness_mm_Max",
+      1.3387149840562103e-06
+    ],
+    [
+      "Grain_Area_mm2_Max",
+      1.2345014013125057e-06
+    ],
+    [
+      "Grain_Thickness_mm_Min",
+      6.536694258085289e-07
+    ],
+    [
+      "Grain_Width_mm_Mean",
+      5.856878055245063e-07
+    ],
+    [
+      "Grain_Width_mm_Max",
+      4.967887636144696e-07
+    ],
+    [
+      "Grain_Volume_mm3_Std",
+      3.137613243880957e-07
+    ],
+    [
+      "Grain_Width_mm_Std",
+      1.0458710812935001e-07
+    ],
+    [
+      "Uniformity_Rate_Pct",
+      0.0
+    ],
+    [
+      "Grain_Length_mm_Min",
+      0.0
+    ],
+    [
+      "Grain_Length_mm_Std",
+      0.0
+    ],
+    [
+      "Grain_Width_mm_Min",
+      0.0
+    ],
+    [
+      "Grain_Volume_mm3_Min",
+      0.0
+    ]
+  ],
+  "effective_phi_quantiles": {
+    "0.0": 0.21729441420377746,
+    "0.1": 0.39712643207760645,
+    "0.25": 0.4523491101209811,
+    "0.5": 0.5502652093458295,
+    "0.75": 0.6715290832879753,
+    "0.9": 1.7510733984071158,
+    "1.0": 611.9576856810854
+  },
+  "weight_count_corr": 0.9986443303907784,
+  "weight_per_seed_quantiles": {
+    "0.0": 0.02375,
+    "0.5": 0.026336477987421385,
+    "1.0": 0.03164705882352941
+  },
+  "thickness_length_ratio_median": 0.8500053190286214,
+  "thickness_greater_width_fraction": 1.0,
+  "scores": {
+    "all_mixed_not_validation": {
+      "regression_now": {
+        "n": 254,
+        "mae": 0.9889763779527562,
+        "rmse": 3.472170008356321,
+        "bias": 0.5433070866141734,
+        "mape_pct": 0.9207996079914453,
+        "median_ratio": 1.0
+      },
+      "physics_stored_mean_082": {
+        "n": 254,
+        "mae": 86.9251968503937,
+        "rmse": 102.24228211443886,
+        "bias": 45.12204724409449,
+        "mape_pct": 63.437852210502555,
+        "median_ratio": 1.4895238095238095
+      },
+      "physics_stored_mean_062": {
+        "n": 254,
+        "mae": 51.574803149606296,
+        "rmse": 74.81773127665545,
+        "bias": -5.700787401574803,
+        "mape_pct": 35.0124805869625,
+        "median_ratio": 1.1263492063492064
+      }
+    },
+    "saved_holdout": {
+      "regression_now": {
+        "n": 51,
+        "mae": 4.925490196078433,
+        "rmse": 7.748769668311804,
+        "bias": 2.705882352941177,
+        "mape_pct": 4.585943145682883,
+        "median_ratio": 1.008
+      },
+      "physics_stored_mean_082": {
+        "n": 51,
+        "mae": 77.13725490196079,
+        "rmse": 86.84649518253569,
+        "bias": 44.86274509803921,
+        "mape_pct": 57.01225298617912,
+        "median_ratio": 1.464
+      },
+      "physics_stored_mean_062": {
+        "n": 51,
+        "mae": 47.23529411764706,
+        "rmse": 64.3737554610329,
+        "bias": -6.450980392156863,
+        "mape_pct": 32.203146835267106,
+        "median_ratio": 1.1066666666666667
+      }
+    }
+  },
+  "selected_smoke_ids": [
+    "M014a",
+    "M031a",
+    "M056a"
+  ]
+}

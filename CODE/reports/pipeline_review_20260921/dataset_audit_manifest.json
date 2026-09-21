@@ -1,0 +1,377 @@
+{
+  "dataset": "DATASET_BUILDER\\4_Final_Dataset\\final_linear_regression_dataset.csv",
+  "total_rows": 285,
+  "flagged_rows": 41,
+  "rows_to_remove": 10,
+  "rows_to_flag": 31,
+  "clean_rows": 244,
+  "details": [
+    {
+      "sample_id": "M017d",
+      "row_index": 83,
+      "reasons": [
+        "DUPLICATE_ID (appears 2x)"
+      ],
+      "action": "REMOVE"
+    },
+    {
+      "sample_id": "M017d",
+      "row_index": 84,
+      "reasons": [
+        "DUPLICATE_ID (appears 2x)"
+      ],
+      "action": "REMOVE"
+    },
+    {
+      "sample_id": "M025c",
+      "row_index": 122,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M025d",
+      "row_index": 123,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M025e",
+      "row_index": 124,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M026c",
+      "row_index": 127,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M026d",
+      "row_index": 128,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M026e",
+      "row_index": 129,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M027c",
+      "row_index": 132,
+      "reasons": [
+        "SCALE_CORRUPTED (px/mm=7.43, expected ~70-80)",
+        "GRAIN_EXCEEDS_CUP (grain=50.5mm > cup=22.8mm)"
+      ],
+      "action": "REMOVE"
+    },
+    {
+      "sample_id": "M027d",
+      "row_index": 133,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M027e",
+      "row_index": 134,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M029a",
+      "row_index": 140,
+      "reasons": [
+        "SCALE_CORRUPTED (px/mm=8.01, expected ~70-80)",
+        "GRAIN_EXCEEDS_CUP (grain=50.0mm > cup=22.8mm)"
+      ],
+      "action": "REMOVE"
+    },
+    {
+      "sample_id": "M029c",
+      "row_index": 142,
+      "reasons": [
+        "SCALE_CORRUPTED (px/mm=7.83, expected ~70-80)",
+        "GRAIN_EXCEEDS_CUP (grain=52.5mm > cup=22.8mm)"
+      ],
+      "action": "REMOVE"
+    },
+    {
+      "sample_id": "M029d",
+      "row_index": 143,
+      "reasons": [
+        "SCALE_CORRUPTED (px/mm=8.72, expected ~70-80)",
+        "GRAIN_EXCEEDS_CUP (grain=46.6mm > cup=22.8mm)"
+      ],
+      "action": "REMOVE"
+    },
+    {
+      "sample_id": "M029e",
+      "row_index": 144,
+      "reasons": [
+        "SCALE_CORRUPTED (px/mm=7.83, expected ~70-80)",
+        "GRAIN_EXCEEDS_CUP (grain=50.8mm > cup=22.8mm)"
+      ],
+      "action": "REMOVE"
+    },
+    {
+      "sample_id": "M030c",
+      "row_index": 147,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M030d",
+      "row_index": 148,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M030e",
+      "row_index": 149,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M031c",
+      "row_index": 152,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M031d",
+      "row_index": 153,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M031e",
+      "row_index": 154,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M032c",
+      "row_index": 157,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M032d",
+      "row_index": 158,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M032e",
+      "row_index": 159,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M034c",
+      "row_index": 167,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M034d",
+      "row_index": 168,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M034e",
+      "row_index": 169,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M035c",
+      "row_index": 172,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M035d",
+      "row_index": 173,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M035e",
+      "row_index": 174,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M036c",
+      "row_index": 177,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M036d",
+      "row_index": 178,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M036e",
+      "row_index": 179,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M037e",
+      "row_index": 184,
+      "reasons": [
+        "SCALE_CORRUPTED (px/mm=7.22, expected ~70-80)",
+        "GRAIN_EXCEEDS_CUP (grain=62.8mm > cup=22.8mm)"
+      ],
+      "action": "REMOVE"
+    },
+    {
+      "sample_id": "M038c",
+      "row_index": 187,
+      "reasons": [
+        "SCALE_CORRUPTED (px/mm=9.86, expected ~70-80)",
+        "GRAIN_EXCEEDS_CUP (grain=40.7mm > cup=22.8mm)"
+      ],
+      "action": "REMOVE"
+    },
+    {
+      "sample_id": "M038e",
+      "row_index": 189,
+      "reasons": [
+        "SCALE_CORRUPTED (px/mm=7.18, expected ~70-80)",
+        "GRAIN_EXCEEDS_CUP (grain=57.5mm > cup=22.8mm)"
+      ],
+      "action": "REMOVE"
+    },
+    {
+      "sample_id": "M039b",
+      "row_index": 191,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M039c",
+      "row_index": 192,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M039d",
+      "row_index": 193,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M039e",
+      "row_index": 194,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    },
+    {
+      "sample_id": "M042e",
+      "row_index": 209,
+      "reasons": [
+        "MISSING_IMAGE",
+        "INCOMPLETE_FEATURES"
+      ],
+      "action": "FLAG"
+    }
+  ]
+}

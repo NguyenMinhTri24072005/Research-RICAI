@@ -1,0 +1,294 @@
+{
+  "rows": 285,
+  "complete_rows": 254,
+  "duplicate_ids": {
+    "M017D": 2
+  },
+  "duplicate_complete_ids": {
+    "M017D": 2
+  },
+  "missing_feature_counts": {
+    "Bulk_Rice_Volume_mm3": 31,
+    "Pixels_Per_mm": 31,
+    "Container_Detected_Diam_px": 31,
+    "Whole_Grains_Count": 31,
+    "Uniformity_Rate_Pct": 31,
+    "Estimated_Total_Seeds_Hybrid": 31,
+    "Grain_Length_mm_Mean": 31,
+    "Grain_Length_mm_Min": 31,
+    "Grain_Length_mm_Max": 31,
+    "Grain_Length_mm_Std": 31,
+    "Grain_Width_mm_Mean": 31,
+    "Grain_Width_mm_Min": 31,
+    "Grain_Width_mm_Max": 31,
+    "Grain_Width_mm_Std": 31,
+    "Grain_Thickness_mm_Mean": 31,
+    "Grain_Thickness_mm_Min": 31,
+    "Grain_Thickness_mm_Max": 31,
+    "Grain_Thickness_mm_Std": 31,
+    "Grain_Area_mm2_Mean": 31,
+    "Grain_Area_mm2_Min": 31,
+    "Grain_Area_mm2_Max": 31,
+    "Grain_Area_mm2_Std": 31,
+    "Grain_Volume_mm3_Mean": 31,
+    "Grain_Volume_mm3_Min": 31,
+    "Grain_Volume_mm3_Max": 31,
+    "Grain_Volume_mm3_Std": 31
+  },
+  "incomplete_rows": [
+    {
+      "sample_id": "M025c",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M025d",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M025e",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M026c",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M026d",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M026e",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M027d",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M027e",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M030c",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M030d",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M030e",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M031c",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M031d",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M031e",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M032c",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M032d",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M032e",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M034c",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M034d",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M034e",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M035c",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M035d",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M035e",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M036c",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M036d",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M036e",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M039b",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M039c",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M039d",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M039e",
+      "image_status": "MISSING",
+      "whole_count": ""
+    },
+    {
+      "sample_id": "M042e",
+      "image_status": "MISSING",
+      "whole_count": ""
+    }
+  ],
+  "cups": [
+    {
+      "diameter_mm": 17.8,
+      "height_mm": 33.9,
+      "n": 122,
+      "count_min": 25.0,
+      "count_max": 145.0
+    },
+    {
+      "diameter_mm": 22.8,
+      "height_mm": 37.1,
+      "n": 132,
+      "count_min": 150.0,
+      "count_max": 305.0
+    }
+  ],
+  "rows_with_fewer_than_8_whole_grains": 101,
+  "mean_grain_length_exceeds_cup_diameter": [
+    {
+      "Sample_ID": "M027c",
+      "Pixels_Per_mm": "7.43",
+      "Inner_Diameter_mm": "22.8",
+      "Container_Detected_Diam_px": "170",
+      "Grain_Length_mm_Mean": "50.49",
+      "Grain_Width_mm_Mean": "15.934",
+      "Grain_Volume_mm3_Mean": "19075.549",
+      "Actual_Count": "155"
+    },
+    {
+      "Sample_ID": "M029a",
+      "Pixels_Per_mm": "8.01",
+      "Inner_Diameter_mm": "22.8",
+      "Container_Detected_Diam_px": "183",
+      "Grain_Length_mm_Mean": "49.972",
+      "Grain_Width_mm_Mean": "16.247",
+      "Grain_Volume_mm3_Mean": "18408.047",
+      "Actual_Count": "165"
+    },
+    {
+      "Sample_ID": "M029c",
+      "Pixels_Per_mm": "7.83",
+      "Inner_Diameter_mm": "22.8",
+      "Container_Detected_Diam_px": "178",
+      "Grain_Length_mm_Mean": "52.515",
+      "Grain_Width_mm_Mean": "16.623",
+      "Grain_Volume_mm3_Mean": "21460.557",
+      "Actual_Count": "165"
+    },
+    {
+      "Sample_ID": "M029d",
+      "Pixels_Per_mm": "8.72",
+      "Inner_Diameter_mm": "22.8",
+      "Container_Detected_Diam_px": "199",
+      "Grain_Length_mm_Mean": "46.607",
+      "Grain_Width_mm_Mean": "15.138",
+      "Grain_Volume_mm3_Mean": "15070.011",
+      "Actual_Count": "165"
+    },
+    {
+      "Sample_ID": "M029e",
+      "Pixels_Per_mm": "7.83",
+      "Inner_Diameter_mm": "22.8",
+      "Container_Detected_Diam_px": "178",
+      "Grain_Length_mm_Mean": "50.796",
+      "Grain_Width_mm_Mean": "16.79",
+      "Grain_Volume_mm3_Mean": "19672.801",
+      "Actual_Count": "165"
+    },
+    {
+      "Sample_ID": "M037e",
+      "Pixels_Per_mm": "7.22",
+      "Inner_Diameter_mm": "22.8",
+      "Container_Detected_Diam_px": "165",
+      "Grain_Length_mm_Mean": "62.791",
+      "Grain_Width_mm_Mean": "17.577",
+      "Grain_Volume_mm3_Mean": "31932.161",
+      "Actual_Count": "205"
+    },
+    {
+      "Sample_ID": "M038c",
+      "Pixels_Per_mm": "9.86",
+      "Inner_Diameter_mm": "22.8",
+      "Container_Detected_Diam_px": "225",
+      "Grain_Length_mm_Mean": "40.697",
+      "Grain_Width_mm_Mean": "12.974",
+      "Grain_Volume_mm3_Mean": "10159.378",
+      "Actual_Count": "210"
+    },
+    {
+      "Sample_ID": "M038e",
+      "Pixels_Per_mm": "7.18",
+      "Inner_Diameter_mm": "22.8",
+      "Container_Detected_Diam_px": "164",
+      "Grain_Length_mm_Mean": "57.457",
+      "Grain_Width_mm_Mean": "19.538",
+      "Grain_Volume_mm3_Mean": "29542.037",
+      "Actual_Count": "210"
+    }
+  ]
+}
