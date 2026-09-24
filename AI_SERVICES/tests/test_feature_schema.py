@@ -9,12 +9,13 @@ import sys
 import unittest
 from pathlib import Path
 
-# Thêm AI_SERVICES vào sys.path
+# Thêm AI_SERVICES/src vào sys.path để import rice_ai
 AI_SERVICES_DIR = Path(__file__).resolve().parent.parent
-if str(AI_SERVICES_DIR) not in sys.path:
-    sys.path.insert(0, str(AI_SERVICES_DIR))
+SRC_DIR = AI_SERVICES_DIR / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
 
-from feature_schema import (
+from rice_ai.estimation.feature_schema import (
     ALL_31_FEATURES,
     FEATURE_DEFS,
     FEATURE_SCHEMA_VERSION,

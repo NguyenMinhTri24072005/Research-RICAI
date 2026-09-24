@@ -127,6 +127,7 @@ function stopInlineCamera(showPlaceholder = true) {
   mediaStream = null;
   video.srcObject = null;
   video.classList.add("hidden");
+  document.getElementById("guidelineReticle")?.classList.add("hidden");
   startCameraButton.textContent = "BẬT CAMERA";
   takePhotoButton.disabled = true;
   switchCameraButton.disabled = true;
@@ -299,6 +300,7 @@ function showLiveCamera() {
   clearSelectedImage();
   previewEmpty.classList.add("hidden");
   video.classList.remove("hidden");
+  document.getElementById("guidelineReticle")?.classList.remove("hidden");
   takePhotoButton.disabled = false;
   switchCameraButton.disabled = false;
   aspectRatioSelect.disabled = false;
@@ -311,6 +313,7 @@ function showCapturedImage(file, message) {
   previewUrl = URL.createObjectURL(file);
   preview.src = previewUrl;
   video.classList.add("hidden");
+  document.getElementById("guidelineReticle")?.classList.add("hidden");
   previewEmpty.classList.add("hidden");
   preview.classList.remove("hidden");
   clearButton.classList.remove("hidden");
@@ -378,17 +381,43 @@ function renderResult(data) {
   const metrics = data.metrics_summary || {};
   
   document.getElementById("resFinal").textContent = est.final?.toLocaleString() || "0";
-  document.getElementById("resMethod").textContent = est.method_used?.includes("regression")
-    ? `Mô hình Hồi quy (${metrics.regression_model || "Extra Trees"})`
-    : (est.method_used === "hybrid" ? "Ước lượng Hybrid" : "Thể tích thuần AI");
   
-  document.getElementById("resReg").textContent = est.regression_est?.toLocaleString() || "—";
-  document.getElementById("resAi").textContent = est.ai_est?.toLocaleString() || "—";
+  // Method indicator
+  const methodUsed = est.method_used || "";
+  const modelName = est.model_bundle || metrics.regression_model || "Machine Learning";
+  if (methodUsed.includes("hybrid")) {
+    document.getElementById("resMethod").textContent = "Ước lượng Hybrid (Hồi quy ML + Cân mẫu)";
+    document.getElementById("resMethod").style.background = "#dbeafe";
+    document.getElementById("resMethod").style.color = "#1e40af";
+  } else if (methodUsed.includes("regression")) {
+    document.getElementById("resMethod").textContent = `Mô hình Hồi quy (${modelName})`;
+    document.getElementById("resMethod").style.background = "#dcfce7";
+    document.getElementById("resMethod").style.color = "#15803d";
+  } else if (methodUsed.includes("weight")) {
+    document.getElementById("resMethod").textContent = "Ước lượng Cân mẫu";
+    document.getElementById("resMethod").style.background = "#fef08a";
+    document.getElementById("resMethod").style.color = "#854d0e";
+  } else {
+    document.getElementById("resMethod").textContent = "Hình học Thể tích 3D";
+    document.getElementById("resMethod").style.background = "#f1f5f9";
+    document.getElementById("resMethod").style.color = "#475569";
+  }
+  
+  document.getElementById("resReg").textContent = est.regression_est != null ? est.regression_est.toLocaleString() : "—";
+  if (document.getElementById("resWeight")) {
+    document.getElementById("resWeight").textContent = est.weight_est != null ? est.weight_est.toLocaleString() : "—";
+  }
+  document.getElementById("resAi").textContent = est.ai_est != null ? est.ai_est.toLocaleString() : "—";
   document.getElementById("resDetected").textContent = metrics.total_grains_detected ?? "—";
   document.getElementById("resUniformity").textContent = metrics.uniformity_rate_pct != null ? metrics.uniformity_rate_pct.toFixed(1) : "—";
   
   resultCard.classList.remove("hidden");
   resultCard.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  // Rung haptic phan hoi tren dien thoai
+  if (navigator.vibrate) {
+    try { navigator.vibrate([40, 60, 40]); } catch (_) {}
+  }
 }
 
 // Gui anh va thong so len may tinh xu ly

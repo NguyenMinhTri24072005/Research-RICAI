@@ -118,6 +118,7 @@ class PredictResponse:
     timings_ms: Optional[TimingInfo] = None
     error: Optional[ErrorDetail] = None
     debug_info: Optional[Dict[str, Any]] = None
+    artifacts: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {"status": self.status}
@@ -141,6 +142,8 @@ class PredictResponse:
             d["error"] = self.error.to_dict()
         if self.debug_info is not None:
             d["debug_info"] = self.debug_info
+        if self.artifacts is not None:
+            d["artifacts"] = self.artifacts
         return d
 
 

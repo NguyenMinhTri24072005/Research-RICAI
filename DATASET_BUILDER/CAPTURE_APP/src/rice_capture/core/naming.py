@@ -7,7 +7,7 @@ from dataclasses import dataclass
 class NamingConfig:
     prefix: str = "M"
     sample_number: int = 1
-    sample_digits: int = 3
+    sample_digits: int = 4
 
     def validate(self) -> None:
         self.prefix = self.prefix.strip().upper()
@@ -15,12 +15,12 @@ class NamingConfig:
             raise ValueError("Tiền tố ảnh được cố định là M.")
         if self.sample_number < 1:
             raise ValueError("Số thứ tự ảnh phải từ 1 trở lên.")
-        if not 1 <= self.sample_digits <= 8:
-            raise ValueError("Số chữ số sau M phải nằm trong khoảng 1-8.")
+        if self.sample_digits != 4:
+            raise ValueError("Số chữ số sau M được cố định là 4 (M0001, M0002, ...).")
         if self.sample_number >= 10**self.sample_digits:
             raise ValueError(
                 f"Số {self.sample_number} không vừa {self.sample_digits} chữ số. "
-                "Hãy tăng số chữ số sau M."
+                "Kho mã hợp lệ hiện tại là M0001-M9999."
             )
 
     @property

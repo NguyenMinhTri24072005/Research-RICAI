@@ -41,6 +41,8 @@ const localEnvPath = path.resolve(__dirname, '.env');
 const envConfig = { ...loadEnvConfig(rootEnvPath), ...loadEnvConfig(localEnvPath) };
 
 // URL máy chủ AI: Tự động ưu tiên NGROK_DOMAIN -> AI_SERVER_URL -> localhost:8000
+const AI_REQUEST_TIMEOUT_MS = Number(process.env.AI_REQUEST_TIMEOUT_MS || envConfig.AI_REQUEST_TIMEOUT_MS || 300000);
+
 let COLAB_BASE_URL = process.env.AI_SERVER_URL 
     || (envConfig.NGROK_DOMAIN ? `https://${envConfig.NGROK_DOMAIN.replace(/^https?:\/\//, '')}` : null)
     || envConfig.AI_SERVER_URL 
@@ -78,6 +80,34 @@ app.post('/api/set-url', (req, res) => {
 });
 
 // [THÊM MỚI] Endpoint kiểm tra URL hiện tại đang dùng
+app.get('/api/results/:requestId/manifest', async (req, res) => {
+    try {
+        const target = `${COLAB_BASE_URL}/api/results/${encodeURIComponent(req.params.requestId)}/manifest`;
+        const response = await axios.get(target, { timeout: AI_REQUEST_TIMEOUT_MS, headers: { 'ngrok-skip-browser-warning': 'true' } });
+        res.status(response.status).json(response.data);
+    } catch (error) {
+        const status = error.response?.status || 502;
+        res.status(status).json(error.response?.data || { error: error.message });
+    }
+});
+
+app.get('/api/results/:requestId/download', async (req, res) => {
+    try {
+        const target = `${COLAB_BASE_URL}/api/results/${encodeURIComponent(req.params.requestId)}/download`;
+        const response = await axios.get(target, {
+            timeout: AI_REQUEST_TIMEOUT_MS,
+            responseType: 'stream',
+            headers: { 'ngrok-skip-browser-warning': 'true' },
+        });
+        res.status(response.status);
+        res.setHeader('Content-Type', response.headers['content-type'] || 'application/zip');
+        if (response.headers['content-disposition']) res.setHeader('Content-Disposition', response.headers['content-disposition']);
+        response.data.pipe(res);
+    } catch (error) {
+        const status = error.response?.status || 502;
+        res.status(status).json(error.response?.data || { error: error.message });
+    }
+});
 app.get('/api/status', (req, res) => {
     res.json({
         backend_running: true,
@@ -222,17 +252,22 @@ app.post('/api/predict', upload.any(), async (req, res) => {
         formData.append('diam',   req.body.diam);
         formData.append('height', req.body.height);
         formData.append('empty',  req.body.empty);
-        formData.append('wall_thickness', req.body.wall_thickness || 0.1);
-        formData.append('weight_total',   req.body.weight_total || 0);
-        formData.append('sample_count',   req.body.sample_count || 0);
-        formData.append('sample_weight',  req.body.sample_weight || 0);
+        formData.append('wall_thickness', req.body.wall_thickness === undefined || req.body.wall_thickness === '' ? 1.0 : req.body.wall_thickness);
+        const appendOptional = (name, value) => {
+            if (value !== undefined && value !== null && value !== '') formData.append(name, value);
+        };
+        appendOptional('weight_total', req.body.weight_total);
+        appendOptional('sample_count', req.body.sample_count);
+        appendOptional('sample_weight', req.body.sample_weight);
+        formData.append('estimator_mode', req.body.estimator_mode || 'auto');
+        formData.append('debug', req.body.debug || 'false');
 
         const targetUrl = `${COLAB_BASE_URL}/predict`;
         console.log(`🚀 Gửi request tới: ${targetUrl}`);
         console.log(`   diam=${req.body.diam} | height=${req.body.height} | empty=${req.body.empty}`);
 
         const response = await axios.post(targetUrl, formData, {
-            timeout: 120000,
+            timeout: AI_REQUEST_TIMEOUT_MS,
             headers: { ...formData.getHeaders(), 'ngrok-skip-browser-warning': 'true' },
         });
 
@@ -254,7 +289,7 @@ app.post('/api/predict', upload.any(), async (req, res) => {
         console.error("--- LỖI SERVER.JS ---");
 
         if (error.code === 'ECONNABORTED') {
-            console.error("Timeout: Colab không phản hồi trong 120s");
+            console.error("Timeout: Colab không phản hồi trong thời gian cấu hình");
             const errObj = { error: "AI Server timeout (>120s). Kiểm tra Colab còn chạy không." };
             broadcastToDashboard({ type: 'error', error: errObj });
             return res.status(504).json(errObj);

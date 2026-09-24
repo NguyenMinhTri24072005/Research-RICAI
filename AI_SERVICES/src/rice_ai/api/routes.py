@@ -3,12 +3,17 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import json
 import uuid
+import re
+import tempfile
+import zipfile
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 import numpy as np
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 
 from rice_ai.api.schemas import (
     ComponentInfo,
@@ -152,6 +157,37 @@ async def get_system_status(
     return response.to_dict()
 
 
+def _resolve_result_directory(settings: Any, request_id: str) -> Path:
+    if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", request_id):
+        raise HTTPException(status_code=400, detail="request_id không hợp lệ")
+    root = settings.get_results_root().resolve()
+    directory = (root / request_id).resolve()
+    if root not in directory.parents:
+        raise HTTPException(status_code=400, detail="Đường dẫn artifact không hợp lệ")
+    if not (directory / "COMPLETED").is_file():
+        raise HTTPException(status_code=404, detail="Không tìm thấy artifact hoàn tất cho request_id")
+    return directory
+
+
+@router.get("/api/results/{request_id}/manifest")
+async def get_result_manifest(request: Request, request_id: str):
+    directory = _resolve_result_directory(request.app.state.settings, request_id)
+    manifest_path = directory / "reports" / "artifact_manifest.json"
+    if not manifest_path.is_file():
+        raise HTTPException(status_code=404, detail="Thiếu artifact_manifest.json")
+    return json.loads(manifest_path.read_text(encoding="utf-8"))
+
+
+@router.get("/api/results/{request_id}/download")
+async def download_result_bundle(request: Request, request_id: str):
+    directory = _resolve_result_directory(request.app.state.settings, request_id)
+    archive_path = directory.parent / f"{request_id}.zip"
+    with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        for file_path in directory.rglob("*"):
+            if file_path.is_file():
+                archive.write(file_path, file_path.relative_to(directory))
+    return FileResponse(archive_path, media_type="application/zip", filename=f"rice_ai_{request_id}.zip")
+
 @router.post("/predict")
 async def predict(
     request: Request,
@@ -159,7 +195,7 @@ async def predict(
     diam: float = Form(...),
     height: float = Form(...),
     empty: float = Form(...),
-    wall_thickness: float = Form(0.1),
+    wall_thickness: float = Form(1.0),
     weight_total: Optional[float] = Form(None),
     sample_weight: Optional[float] = Form(None),
     sample_count: Optional[int] = Form(None),
@@ -203,7 +239,7 @@ async def predict(
             diam=float(diam),
             height=float(height),
             empty=float(empty),
-            wall_thickness=float(wall_thickness) if wall_thickness is not None else 0.1,
+            wall_thickness=float(wall_thickness) if wall_thickness is not None else 1.0,
             weight_total=parsed_weight,
             sample_weight=parsed_s_weight,
             sample_count=parsed_s_count,
@@ -283,6 +319,8 @@ async def predict(
             "total_grains_detected": result.grain_analysis.total_detected,
             "whole_grains_count": len(whole_grains),
             "whole_grains_surface": len(whole_grains),
+            "physical_grains_count": len(result.grain_analysis.physical_grains),
+            "size_filter": result.grain_analysis.size_filter_stats,
             "classified_counts": result.grain_analysis.classified_counts,
             "uniformity_rate_pct": result.grain_analysis.uniformity_metrics.get("uniformity_rate_pct"),
             "bulk_volume_mm3": round(result.container.bulk_volume_mm3, 2),
@@ -297,6 +335,7 @@ async def predict(
         debug_data = None
         if input_params.debug:
             debug_data = {
+                "visuals": result.debug_visuals,
                 "features_vector": {
                     k: (round(v, 4) if v is not None else None)
                     for k, v in result.features_31.items()
@@ -305,6 +344,18 @@ async def predict(
                     "whole_grains": len(result.grain_analysis.whole_grains),
                     "broken_grains": len(result.grain_analysis.broken_grains),
                     "skipped_grains": result.grain_analysis.skipped_measurement_count,
+                    "physical_grains": len(result.grain_analysis.physical_grains),
+                    "size_filter_rejected": len(result.grain_analysis.size_filter_rejected),
+                },
+                "container": {
+                    "pixels_per_mm": result.container.pixels_per_mm,
+                    "bulk_volume_mm3": result.container.bulk_volume_mm3,
+                    "rice_height_mm": result.container.rice_height_mm,
+                },
+                "physical_estimator": {
+                    "packing_fraction": pipeline.settings.packing_fraction_geometry,
+                    "mean_clean_volume_mm3": result.grain_analysis.uniformity_metrics.get("mean_clean"),
+                    "size_filter": result.grain_analysis.size_filter_stats,
                 },
             }
 
@@ -317,6 +368,7 @@ async def predict(
             warnings=result.warnings,
             timings_ms=timings,
             debug_info=debug_data,
+            artifacts=result.artifact_manifest,
         )
         return JSONResponse(status_code=200, content=resp.to_dict())
 

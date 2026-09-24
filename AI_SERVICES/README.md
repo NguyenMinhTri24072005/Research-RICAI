@@ -91,10 +91,10 @@ Tài liệu này hướng dẫn chi tiết **2 phương pháp vận hành hệ t
 #### 📍 Bước 4: Trải nghiệm trên trình duyệt
 1. Mở trình duyệt truy cập: **`http://localhost:5173`**.
 2. Nhập các thông số hình học của cốc lúa:
-   - **Đường kính ly (cm)**: `1.78`
-   - **Chiều cao ly (cm)**: `3.39`
-   - **Mức hụt lúa (cm)**: `1.09`
-   - **Độ dày thành ly (cm)**: `0.1`
+   - **Đường kính ly (mm)**: `17.8`
+   - **Chiều cao ly (mm)**: `33.9`
+   - **Mức hụt lúa (mm)**: `10.9`
+   - **Độ dày thành ly (mm)**: `1.0`
 3. Nhấp **Chọn ảnh mẫu lúa** và chọn một ảnh trong `DATASET_BUILDER/1_Raw_Images/M001/M001A.jpg`. (Hoặc sử dụng chế độ kết nối quét mã QR từ camera điện thoại)
 4. Bấm **BẮT ĐẦU ƯỚC LƯỢNG** và chờ hệ thống phân tích (~8 - 14 giây trên CPU).
 
@@ -166,10 +166,10 @@ npm run dev
 - **Content-Type**: `multipart/form-data`
 - **Các trường đầu vào**:
   - `file`: File ảnh chụp cốc lúa (JPG/PNG).
-  - `diam`: Đường kính trong của ly (cm).
-  - `height`: Chiều cao toàn bộ thân ly (cm).
-  - `empty`: Chiều cao khoảng trống từ miệng ly tới mặt lúa (cm).
-  - `wall_thickness` (tùy chọn): Độ dày thành ly (cm, mặc định 0.1).
+  - `diam`: Đường kính trong của ly (mm).
+  - `height`: Chiều cao toàn bộ thân ly (mm).
+  - `empty`: Chiều cao khoảng trống từ miệng ly tới mặt lúa (mm).
+  - `wall_thickness` (tùy chọn): Độ dày thành ly (mm, mặc định 1.0).
   - `weight_total` (tùy chọn): Tổng khối lượng mẫu (g).
   - `sample_count` (tùy chọn): Số hạt đem cân mẫu (hạt).
   - `sample_weight` (tùy chọn): Khối lượng số hạt mẫu (g).
@@ -317,3 +317,17 @@ $env:PYTHONIOENCODING="utf-8"
 # 2. Chạy kiểm thử tích hợp đầy đủ với ảnh chụp thật M001A
 & AI_SERVICES/.venv/Scripts/python.exe -m unittest AI_SERVICES.tests.test_real_pipeline -v
 ```
+
+## Foreground Colab host and persisted results
+
+The Colab notebook is `src/notebooks/API_Server.ipynb`. Run Cells 2–5 for mount, dependencies, settings, and preflight, then run Cell 6. Cell 6 intentionally remains running while Uvicorn and ngrok are available. Interrupt that cell to execute its `finally` cleanup and close both the server and tunnel; do not start a second background server from another cell.
+
+`REGRESSION_MODEL_DIR` selects the regression bundle. The current research default is:
+
+```text
+../LINEAR_REGRESSION_MODEL/models/extra_trees
+```
+
+The selected folder must contain `model.joblib`, `scaler.joblib`, and `feature_schema.json`. The scaler is applied once before the estimator. `PACKING_FRACTION_GEOMETRY=0.55` is the physical cylinder estimate, while `PACKING_FRACTION_FEATURE_HYBRID=0.62` is the historical regression feature contract.
+
+Every successful request is saved under `/content/pipeline_inference_results/<request_id>/` (or `RESULTS_ROOT` when overridden). The directory includes the input, container/crop artifacts, classification and filter records, regression features, timings, and `reports/artifact_manifest.json`. The API exposes the manifest and ZIP download endpoints. `/content` is ephemeral and is lost when the Colab runtime is reset, so download a ZIP when the result must be retained.

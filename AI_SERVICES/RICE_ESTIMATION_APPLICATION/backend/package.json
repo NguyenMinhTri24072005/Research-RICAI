@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node server.js"
+    "start": "nodemon server.js",
+    "dev": "nodemon server.js",
+    "dev:all": "npm --prefix .. run dev",
+    "prod": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -17,5 +20,8 @@
     "express": "^5.2.1",
     "form-data": "^4.0.6",
     "multer": "^2.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }

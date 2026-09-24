@@ -149,6 +149,10 @@ def sever_bridges_and_isolate_main(
     # Lấy lưu vực của hạt lúa chính (Marker == 2)
     clean_mask = np.where(markers == 2, 255, 0).astype(np.uint8)
 
+    # Phục hồi viền bị mất do thuật toán watershed (đường biên luôn bị đánh dấu là -1)
+    kernel_restore = np.ones((3, 3), np.uint8)
+    clean_mask = cv2.bitwise_and(cv2.dilate(clean_mask, kernel_restore, iterations=1), raw_mask)
+
     # Lấp đầy các lỗ rỗng bên trong thân hạt lúa
     cnts, _ = cv2.findContours(clean_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if cnts:
@@ -326,7 +330,7 @@ def clean_dataset_cropped_grains(
     """
     Quét đệ quy toàn bộ thư mục dữ liệu, tìm tất cả các thư mục con có tên `target_subfolder`
     (ví dụ: OUTPUT_CROPPED_GRAINS), làm sạch từng ảnh hạt lúa và lưu sang thư mục cùng cấp `output_subfolder`.
-    
+
     Parameters
     ----------
     open_ksize : int, default 3

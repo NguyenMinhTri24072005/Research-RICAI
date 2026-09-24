@@ -56,18 +56,18 @@ class DesktopMobileIntegrationTests(unittest.TestCase):
                     request_id="integration-request",
                 )
                 deadline = time.monotonic() + 3
-                while time.monotonic() < deadline and not app.workbook_store.contains_sample_id("M001"):
+                while time.monotonic() < deadline and not app.workbook_store.contains_sample_id("M0001"):
                     window.update()
                     time.sleep(0.02)
-                self.assertTrue(app.workbook_store.contains_sample_id("M001"))
+                self.assertTrue(app.workbook_store.contains_sample_id("M0001"))
                 self.assertEqual(app.manual_vars["Weight_g"].get(), "125.5")
                 self.assertNotIn("Capture_Batch", app.manual_vars)
                 self.assertNotIn("Device_ID", app.manual_vars)
                 self.assertEqual(app.sample_number_var.get(), 2)
-                self.assertTrue((root_dir / "images" / "M001.jpg").exists())
+                self.assertTrue((root_dir / "images" / "M0001.jpg").exists())
                 self.assertTrue((root_dir / "records" / "manual_data.xlsx").exists())
                 workbook_record = dict(app.workbook_store.rows())[2]
-                self.assertEqual(workbook_record["Sample_ID"], "M001")
+                self.assertEqual(workbook_record["Sample_ID"], "M0001")
                 self.assertNotIn("Capture_Batch", workbook_record)
                 self.assertNotIn("Device_ID", workbook_record)
                 self.assertIn("+", workbook_record["Capture_Timestamp"])

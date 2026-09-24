@@ -29,6 +29,7 @@ def assemble_31_features(
     uniformity_res: Optional[Dict[str, Any]] = None,
     form_inputs: Optional[Dict[str, Any]] = None,
     hybrid_estimate: float = 0.0,
+    hybrid_packing_fraction: float = 0.62,
 ) -> Dict[str, Optional[float]]:
     """Tập hợp chính xác vector 31 đặc trưng theo đúng hợp đồng 31v1.
     
@@ -89,7 +90,9 @@ def assemble_31_features(
     volumes = [float(g["volume_mm3"]) for g in whole_grains if g.get("volume_mm3") is not None]
 
     # Tính Feature 11: Estimated_Total_Seeds_Hybrid (0.62 * bulk / mean_grain_vol)
-    trained_hybrid = compute_trained_hybrid_feature(bulk_volume_mm3, volumes)
+    trained_hybrid = compute_trained_hybrid_feature(
+        bulk_volume_mm3, volumes, packing_fraction=hybrid_packing_fraction
+    )
     if trained_hybrid is not None:
         hybrid_feature = float(trained_hybrid)
     elif hybrid_estimate is not None and hybrid_estimate > 0:

@@ -4,6 +4,122 @@ import './App.css';
 
 const GATEWAY_URL = 'http://localhost:3000';
 
+/* Component đếm số hạt mượt mà (Count-up animation) */
+function CountUpNumber({ target }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (target === undefined || target === null) return;
+    const end = typeof target === 'number' ? target : parseFloat(target) || 0;
+    const duration = 1000;
+    const startTime = performance.now();
+
+    const step = (now) => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(ease * end));
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    };
+
+    requestAnimationFrame(step);
+  }, [target]);
+
+  return <span>{count.toLocaleString()}</span>;
+}
+
+/* Component chỉ báo tiến trình phân tích đa giai đoạn kèm Timer */
+function AnalysisProgressView() {
+  const [elapsed, setElapsed] = useState('00:00.0s');
+  const [progress, setProgress] = useState(6);
+  const [stageIndex, setStageIndex] = useState(0);
+
+  const stages = [
+    { id: 1, name: "Đo cốc lúa", desc: "Đang hiệu chỉnh px/mm & phân tích kích thước cốc..." },
+    { id: 2, name: "Bóc tách SAHI", desc: "AI đang cắt lát siêu phân giải & phát hiện hạt lúa (YOLOv8-seg)..." },
+    { id: 3, name: "Phẩm cấp CNN", desc: "Đang làm sạch hình thái & phân loại hạt nguyên/lỗi (DenseNet121)..." },
+    { id: 4, name: "Hồi quy ML", desc: "Đang trích xuất 31 đặc trưng & suy luận số lượng hạt bằng Machine Learning..." },
+  ];
+
+  useEffect(() => {
+    const start = performance.now();
+
+    const timerId = setInterval(() => {
+      const sec = (performance.now() - start) / 1000;
+      const mins = Math.floor(sec / 60);
+      const s = (sec % 60).toFixed(1);
+      setElapsed(`⏱️ ${String(mins).padStart(2, '0')}:${s.padStart(4, '0')}s`);
+
+      if (sec < 1.5) {
+        setStageIndex(0);
+      } else if (sec < 6.0) {
+        setStageIndex(1);
+      } else if (sec < 8.5) {
+        setStageIndex(2);
+      } else {
+        setStageIndex(3);
+      }
+    }, 100);
+
+    const progressId = setInterval(() => {
+      const sec = (performance.now() - start) / 1000;
+      let target = 6;
+      if (sec < 1.5) {
+        target = 6 + (sec / 1.5) * 17;
+      } else if (sec < 6.0) {
+        target = 23 + ((sec - 1.5) / 4.5) * 45;
+      } else if (sec < 8.5) {
+        target = 68 + ((sec - 6.0) / 2.5) * 22;
+      } else {
+        target = Math.min(96, 90 + ((sec - 8.5) / 5.0) * 6);
+      }
+      setProgress(Math.round(target));
+    }, 150);
+
+    return () => {
+      clearInterval(timerId);
+      clearInterval(progressId);
+    };
+  }, []);
+
+  return (
+    <div className="analysis-progress-panel">
+      <div className="progress-header">
+        <div className="progress-pulse-badge">
+          <span className="pulse-dot"></span>
+          AI INFERENCE ACTIVE
+        </div>
+        <div className="progress-timer">{elapsed}</div>
+      </div>
+
+      <h3 className="progress-title">Hệ Thống Đang Xử Lý Mẫu Lúa</h3>
+      <p className="progress-subtext">{stages[stageIndex].desc}</p>
+
+      <div className="progress-bar-container">
+        <div className="progress-bar-fill" style={{ width: `${progress}%` }}>
+          <span className="shimmer-effect"></span>
+        </div>
+      </div>
+      <div className="progress-percentage-label">{progress}% HOÀN THÀNH</div>
+
+      <div className="pipeline-steps-checklist">
+        {stages.map((st, idx) => (
+          <div 
+            key={st.id} 
+            className={`step-chip ${idx < stageIndex ? 'completed' : idx === stageIndex ? 'active' : 'pending'}`}
+          >
+            <span className="chip-indicator">
+              {idx < stageIndex ? '✓' : idx === stageIndex ? '⟳' : idx + 1}
+            </span>
+            <span className="chip-name">{st.name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [mode, setMode] = useState('phone'); // 'phone' | 'computer'
 
@@ -14,15 +130,19 @@ function App() {
     diam: '', 
     height: '', 
     empty: 0,
-    wall_thickness: 0.1,
+    wall_thickness: 1.0,
     weightTotal: '',  
     sampleCount: '',  
-    sampleWeight: ''  
+    sampleWeight: '',
+    estimatorMode: 'auto',
+    debug: true
   });
   
   // Results & UI State
   const [result, setResult] = useState(null);
   const [metrics, setMetrics] = useState(null);
+  const [analysis, setAnalysis] = useState(null);
+  const [artifacts, setArtifacts] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
 
@@ -30,30 +150,36 @@ function App() {
   const [qrData, setQrData] = useState(null);
   const [qrLoading, setQrLoading] = useState(false);
   const [qrError, setQrError] = useState(null);
-  const [phoneConnected, setPhoneConnected] = useState(false);
 
-  // Lắng nghe Server-Sent Events (SSE) để cập nhật kết quả realtime từ Điện thoại
+  // Lắng nghe Server-Sent Events (SSE) để cập nhật realtime từ Điện thoại
   useEffect(() => {
     const eventSource = new EventSource(`${GATEWAY_URL}/api/capture/stream`);
 
     eventSource.onmessage = (event) => {
       try {
         const payload = JSON.parse(event.data);
-        if (payload.type === 'result' && payload.data?.status === 'success') {
+        if (payload.type === 'analyzing') {
+          setLoading(true);
+          setErrorMsg(null);
+          setResult(null);
+        } else if (payload.type === 'result' && payload.data?.status === 'success') {
           setResult(payload.data.estimation);
           setMetrics(payload.data.metrics_summary);
+          setAnalysis(payload.data);
+          setArtifacts(payload.data.artifacts || null);
           setLoading(false);
           setErrorMsg(null);
         } else if (payload.type === 'capture_ready' && payload.captureInfo) {
           setQrData(payload.captureInfo);
           setQrLoading(false);
+        } else if (payload.type === 'error') {
+          setErrorMsg(payload.error?.error || "Lỗi xử lý từ hệ thống AI");
+          setLoading(false);
         }
       } catch (_) {}
     };
 
-    eventSource.onerror = () => {
-      // Tự động reconnect sau sự cố mạng
-    };
+    eventSource.onerror = () => {};
 
     return () => {
       eventSource.close();
@@ -97,32 +223,51 @@ function App() {
     if (file) setPreview(URL.createObjectURL(file));
   };
 
+  // Tính toán hình học tức thì & Inline Validation
+  const riceHeight = formData.height !== '' && formData.empty !== '' && Number(formData.height) >= Number(formData.empty)
+    ? (Number(formData.height) - Number(formData.empty)).toFixed(1)
+    : null;
+
+  const isInvalidHeight = formData.height !== '' && formData.empty !== '' && Number(formData.empty) >= Number(formData.height);
+  const isInvalidThickness = formData.diam !== '' && formData.wall_thickness !== '' && Number(formData.wall_thickness) * 2 >= Number(formData.diam);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
     if (!image) {
-      alert("Vui lòng tải ảnh lên trước khi phân tích!");
+      alert("Vui lòng chọn ảnh chụp mẫu lúa trước khi phân tích!");
+      return;
+    }
+    if (isInvalidHeight) {
+      alert("Lỗi: Mức hụt lúa không thể lớn hơn hoặc bằng chiều cao ly!");
+      return;
+    }
+    if (isInvalidThickness) {
+      alert("Lỗi: Độ dày thành ly vượt quá kích thước lòng trong cốc!");
       return;
     }
 
     setLoading(true);
-    setResult(null);
-    setMetrics(null);
     setErrorMsg(null);
+    setResult(null);
 
     const data = new FormData();
     data.append('file', image);
-    data.append('diam', formData.diam || 0);
-    data.append('height', formData.height || 0);
-    data.append('empty', formData.empty || 0);
-    data.append('wall_thickness', formData.wall_thickness || 0);
-    data.append('weight_total', formData.weightTotal || 0);
-    data.append('sample_count', formData.sampleCount || 0);
-    data.append('sample_weight', formData.sampleWeight || 0);
+    data.append('diam', formData.diam);
+    data.append('height', formData.height);
+    data.append('empty', formData.empty);
+    data.append('wall_thickness', formData.wall_thickness);
+
+    if (formData.weightTotal) data.append('weight_total', formData.weightTotal);
+    if (formData.sampleCount) data.append('sample_count', formData.sampleCount);
+    if (formData.sampleWeight) data.append('sample_weight', formData.sampleWeight);
+    data.append('estimator_mode', formData.estimatorMode);
+    data.append('debug', formData.debug);
 
     try {
       const response = await axios.post(`${GATEWAY_URL}/api/predict`, data, {
-        timeout: 120000,
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 120000
       });
 
       const responseData = response.data;
@@ -130,6 +275,8 @@ function App() {
       if (responseData.status === 'success') {
         setResult(responseData.estimation);
         setMetrics(responseData.metrics_summary);
+        setAnalysis(responseData);
+        setArtifacts(responseData.artifacts || null);
       } else {
         setErrorMsg(responseData.message || responseData.error || "Lỗi xử lý AI");
       }
@@ -143,24 +290,30 @@ function App() {
   return (
     <div className="dashboard">
       <header className="brand-header">
-        <h1>RICE VISION AI</h1>
-        <p>Hệ Thống Ước Lượng Hạt Giống Thông Minh</p>
+        <div className="brand-badge-row">
+          <span className="brand-pill">✨ RESEARCH LAB EDITION · V2.5</span>
+        </div>
+        <h1 className="brand-title">RICE VISION AI</h1>
+        <p className="brand-subtitle">Hệ Thống Ước Lượng Hạt Giống Thông Minh Đa Phương Thức</p>
 
-        {/* Chuyển đổi chế độ: Điện thoại làm Camera Node vs Tải file trực tiếp */}
-        <div className="mode-toggle">
+        {/* Chuyển đổi chế độ phong cách Segmented Pill */}
+        <div className="segmented-tabs">
           <button 
             type="button"
-            className={`mode-btn ${mode === 'phone' ? 'active' : ''}`}
+            className={`tab-item ${mode === 'phone' ? 'active' : ''}`}
             onClick={() => setMode('phone')}
           >
-            📱 Camera Điện thoại (Khuyên dùng)
+            <span className="tab-icon">📱</span>
+            <span>Camera Điện thoại</span>
+            <span className="tab-badge">Khuyên dùng</span>
           </button>
           <button 
             type="button"
-            className={`mode-btn ${mode === 'computer' ? 'active' : ''}`}
+            className={`tab-item ${mode === 'computer' ? 'active' : ''}`}
             onClick={() => setMode('computer')}
           >
-            💻 Tải ảnh từ máy tính
+            <span className="tab-icon">💻</span>
+            <span>Tải ảnh từ máy tính</span>
           </button>
         </div>
       </header>
@@ -169,9 +322,9 @@ function App() {
         {/* PANEL NHẬP LIỆU: TÙY THEO CHẾ ĐỘ */}
         {mode === 'phone' ? (
           <section className="input-panel qr-panel">
-            <h2>Kết nối Điện thoại làm Camera</h2>
+            <h2>Kết nối Điện thoại làm Camera Node</h2>
             <p className="panel-desc">
-              Sử dụng camera điện thoại để chụp ảnh mẫu lúa với độ phân giải và chất lượng tốt nhất.
+              Sử dụng camera điện thoại để chụp ảnh mẫu lúa với độ phân giải và chất lượng quang học tốt nhất.
             </p>
 
             {qrLoading && (
@@ -201,11 +354,11 @@ function App() {
                   </div>
                   <div className="step-item">
                     <span className="step-number">2</span>
-                    <span>Mở ứng dụng <strong>Camera</strong> hoặc trình quét QR trên điện thoại để quét mã.</span>
+                    <span>Mở ứng dụng <strong>Camera</strong> trên điện thoại để quét mã QR.</span>
                   </div>
                   <div className="step-item">
                     <span className="step-number">3</span>
-                    <span>Bấm vào link mở ra, bật camera, nhập thông số và bấm <strong>GỬI ẢNH VÀ ƯỚC LƯỢNG</strong>.</span>
+                    <span>Nhập thông số, căn chỉnh miệng cốc vào vòng tròn và bấm <strong>GỬI ẢNH</strong>.</span>
                   </div>
                 </div>
 
@@ -224,60 +377,139 @@ function App() {
         ) : (
           /* CHẾ ĐỘ THỦ CÔNG TẢI FILE TỪ MÁY TÍNH */
           <section className="input-panel">
-            <h2>Tham số cấu hình</h2>
+            <h2>Tham số cấu hình cốc lúa</h2>
             <form onSubmit={handleSubmit}>
               <div className="input-row">
                 <div className="input-group">
-                  <label>Đường kính ly (cm)</label>
-                  <input type="number" step="0.01" name="diam" placeholder="VD: 1.78" value={formData.diam} onChange={handleInputChange} required />
+                  <label>Đường kính ly (mm)</label>
+                  <div className="input-with-unit">
+                    <input type="number" step="0.01" name="diam" placeholder="VD: 17.8" value={formData.diam} onChange={handleInputChange} required />
+                    <span className="unit-tag">mm</span>
+                  </div>
                 </div>
                 <div className="input-group">
-                  <label>Chiều cao ly (cm)</label>
-                  <input type="number" step="0.01" name="height" placeholder="VD: 3.38" value={formData.height} onChange={handleInputChange} required />
+                  <label>Chiều cao ly (mm)</label>
+                  <div className="input-with-unit">
+                    <input type="number" step="0.01" name="height" placeholder="VD: 33.8" value={formData.height} onChange={handleInputChange} required />
+                    <span className="unit-tag">mm</span>
+                  </div>
                 </div>
               </div>
               
               <div className="input-row">
                 <div className="input-group">
-                  <label>Mức hụt lúa (cm)</label>
-                  <input type="number" step="0.01" name="empty" value={formData.empty} onChange={handleInputChange} required />
+                  <label>Mức hụt lúa (mm)</label>
+                  <div className="input-with-unit">
+                    <input type="number" step="0.01" name="empty" value={formData.empty} onChange={handleInputChange} required />
+                    <span className="unit-tag">mm</span>
+                  </div>
                 </div>
                 <div className="input-group">
-                  <label>Độ dày thành ly (cm)</label>
-                  <input type="number" step="0.01" name="wall_thickness" value={formData.wall_thickness} onChange={handleInputChange} required />
+                  <label>Độ dày thành ly (mm)</label>
+                  <div className="input-with-unit">
+                    <input type="number" step="0.01" name="wall_thickness" value={formData.wall_thickness} onChange={handleInputChange} required />
+                    <span className="unit-tag">mm</span>
+                  </div>
                 </div>
               </div>
 
+              {/* Thông báo chiều cao lớp gạo tức thì & Validation Error */}
+              {riceHeight && !isInvalidHeight && (
+                <div className="rice-height-badge">
+                  <span>🌾 Chiều cao lớp gạo thực tế: <strong>{riceHeight} mm</strong></span>
+                </div>
+              )}
+              {isInvalidHeight && (
+                <div className="validation-error-badge">
+                  <span>⚠️ Mức hụt lúa không thể lớn hơn hoặc bằng chiều cao ly!</span>
+                </div>
+              )}
+              {isInvalidThickness && (
+                <div className="validation-error-badge">
+                  <span>⚠️ Độ dày thành vượt quá kích thước lòng trong cốc!</span>
+                </div>
+              )}
+
               <div className="optional-section">
                 <h3>Tối ưu độ chính xác (Tùy chọn kết hợp Cân nặng)</h3>
-                <div className="input-row" style={{ gridTemplateColumns: '1fr' }}>
-                  <div className="input-group" style={{ marginBottom: '10px' }}>
+                <div className="input-row" style={{ gridTemplateColumns: '1fr', marginBottom: '10px' }}>
+                  <div className="input-group">
                     <label>Tổng trọng lượng khối lúa (g)</label>
-                    <input type="number" step="0.01" name="weightTotal" placeholder="VD: 500" value={formData.weightTotal} onChange={handleInputChange} />
+                    <div className="input-with-unit">
+                      <input type="number" step="0.01" name="weightTotal" placeholder="VD: 500" value={formData.weightTotal} onChange={handleInputChange} />
+                      <span className="unit-tag">g</span>
+                    </div>
                   </div>
                 </div>
                 <div className="input-row">
                   <div className="input-group">
                     <label>Số hạt đếm cân mẫu</label>
-                    <input type="number" step="1" name="sampleCount" placeholder="VD: 5, 10, 20..." value={formData.sampleCount} onChange={handleInputChange} />
+                    <div className="input-with-unit">
+                      <input type="number" step="1" name="sampleCount" placeholder="VD: 10" value={formData.sampleCount} onChange={handleInputChange} />
+                      <span className="unit-tag">hạt</span>
+                    </div>
                   </div>
                   <div className="input-group">
                     <label>Trọng lượng hạt mẫu (g)</label>
-                    <input type="number" step="0.01" name="sampleWeight" placeholder="VD: 0.15" value={formData.sampleWeight} onChange={handleInputChange} />
+                    <div className="input-with-unit">
+                      <input type="number" step="0.01" name="sampleWeight" placeholder="VD: 0.15" value={formData.sampleWeight} onChange={handleInputChange} />
+                      <span className="unit-tag">g</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="advanced-section">
+                <h3>Chế độ suy luận và quan sát</h3>
+                <div className="advanced-grid">
+                  <div className="input-group">
+                    <label>Phương pháp ước lượng</label>
+                    <select 
+                      name="estimatorMode" 
+                      value={formData.estimatorMode} 
+                      onChange={(e) => setFormData({ ...formData, estimatorMode: e.target.value })}
+                    >
+                      <option value="auto">Tự động (Ưu tiên Hồi quy ML + Hybrid Cân mẫu)</option>
+                      <option value="regression">Chỉ mô hình Hồi quy ML (31 đặc trưng)</option>
+                      <option value="geometry">Chỉ công thức hình học 3D</option>
+                      <option value="weight">Chỉ suy luận theo Cân mẫu</option>
+                    </select>
+                  </div>
+                  <div className="input-group">
+                    <label>Tùy chọn hiển thị</label>
+                    <label className="debug-toggle-card">
+                      <input 
+                        type="checkbox" 
+                        checked={formData.debug} 
+                        onChange={(e) => setFormData({ ...formData, debug: e.target.checked })} 
+                      />
+                      <span>Hiển thị phân tích chuyên sâu</span>
+                    </label>
                   </div>
                 </div>
               </div>
 
               <div className="upload-group">
                 <label className="upload-label">
-                  <span className="upload-btn-text">Chọn ảnh mẫu lúa</span>
+                  <span className="upload-btn-text">
+                    <span className="upload-icon">📷</span>
+                    <span>{image ? `Đã chọn: ${image.name}` : 'Nhấp hoặc Kéo thả ảnh mẫu lúa vào đây'}</span>
+                  </span>
                   <input type="file" accept="image/*" onChange={handleFileChange} hidden />
                 </label>
-                {preview && <img src={preview} alt="Preview" className="img-preview" />}
+                {preview && (
+                  <div className="preview-container">
+                    <img src={preview} alt="Preview" className="img-preview" />
+                  </div>
+                )}
               </div>
 
-              <button type="submit" className={`run-btn ${loading ? 'loading' : ''}`} disabled={loading}>
-                {loading ? 'Đang phân tích...' : 'BẮT ĐẦU ƯỚC LƯỢNG'}
+              <button 
+                type="submit" 
+                className={`run-btn ${loading ? 'loading' : ''}`} 
+                disabled={loading || isInvalidHeight || isInvalidThickness}
+              >
+                {loading ? 'ĐANG PHÂN TÍCH TIẾN TRÌNH...' : '⚡ BẮT ĐẦU ƯỚC LƯỢNG'}
               </button>
             </form>
           </section>
@@ -288,95 +520,174 @@ function App() {
           {!result && !loading && !errorMsg && (
             <div className="idle-state">
               <div className="pulse-circle"></div>
-              <p>Hệ thống đang chờ dữ liệu đầu vào</p>
-              <small style={{ color: '#9ca3af', marginTop: '6px' }}>
-                {mode === 'phone' ? 'Hãy dùng điện thoại quét mã QR bên trái để chụp ảnh' : 'Hãy điền thông số và tải ảnh lên'}
-              </small>
+              <p className="idle-title">Hệ thống đang chờ dữ liệu đầu vào</p>
+              <p className="idle-desc">Chụp ảnh từ điện thoại hoặc tải ảnh từ máy tính để bắt đầu phân tích.</p>
             </div>
           )}
 
-          {loading && (
-            <div className="loading-state">
-              <div className="spinner"></div>
-              <p>AI đang xử lý trên GPU...</p>
-            </div>
-          )}
+          {/* Màn hình tiến trình thông minh Loading State */}
+          {loading && <AnalysisProgressView />}
 
           {errorMsg && (
             <div className="error-state">
-              <p>Lỗi: {errorMsg}</p>
+              <p>⚠️ Lỗi: {errorMsg}</p>
             </div>
           )}
 
-          {result && (
+          {result && !loading && (
             <div className="success-state">
-              <p className="result-subtitle">SỐ LƯỢNG ƯỚC TÍNH</p>
-              <h2 className="result-number">{result.final?.toLocaleString() || 0} <span className="unit">hạt</span></h2>
-              
-              {/* Method indicator */}
-              <div className="method-badge">
-                {result.method_used?.includes('regression') ? (
-                  <span className="badge badge-green">Mô hình Hồi quy ({result.method_used?.includes('ExtraTrees') ? 'Extra Trees' : 'OLS'})</span>
-                ) : result.method_used === 'hybrid' ? (
-                  <span className="badge badge-blue">Ước lượng Hybrid (AI + Cân nặng)</span>
-                ) : (
-                  <span className="badge badge-gray">{result.method_used || 'Thể tích thuần AI'}</span>
-                )}
+              <div className="hero-result-card">
+                <p className="result-subtitle">SỐ LƯỢNG ƯỚC TÍNH</p>
+                <h2 className="result-number">
+                  <CountUpNumber target={result.final} />
+                  <span className="unit"> hạt</span>
+                </h2>
+                
+                {/* Method indicator chuẩn xác */}
+                <div className="method-badge">
+                  {result.method_used?.includes('hybrid') ? (
+                    <span className="badge badge-blue">
+                      <span className="badge-dot"></span>
+                      Ước lượng Hybrid (Hồi quy ML + Cân mẫu)
+                    </span>
+                  ) : result.method_used?.includes('regression') ? (
+                    <span className="badge badge-green">
+                      <span className="badge-dot"></span>
+                      Mô hình Hồi quy ({result.model_bundle || metrics?.regression_model || 'Machine Learning'})
+                    </span>
+                  ) : result.method_used?.includes('weight') ? (
+                    <span className="badge badge-amber">
+                      <span className="badge-dot"></span>
+                      Ước lượng Cân mẫu
+                    </span>
+                  ) : (
+                    <span className="badge badge-gray">
+                      <span className="badge-dot"></span>
+                      Thể tích Hình học 3D (Tham khảo)
+                    </span>
+                  )}
+                </div>
               </div>
 
-              {/* Breakdown table */}
-              <div className="breakdown-table">
-                <h3>Chi tiết các phương pháp</h3>
-                <table>
+              {/* Bento Grid Thống kê Hình thái học */}
+              {metrics && (
+                <div className="metrics-section">
+                  <h3 className="section-title">Thông số hình thái học trung bình</h3>
+                  <div className="bento-grid">
+                    <div className="bento-card">
+                      <div className="bento-icon">🔍</div>
+                      <div className="bento-content">
+                        <span className="bento-label">Hạt phát hiện</span>
+                        <span className="bento-val">{metrics.total_grains_detected}</span>
+                      </div>
+                    </div>
+
+                    <div className="bento-card">
+                      <div className="bento-icon">🌾</div>
+                      <div className="bento-content">
+                        <span className="bento-label">Hạt nguyên</span>
+                        <span className="bento-val">{metrics.whole_grains_surface}</span>
+                      </div>
+                    </div>
+
+                    <div className="bento-card bento-wide">
+                      <div className="bento-header-row">
+                        <span className="bento-label">Độ đồng đều phẩm cấp</span>
+                        <span className="bento-highlight">{metrics.uniformity_rate_pct?.toFixed(1)}%</span>
+                      </div>
+                      <div className="uniformity-bar-track">
+                        <div 
+                          className="uniformity-bar-fill" 
+                          style={{ width: `${Math.min(100, Math.max(0, metrics.uniformity_rate_pct || 0))}%` }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div className="bento-card">
+                      <div className="bento-icon">📏</div>
+                      <div className="bento-content">
+                        <span className="bento-label">Dài TB</span>
+                        <span className="bento-val">{metrics.avg_length_mm} <small>mm</small></span>
+                      </div>
+                    </div>
+
+                    <div className="bento-card">
+                      <div className="bento-icon">📐</div>
+                      <div className="bento-content">
+                        <span className="bento-label">Rộng TB</span>
+                        <span className="bento-val">{metrics.avg_width_mm} <small>mm</small></span>
+                      </div>
+                    </div>
+
+                    <div className="bento-card">
+                      <div className="bento-icon">📦</div>
+                      <div className="bento-content">
+                        <span className="bento-label">Dày TB</span>
+                        <span className="bento-val">{metrics.avg_thickness_mm} <small>mm</small></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Bảng đối sánh các phương pháp */}
+              <div className="breakdown-card">
+                <h3>Chi tiết các phương pháp suy luận</h3>
+                <table className="breakdown-table">
                   <tbody>
                     <tr>
-                      <td>Hồi quy 31 biến (Extra Trees)</td>
-                      <td className="val">{result.regression_est?.toLocaleString() || '-'} hạt</td>
+                      <td>
+                        <strong>Hồi quy 31 đặc trưng</strong>
+                        <small>{result.model_bundle || 'Machine Learning'}</small>
+                      </td>
+                      <td className="val highlight">{result.regression_est?.toLocaleString() || '-'} hạt</td>
                     </tr>
                     <tr>
-                      <td>Thể tích thuần AI</td>
-                      <td className="val">{result.ai_est?.toLocaleString() || '-'} hạt</td>
-                    </tr>
-                    <tr>
-                      <td>Tỷ trọng Cân mẫu</td>
+                      <td>
+                        <strong>Ước lượng theo Khối lượng mẫu</strong>
+                        <small>Tỷ trọng hạt cân mẫu</small>
+                      </td>
                       <td className="val">{result.weight_est?.toLocaleString() || '-'} hạt</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Hình học Thể tích 3D (Tham khảo)</strong>
+                        <small>Độ xếp chặt Ellipsoid</small>
+                      </td>
+                      <td className="val text-muted">{result.ai_est?.toLocaleString() || result.geometry_est?.toLocaleString() || '-'} hạt</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
-              {/* Metrics */}
-              {metrics && (
-                <div className="metrics-panel">
-                  <h3>Thông số hình thái học trung bình</h3>
-                  <div className="metrics-grid">
-                    <div className="metric-item">
-                      <span className="metric-label">Hạt phát hiện</span>
-                      <span className="metric-value">{metrics.total_grains_detected}</span>
-                    </div>
-                    <div className="metric-item">
-                      <span className="metric-label">Hạt nguyên</span>
-                      <span className="metric-value">{metrics.whole_grains_surface}</span>
-                    </div>
-                    <div className="metric-item">
-                      <span className="metric-label">Độ đồng đều</span>
-                      <span className="metric-value">{metrics.uniformity_rate_pct?.toFixed(1)}%</span>
-                    </div>
-                    <div className="metric-item">
-                      <span className="metric-label">Dài TB</span>
-                      <span className="metric-value">{metrics.avg_length_mm} mm</span>
-                    </div>
-                    <div className="metric-item">
-                      <span className="metric-label">Rộng TB</span>
-                      <span className="metric-value">{metrics.avg_width_mm} mm</span>
-                    </div>
-                    <div className="metric-item">
-                      <span className="metric-label">Dày TB</span>
-                      <span className="metric-value">{metrics.avg_thickness_mm} mm</span>
-                    </div>
-                  </div>
-                  <p className="model-info">Mô hình AI: {metrics.regression_model || 'Extra Trees'}</p>
+              {artifacts?.status === 'completed' && artifacts?.request_id && (
+                <div className="artifact-actions">
+                  <span>✅ Đã lưu kết quả: {artifacts.request_id}</span>
+                  <a href={`${GATEWAY_URL}/api/results/${artifacts.request_id}/download`} target="_blank" rel="noreferrer">
+                    Tải toàn bộ artifact
+                  </a>
                 </div>
+              )}
+
+              {analysis?.debug_info && (
+                <details className="analysis-details">
+                  <summary>Chi tiết pipeline và 31 đặc trưng kỹ thuật</summary>
+                  <div className="analysis-grid">
+                    <p>Scale: {analysis.debug_info.container?.pixels_per_mm?.toFixed?.(2) ?? '-'} px/mm</p>
+                    <p>V_bulk: {analysis.debug_info.container?.bulk_volume_mm3?.toFixed?.(1) ?? '-'} mm³</p>
+                    <p>Hệ số packing: {analysis.debug_info.physical_estimator?.packing_fraction ?? '-'}</p>
+                    <p>Mean volume sau lọc: {analysis.debug_info.physical_estimator?.mean_clean_volume_mm3 ?? '-'} mm³</p>
+                    <p>Trạng thái lọc: {analysis.debug_info.physical_estimator?.size_filter?.status ?? '-'}</p>
+                    <p>Hạt bị loại nhánh physical: {analysis.debug_info.grain_details?.size_filter_rejected ?? 0}</p>
+                  </div>
+                  {Object.entries(analysis.debug_info.visuals || {}).map(([name, src]) => (
+                    <figure className="debug-visual" key={name}>
+                      <img src={src} alt={name} />
+                      <figcaption>{name === 'container_detection' ? 'Phát hiện miệng ly' : 'Phân loại hạt: xanh = hạt nguyên, cam = chỉ dùng regression, đỏ = không đạt CNN'}</figcaption>
+                    </figure>
+                  ))}
+                  <pre>{JSON.stringify({ timings_ms: analysis.timings_ms, features_31: analysis.debug_info.features_vector }, null, 2)}</pre>
+                </details>
               )}
             </div>
           )}

@@ -88,7 +88,9 @@ def analyze_all_original_features(
         base_dir = find_project_root()
 
     final_dir = base_dir / "DATASET_BUILDER" / "4_Final_Dataset"
-    csv_path = final_dir / "final_linear_regression_dataset.csv"
+    csv_path = final_dir / "final_regression_dataset.csv"
+    if not csv_path.exists():
+        csv_path = final_dir / "final_linear_regression_dataset.csv"
 
     print("=" * 105)
     print("🌾 CÔNG CỤ KHẢO SÁT & ĐÁNH GIÁ TOÀN BỘ 31 THUỘC TÍNH GỐC (FEATURE DEEP DIVE)")

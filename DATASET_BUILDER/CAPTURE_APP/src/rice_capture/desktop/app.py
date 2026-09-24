@@ -71,7 +71,8 @@ class DatasetCaptureApp:
         naming = saved.get("naming", {})
         self.prefix_var = tk.StringVar(value="M")
         self.sample_number_var = tk.IntVar(value=int(naming.get("sample_number", 1)))
-        self.sample_digits_var = tk.IntVar(value=int(naming.get("sample_digits", 3)))
+        # M#### is the canonical raw-data contract; ignore legacy saved widths.
+        self.sample_digits_var = tk.IntVar(value=4)
 
         manual = saved.get("manual", {})
         self.manual_vars = {
@@ -215,14 +216,14 @@ class DatasetCaptureApp:
             row=0, column=1, sticky="w", padx=(6, 12)
         )
         ttk.Label(naming_box, text="Số ảnh kế tiếp").grid(row=0, column=2, sticky="w")
-        ttk.Spinbox(naming_box, from_=1, to=99999999, textvariable=self.sample_number_var, width=10).grid(
+        ttk.Spinbox(naming_box, from_=1, to=9999, textvariable=self.sample_number_var, width=10).grid(
             row=0, column=3, sticky="ew", padx=(6, 0)
         )
         ttk.Label(naming_box, text="Số chữ số sau M").grid(row=1, column=0, sticky="w", pady=(8, 0))
-        ttk.Spinbox(naming_box, from_=1, to=8, textvariable=self.sample_digits_var, width=8).grid(
+        ttk.Label(naming_box, text="4 (cố định)", font=("Consolas", 11, "bold")).grid(
             row=1, column=1, sticky="ew", padx=(6, 12), pady=(8, 0)
         )
-        ttk.Label(naming_box, text="Ví dụ: 3 → M001; 4 → M0001", style="Sub.TLabel").grid(
+        ttk.Label(naming_box, text="Chuẩn dữ liệu: M0001, M0002, ...", style="Sub.TLabel").grid(
             row=1, column=2, columnspan=2, sticky="w", padx=(6, 0), pady=(8, 0)
         )
         ttk.Label(naming_box, text="ID kế tiếp:").grid(row=2, column=0, sticky="w", pady=(10, 0))

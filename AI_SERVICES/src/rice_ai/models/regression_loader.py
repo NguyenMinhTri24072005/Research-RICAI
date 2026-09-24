@@ -8,7 +8,7 @@ import threading
 import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 import joblib
 import numpy as np
@@ -123,6 +123,7 @@ class LoadedRegression:
     config: Optional[Dict[str, Any]] = None
     is_legacy: bool = False
     warnings: List[str] = field(default_factory=list)
+    hybrid_packing_fraction: float = 0.62
 
     def predict(self, feature_vector_ordered: Sequence[float]) -> float:
         """Dự đoán từ vector 31 đặc trưng đã xếp đúng thứ tự."""
@@ -249,8 +250,13 @@ def load_regression_folder(folder_path: Union[str, Path]) -> LoadedRegression:
             if not hasattr(scaler_obj, "transform") or not callable(getattr(scaler_obj, "transform")):
                 raise ValueError(f"Scaler nạp từ {scaler_file} không có phương thức callable 'transform'.")
 
-        # Xác định tên hiển thị
+        # Xác định tên hiển thị và training contract
         cls_name = model_obj.__class__.__name__
+        hybrid_factor = 0.62
+        if isinstance(config_data, dict) and config_data.get("hybrid_packing_fraction") is not None:
+            hybrid_factor = float(config_data["hybrid_packing_fraction"])
+            if not 0.0 < hybrid_factor <= 1.0:
+                raise ValueError(f"hybrid_packing_fraction không hợp lệ trong {config_file}: {hybrid_factor}")
         model_name = "ExtraTrees" if cls_name == "ExtraTreesRegressor" else cls_name
 
         # Smoke prediction kiểm tra tính tương thích toán học
@@ -266,6 +272,7 @@ def load_regression_folder(folder_path: Union[str, Path]) -> LoadedRegression:
             config=config_data,
             is_legacy=False,
             warnings=collected_warnings,
+            hybrid_packing_fraction=hybrid_factor,
         )
 
     # =========================================================================
@@ -320,6 +327,7 @@ def load_regression_folder(folder_path: Union[str, Path]) -> LoadedRegression:
             config=None,
             is_legacy=True,
             warnings=collected_warnings,
+            hybrid_packing_fraction=0.62,
         )
 
     # =========================================================================

@@ -33,7 +33,7 @@ class MobileCaptureServiceTests(unittest.TestCase):
                 image_dir=root / "images",
                 database_path=root / "records" / "capture_data.sqlite3",
                 sample_number=1,
-                sample_digits=3,
+                sample_digits=4,
                 manual_defaults={},
             )
             result = coordinator.save_jpeg(
@@ -49,12 +49,12 @@ class MobileCaptureServiceTests(unittest.TestCase):
                 node_id="phone-1",
                 request_id="request-1",
             )
-            self.assertEqual(result.sample_id, "M001")
-            self.assertEqual(result.next_sample_id, "M002")
-            self.assertTrue((root / "images" / "M001.jpg").exists())
+            self.assertEqual(result.sample_id, "M0001")
+            self.assertEqual(result.next_sample_id, "M0002")
+            self.assertTrue((root / "images" / "M0001.jpg").exists())
             self.assertEqual(events.get_nowait()["type"], "sample_saved")
             pending = coordinator.database.pending_excel_records()
-            self.assertEqual(pending[0]["sample_id"], "M001")
+            self.assertEqual(pending[0]["sample_id"], "M0001")
             self.assertEqual(pending[0]["source_type"], "mobile")
             self.assertNotIn("capture_batch", pending[0])
             self.assertNotIn("device_id", pending[0])
@@ -94,16 +94,16 @@ class MobileCaptureServiceTests(unittest.TestCase):
             root = Path(temp_dir)
             images = root / "images"
             images.mkdir()
-            (images / "M002.jpg").write_bytes(jpeg_bytes())
+            (images / "M0002.jpg").write_bytes(jpeg_bytes())
             coordinator = CaptureCoordinator()
             coordinator.configure(
                 image_dir=images,
                 database_path=root / "capture.sqlite3",
                 sample_number=1,
-                sample_digits=3,
-                existing_excel_ids={"M001"},
+                sample_digits=4,
+                existing_excel_ids={"M0001"},
             )
-            self.assertEqual(coordinator.next_sample_id(), "M003")
+            self.assertEqual(coordinator.next_sample_id(), "M0003")
 
     def test_opens_existing_database_with_deprecated_metadata_without_losing_rows(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -130,7 +130,12 @@ class MobileCaptureServiceTests(unittest.TestCase):
             connection.close()
 
             coordinator = CaptureCoordinator()
-            coordinator.configure(image_dir=Path(temp_dir) / "images", database_path=path, sample_number=2, sample_digits=3)
+            coordinator.configure(
+                image_dir=Path(temp_dir) / "images",
+                database_path=path,
+                sample_number=2,
+                sample_digits=4,
+            )
             pending = coordinator.database.pending_excel_records()
             self.assertEqual(pending[0]["sample_id"], "M001")
             self.assertEqual(pending[0]["capture_batch"], "OLD_BATCH")

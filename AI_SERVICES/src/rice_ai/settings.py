@@ -48,6 +48,7 @@ class Settings:
 
         # Cổng mạng và tham số server
         self.port_ai: int = int(get_val("PORT_AI", "8000"))
+        self.host_ai: str = get_val("HOST_AI", "0.0.0.0")
         
         # Concurrency check: chỉ chấp nhận 1 trong đợt này
         raw_concurrent = get_val("MAX_CONCURRENT_INFERENCES", "1")
@@ -62,15 +63,46 @@ class Settings:
             )
 
         # Hằng số tính toán vật lý & thị giác máy tính
-        self.packing_fraction_geometry: float = 0.82  # Dùng cho ước lượng hình học thực tế
-        self.packing_fraction_feature_hybrid: float = 0.62  # Dùng cho Feature 11 (Trained contract)
+        self.packing_fraction_geometry: float = self._float_in_range(get_val("PACKING_FRACTION_GEOMETRY", "0.55"), 0.0, 1.0, "PACKING_FRACTION_GEOMETRY")
+        self.packing_fraction_feature_hybrid: float = self._float_in_range(
+            get_val("PACKING_FRACTION_FEATURE_HYBRID", "0.62"), 0.0, 1.0,
+            "PACKING_FRACTION_FEATURE_HYBRID",
+        )
         self.sahi_slice_height: int = 640
         self.sahi_slice_width: int = 640
-        self.sahi_overlap_height_ratio: float = 0.20
-        self.sahi_overlap_width_ratio: float = 0.20
-        self.sahi_conf_threshold: float = 0.50
+        self.sahi_overlap_height_ratio: float = self._float_in_range(
+            get_val("SAHI_OVERLAP_RATIO", "0.25"), 0.0, 0.99, "SAHI_OVERLAP_RATIO"
+        )
+        self.sahi_overlap_width_ratio: float = self.sahi_overlap_height_ratio
+        self.sahi_conf_threshold: float = self._float_in_range(
+            get_val("SAHI_CONFIDENCE_THRESHOLD", "0.50"), 0.0, 1.0, "SAHI_CONFIDENCE_THRESHOLD"
+        )
         self.cleaner_kernel_size: int = 3
         self.cleaner_neck_ratio: float = 0.15
+        self.cleaner_step1_open_ksize: int = int(get_val("CLEANER_STEP1_OPEN_KSIZE", "5"))
+        self.cleaner_step1_min_area: int = int(get_val("CLEANER_STEP1_MIN_AREA", "35"))
+        self.cleaner_step1_centrality_weight: float = self._float_in_range(get_val("CLEANER_STEP1_CENTRALITY_WEIGHT", "2.5"), 0.0, 10.0, "CLEANER_STEP1_CENTRALITY_WEIGHT")
+        self.cleaner_step2_open_ksize: int = int(get_val("CLEANER_STEP2_OPEN_KSIZE", "3"))
+        self.cleaner_step2_min_area: int = int(get_val("CLEANER_STEP2_MIN_AREA", "25"))
+        self.cleaner_step2_centrality_weight: float = self._float_in_range(get_val("CLEANER_STEP2_CENTRALITY_WEIGHT", "2.2"), 0.0, 10.0, "CLEANER_STEP2_CENTRALITY_WEIGHT")
+        self.cnn_whole_confidence: float = self._float_in_range(get_val("CNN_WHOLE_CONFIDENCE", "0.90"), 0.0, 1.0, "CNN_WHOLE_CONFIDENCE")
+        self.enable_size_filter: bool = (get_val("ENABLE_SIZE_FILTER", "true") or "true").strip().lower() in {"1", "true", "yes", "on"}
+        self.size_filter_k: float = self._float_in_range(get_val("SIZE_FILTER_K", "0.10"), 0.0, 10.0, "SIZE_FILTER_K")
+        self.size_filter_min_samples: int = int(get_val("SIZE_FILTER_MIN_SAMPLES", "8"))
+        self.results_root_str: str = str(get_val("RESULTS_ROOT", "/content/pipeline_inference_results") or "").strip()
+        self.save_inference_artifacts: bool = (
+            str(get_val("SAVE_INFERENCE_ARTIFACTS", "true") or "true").strip().lower()
+            in {"1", "true", "yes", "on"}
+        )
+    @staticmethod
+    def _float_in_range(raw: Optional[str], minimum: float, maximum: float, name: str) -> float:
+        try:
+            value = float(raw)  # type: ignore[arg-type]
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"{name} phải là số thực hợp lệ, nhận: {raw!r}") from exc
+        if not minimum <= value <= maximum:
+            raise ValueError(f"{name} phải trong [{minimum}, {maximum}], nhận: {value}")
+        return value
 
     def get_yolo_device(self) -> str:
         """Giải quyết thiết bị thực thi cho YOLO theo YOLO_DEVICE.
@@ -207,3 +239,19 @@ class Settings:
                 "Vui lòng thiết lập REGRESSION_MODEL_DIR trong .env"
             )
         return default_dir
+
+    def get_results_root(self) -> Path:
+        """Resolve the per-request inference result directory."""
+        if not self.results_root_str:
+            raise ValueError("RESULTS_ROOT không được để trống khi lưu artifact.")
+        return self.resolve_path(self.results_root_str)
+
+    @property
+    def port(self) -> int:
+        """Cổng mạng của AI Inference Server (alias của port_ai)."""
+        return self.port_ai
+
+    @property
+    def host(self) -> str:
+        """Địa chỉ host của AI Inference Server (alias của host_ai)."""
+        return self.host_ai

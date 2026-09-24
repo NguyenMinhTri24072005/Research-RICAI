@@ -27,11 +27,11 @@ class PipelineError(Exception):
 
 @dataclass
 class PredictionInput:
-    """Tham số đầu vào vật lý cho pipeline ước lượng."""
-    diam: float  # cm
-    height: float  # cm
-    empty: float  # cm
-    wall_thickness: float = 0.1  # cm
+    """Tham số đầu vào vật lý cho pipeline ước lượng (toàn bộ tính theo đơn vị mm)."""
+    diam: float  # mm
+    height: float  # mm
+    empty: float  # mm
+    wall_thickness: float = 1.0  # mm
     weight_total: Optional[float] = None  # g
     sample_weight: Optional[float] = None  # g
     sample_count: Optional[int] = None
@@ -95,6 +95,13 @@ class GrainAnalysis:
     skipped_measurement_count: int = 0
     uniformity_metrics: Dict[str, Any] = field(default_factory=dict)
     timings_ms: Dict[str, float] = field(default_factory=dict)
+    # Regression consumes all valid CNN-whole grains; physical estimation can
+    # use a separately filtered population, matching the research notebook.
+    physical_grains: List[Dict[str, Any]] = field(default_factory=list)
+    size_filter_stats: Dict[str, Any] = field(default_factory=dict)
+    size_filter_rejected: List[Dict[str, Any]] = field(default_factory=list)
+    raw_crops: List[Dict[str, Any]] = field(default_factory=list)
+    cleaned_crops: List[Dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass
@@ -117,3 +124,5 @@ class PipelineResult:
     features_31: Optional[Dict[str, Optional[float]]] = None
     timings_ms: Dict[str, float] = field(default_factory=dict)
     warnings: List[str] = field(default_factory=list)
+    debug_visuals: Dict[str, str] = field(default_factory=dict)
+    artifact_manifest: Optional[Dict[str, Any]] = None

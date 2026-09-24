@@ -18,12 +18,12 @@ def timestamp() -> dict[str, str]:
 class NamingTests(unittest.TestCase):
     def test_default_flat_sequence(self):
         config = NamingConfig()
-        self.assertEqual(config.sample_code, "M001")
-        self.assertEqual(config.sample_id, "M001")
+        self.assertEqual(config.sample_code, "M0001")
+        self.assertEqual(config.sample_id, "M0001")
         config.next_id()
-        self.assertEqual(config.sample_id, "M002")
+        self.assertEqual(config.sample_id, "M0002")
 
-    def test_variable_width_id(self):
+    def test_four_digit_id(self):
         config = NamingConfig(
             prefix="M",
             sample_number=12,
@@ -32,9 +32,13 @@ class NamingTests(unittest.TestCase):
         self.assertEqual(config.sample_code, "M0012")
         self.assertEqual(config.sample_id, "M0012")
 
-    def test_rejects_number_that_exceeds_selected_width(self):
+    def test_rejects_noncanonical_width(self):
         with self.assertRaises(ValueError):
-            _ = NamingConfig(sample_number=1000, sample_digits=3).sample_id
+            _ = NamingConfig(sample_number=1, sample_digits=3).sample_id
+
+    def test_rejects_number_that_exceeds_four_digits(self):
+        with self.assertRaises(ValueError):
+            _ = NamingConfig(sample_number=10000).sample_id
 
 
 class ManualRecordTests(unittest.TestCase):

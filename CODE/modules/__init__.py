@@ -11,7 +11,6 @@ from .ellipsoid_geometry import (
     draw_grain_ellipse_overlay,
 )
 from .uniformity_evaluator import evaluate_batch_uniformity
-from .dataset_extractor import DatasetExtractor
 from .grain_crop_cleaner import (
     GrainCropCleaner,
     clean_single_grain_crop,
@@ -27,7 +26,6 @@ __all__ = [
     "compute_folder_grains_summary",
     "draw_grain_ellipse_overlay",
     "evaluate_batch_uniformity",
-    "DatasetExtractor",
     "GrainCropCleaner",
     "clean_single_grain_crop",
     "clean_dataset_cropped_grains",

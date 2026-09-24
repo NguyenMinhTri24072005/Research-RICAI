@@ -31,6 +31,7 @@ from rice_ai.contracts import (
 from rice_ai.models.regression_loader import LoadedRegressionProvider
 from rice_ai.models.vision_models import VisionModelProvider
 from rice_ai.pipeline.runner import RicePipeline
+from rice_ai.pipeline.grains import process_grains
 from rice_ai.settings import Settings
 
 
@@ -100,6 +101,18 @@ class TestRicePipeline(unittest.TestCase):
             self.pipeline.run(inputs, b"NOT_AN_IMAGE", request_id="err_req")
         self.assertEqual(ctx.exception.status_code, 422)
         self.assertEqual(ctx.exception.error_code, "INVALID_IMAGE")
+
+    @patch("rice_ai.pipeline.grains.segment_grains_sahi", return_value=[])
+    @patch("rice_ai.pipeline.grains.evaluate_batch_uniformity", return_value={})
+    def test_grain_stage_returns_filter_contract(self, _uniformity, _segment):
+        result = process_grains(
+            image_input=np.zeros((20, 20, 3), dtype=np.uint8),
+            pixels_per_mm=10.0,
+            vision_provider=self.vision_provider,
+            settings=self.settings,
+        )
+        self.assertEqual(result.size_filter_rejected, [])
+        self.assertEqual(result.size_filter_stats["status"], "empty_input")
 
 
 if __name__ == "__main__":

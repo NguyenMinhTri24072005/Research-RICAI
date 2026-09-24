@@ -90,10 +90,10 @@ Không chạy trực tiếp các tệp `.py` hoặc dùng Python hệ thống; l
 
 ### Bước 5 — Thiết lập lần đầu trong ứng dụng
 
-1. Chọn **thư mục lưu ảnh**. Ảnh sẽ được lưu phẳng như `M001.jpg`, `M002.jpg`.
+1. Chọn **thư mục lưu ảnh**. Ảnh được lưu phẳng như `M0001.jpg`, `M0002.jpg`.
 2. Chọn hoặc tạo **file Excel** để lưu bảng dữ liệu. File Excel trống được tự thêm
    hàng tiêu đề khi lưu mẫu đầu tiên.
-3. Chọn số chữ số sau `M` và mã bắt đầu, ví dụ `M001` hoặc `M0001`.
+3. Mặc định ứng dụng dùng 4 chữ số sau `M` (`M0001`, `M0002`, ...).
 4. Chọn nguồn webcam trên máy tính, hoặc mở tab **Thiết bị di động** để kết nối QR.
 5. Nếu Windows Firewall hỏi khi bật kết nối điện thoại, cho phép trên mạng
    **Private**. Không cần cho phép mạng Public.
@@ -157,8 +157,8 @@ vẫn có sẵn làm phương án dự phòng. Không cần DroidCam, USB debugg
 
 ## Lưu dữ liệu
 
-- Ảnh được lưu phẳng tại thư mục đã chọn: M001.jpg, M002.jpg, ...
-- Số chữ số sau M được chọn từ 1 đến 8.
+- Ảnh được lưu phẳng tại thư mục đã chọn: M0001.jpg, M0002.jpg, ...
+- Số chữ số sau M được cố định là 4 để tương thích pipeline: M0001-M9999.
 - SQLite nằm cạnh workbook dưới tên capture_data.sqlite3.
 - Excel giữ bảy cột tương thích pipeline hiện tại.
 - Nếu Excel đang bị khóa, mẫu vẫn an toàn trong SQLite và được đồng bộ lại sau.

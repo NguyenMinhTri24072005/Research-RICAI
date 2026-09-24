@@ -31,7 +31,7 @@ class CaptureCoordinator:
         self._image_dir = Path.cwd()
         self._database: CaptureDatabase | None = None
         self._sample_number = 1
-        self._sample_digits = 3
+        self._sample_digits = 4
         self._existing_excel_ids: set[str] = set()
         self._manual_defaults: dict[str, str] = {}
 

@@ -69,7 +69,7 @@ class MobileApiTests(unittest.TestCase):
                 image_dir=root / "images",
                 database_path=root / "capture.sqlite3",
                 sample_number=1,
-                sample_digits=3,
+                sample_digits=4,
                 manual_defaults={"Weight_g": "100"},
             )
             server = MobileServerController(
@@ -101,7 +101,7 @@ class MobileApiTests(unittest.TestCase):
                     headers={"X-Capture-Token": server.token},
                 )
                 with urllib.request.urlopen(session_request, timeout=5, context=context) as response:
-                    self.assertEqual(json.load(response)["next_sample_id"], "M001")
+                    self.assertEqual(json.load(response)["next_sample_id"], "M0001")
 
                 body, boundary = multipart_body(
                     {
@@ -127,9 +127,9 @@ class MobileApiTests(unittest.TestCase):
                 )
                 with urllib.request.urlopen(upload_request, timeout=10, context=context) as response:
                     result = json.load(response)
-                self.assertEqual(result["sample_id"], "M001")
-                self.assertEqual(result["next_sample_id"], "M002")
-                self.assertTrue((root / "images" / "M001.jpg").exists())
+                self.assertEqual(result["sample_id"], "M0001")
+                self.assertEqual(result["next_sample_id"], "M0002")
+                self.assertTrue((root / "images" / "M0001.jpg").exists())
                 self.assertTrue(server.ca_certificate_path.exists())
                 pending = coordinator.database.pending_excel_records()
                 self.assertNotIn("capture_batch", pending[0])

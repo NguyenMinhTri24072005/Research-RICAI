@@ -26,6 +26,7 @@ TRAINED_HYBRID_PACKING_FRACTION: float = 0.62  # Xác minh 100% (254/254 mẫu F
 def compute_trained_hybrid_feature(
     bulk_volume_mm3: Optional[float],
     grain_volumes_mm3: Sequence[float],
+    packing_fraction: float = TRAINED_HYBRID_PACKING_FRACTION,
 ) -> Optional[int]:
     """
     Tính đặc trưng Estimated_Total_Seeds_Hybrid (index 10) chuẩn hóa
@@ -51,7 +52,9 @@ def compute_trained_hybrid_feature(
     if mean_vol <= 0 or not math.isfinite(mean_vol):
         return None
 
-    return int(round(bulk_volume_mm3 * TRAINED_HYBRID_PACKING_FRACTION / mean_vol))
+    if not math.isfinite(packing_fraction) or not 0.0 < packing_fraction <= 1.0:
+        raise ValueError(f"packing_fraction không hợp lệ: {packing_fraction}")
+    return int(round(bulk_volume_mm3 * packing_fraction / mean_vol))
 
 
 def compute_schema_hash() -> str:
