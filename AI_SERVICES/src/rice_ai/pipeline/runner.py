@@ -64,11 +64,12 @@ class RicePipeline:
             wall_thickness_mm=input_params.wall_thickness,
         )
         timings["container_ms"] = (time.perf_counter() - t0) * 1000
+        warnings_list.extend(container_res.raw_dict.get("warnings", []))
 
         t0 = time.perf_counter()
         with RequestWorkspace(debug=input_params.debug) as ws:
             grain_analysis = process_grains(
-                image_input=img,
+                image_input=container_res.raw_dict.get("surface_isolated_bgr", img),
                 pixels_per_mm=container_res.pixels_per_mm,
                 vision_provider=self.vision_provider,
                 settings=self.settings,

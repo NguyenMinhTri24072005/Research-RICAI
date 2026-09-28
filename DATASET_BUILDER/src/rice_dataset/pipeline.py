@@ -249,11 +249,11 @@ class DatasetExtractionPipeline:
             row["QC_Reason"] = "Container detection succeeded but missing required geometric dimensions."
             return row
 
-        # Step 4: Run SAHI YOLO Segmentation on full raw image
+        # Full-frame surface mask preserves coordinates and excludes reflections.
         try:
             raw_grains = segment_grains_sahi(
                 detection_model=self.sahi_model,
-                image_path=img_bgr,
+                image_path=container_info.get("surface_isolated_bgr", img_bgr),
                 output_crop_dir=None,
                 conf_threshold=self.config.yolo_result_confidence,
                 slice_size=self.config.sahi_slice_size,

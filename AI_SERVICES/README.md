@@ -6,6 +6,19 @@ Dịch vụ API ước lượng số lượng hạt lúa từ ảnh chụp. Đâ
 
 ## 🏗️ 1. Kiến Trúc Sơ Đồ Luồng Dữ Liệu Của Hệ Thống (3 Tầng)
 
+### Detector mặt lúa hiện hành
+
+Stage container dùng `surface_method="adaptive"`, cùng source với CODE và
+Capture App. SAHI nhận ảnh đã che vùng ngoài mặt lúa nhưng giữ nguyên tọa độ
+toàn ảnh. Detector không xác định được biên sẽ trả `422 / DETECTION_FAILED`;
+overlay dùng `overlay_bgr` của detector. Gateway và camera điện thoại gửi ảnh
+qua `/api/predict` sẽ sử dụng cùng luồng này, không có detector riêng ở gateway.
+
+Sau khi cập nhật source, restart Python server hoặc Colab runtime rồi chạy lại
+setup/import và cell host. Việc cập nhật source không tự thay module đã nạp
+trong một server đang chạy. Scale vẫn dựa trên giả định mặt lúa phủ đầy tiết
+diện tròn; cần đánh giá lại feature/model khi so sánh với dữ liệu trích xuất cũ.
+
 ```text
                    [GIAO DIỆN NGƯỜI DÙNG]
                React 19 + Vite (Port 5173)

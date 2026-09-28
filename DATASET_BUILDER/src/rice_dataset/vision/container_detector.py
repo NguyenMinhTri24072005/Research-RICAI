@@ -1,95 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-===============================================================================
-MODULE 1: NHẬN DIỆN VẬT CHỨA & QUY ĐỔI TỶ LỆ KÍCH THƯỚC (CONTAINER DETECTOR)
-Phiên bản 2.0 — VIẾT LẠI KIẾN TRÚC (thay thế toàn bộ v1 + 7 đợt vá)
-===============================================================================
+"""Container scale and rice-surface isolation (v3, adaptive envelope).
 
-LÝ DO VIẾT LẠI (chẩn đoán lỗi của v1):
---------------------------------------
-v1 dò miệng ly bằng Canny -> findContours -> chấm điểm theo
-`area * aspect^2 * coverage`. Trên ảnh ly KÍNH TRONG SUỐT đặt trên nền sáng,
-cạnh mạnh nhất trong ảnh KHÔNG phải viền ly (gần như không có gradient) mà là:
-    (a) biên các hạt lúa (tan/vàng trên nền tối bên trong ly),
-    (b) biên vùng bóng đổ của ly trên mặt bàn.
-Hàm score nói trên ưu tiên "blob tròn, đặc, tương phản cao" — tức là ưu tiên
-ĐÚNG đám hạt lúa. Thuật toán làm chính xác việc nó được yêu cầu làm, và vì thế
-7 đợt vá (MORPH_CLOSE, angular coverage, Hough fallback, RANSAC, sanity check,
-halo overlay, chuẩn hoá độ phân giải) không thể cứu được: chúng đều là các cải
-tiến cho bước FIT, trong khi lỗi nằm ở bước CHỌN ĐỐI TƯỢNG.
+Default: local adaptive saturation segmentation separates the visible rice
+surface from pale reflections. Fit its convex envelope with an ellipse and
+check stability under threshold perturbations. Crop uses the surface envelope,
+not an expanded outer glass ellipse. No learned model or new dependency.
 
-Các lỗ hổng cụ thể của v1 đã được xử lý trong v2:
-  1. `_contour_angular_coverage` đo độ phủ quanh tâm của CHÍNH contour đó, nên
-     mọi contour khép kín (kể cả viền một cụm hạt lúa) đều trả về 1.0 -> bộ lọc
-     gần như vô hiệu. v2 đo độ phủ quanh TÂM KHỐI LÚA (một tâm tham chiếu độc
-     lập với contour đang xét).
-  2. `min_outer_diam_ratio * min_side` là ngưỡng TƯƠNG ĐỐI THEO KHUNG ẢNH, nên
-     khi ly chỉ chiếm ~20% cạnh ngắn (ảnh chụp xa), cụm hạt lúa vẫn đủ lớn để
-     lọt qua. Ngưỡng theo khung ảnh không thể phân biệt "chụp xa" với "bắt
-     nhầm". v2 dùng RÀNG BUỘC BAO HÀM: miệng ly bắt buộc phải BAO QUANH khối
-     lúa (vật lý không thể trùng hợp), còn ngưỡng theo khung ảnh bị hạ cấp
-     thành cảnh báo.
-  3. `abs(ratio - expected_ratio) <= 0.035` là bẫy trùng hợp: với ly 20mm thành
-     1.5mm, expected_ratio ~= 0.87, nên hai contour lồng nhau bất kỳ trong đám
-     hạt có xác suất cao chạm dải 0.835–0.905. v2 vẫn dùng expected_ratio nhưng
-     chỉ để CHỌN CẶP trong số các bán kính đã được bình chọn bởi gradient hướng
-     tâm, chứ không dùng làm điều kiện chấp nhận độc lập.
-  4. `cv2.dilate` sau `MORPH_CLOSE` làm phình contour ngoài -> `outer_diam_px`
-     bị thổi lên một cách HỆ THỐNG (sai lệch một chiều, không phải nhiễu ngẫu
-     nhiên). v2 bỏ hẳn dilate và định vị viền bằng ĐỈNH gradient trên tia hướng
-     tâm, cho độ chính xác dưới pixel và không lệch chiều.
-  5. `RETR_TREE` trên ảnh cạnh trả về contour của DẢI cạnh: mỗi viền sinh 2
-     contour (biên trong + biên ngoài của dải), làm mọi bộ lọc hình dạng
-     (area, circularity, solidity) mất ý nghĩa. v2 không dựa vào contour của
-     ảnh cạnh để đo kích thước.
-  6. `raise RuntimeError` giết cả lô ảnh khi chạy batch. v2 có tham số
-     `on_failure="dict"` để trả về {"status": "failed", "reason": ...}.
+The envelope is a PROXY for a filled cylindrical cross-section, not a direct
+observation of a physical ring. Sparse/non-flat piles, colored glass and strong
+colored reflections may violate this assumption. Consistency checks do not
+establish absolute metric accuracy. Validate against annotated boundaries and
+physical measurements before using the resulting features for research.
 
-NGUYÊN LÝ v2 (đảo ngược thứ tự suy luận):
-------------------------------------------
-  B1. TÁCH KHỐI LÚA BẰNG MÀU (HSV) — đây là tín hiệu ổn định nhất trong ảnh:
-      hạt lúa có hue vàng/nâu và saturation rõ rệt, khác hẳn nền bàn xám-xanh
-      vô sắc. Kết quả: tâm (rx, ry) và bán kính r_rice của khối lúa.
-  B2. DÒ VÀNH LY BẰNG TIA HƯỚNG TÂM: từ tâm khối lúa, phóng 360 tia ra ngoài
-      trong dải bán kính [r_rice, r_max]. Trên mỗi tia, tìm các đỉnh của
-      (độ lớn gradient x độ đồng thuận hướng tâm). Điểm cạnh của viền ly có
-      gradient hướng về MỘT tâm chung -> tích luỹ phiếu mạnh. Điểm cạnh của hạt
-      lúa/vân gỗ/bóng đổ hướng tứ phía -> không tích luỹ được phiếu.
-  B3. BÌNH CHỌN BÁN KÍNH (1-D histogram có trọng số): các đỉnh gradient tụ lại
-      thành những "vòng" rõ rệt. Chọn cặp (r_in, r_out) có tỉ lệ khớp nhất với
-      expected_ratio hình học từ wall_thickness_mm.
-  B4. FIT ELIP BỀN VỮNG (RANSAC) trên tập điểm cạnh thuộc từng vòng, rồi TINH
-      CHỈNH lại một lần nữa bằng tia hướng tâm quanh elip vừa fit (xử lý được
-      cả trường hợp miệng ly hơi méo do phối cảnh).
-  B5. KIỂM TRA RÀNG BUỘC VẬT LÝ: mép trong phải bao quanh khối lúa, tỉ lệ
-      inner/outer phải hợp lý, đồng tâm với khối lúa.
-
-Không gian tìm kiếm co lại khoảng 50 lần so với v1, và lớp lỗi "bắt nhầm cụm
-hạt lúa làm miệng ly" trở thành BẤT KHẢ THI VỀ MẶT CẤU TRÚC (một vòng nằm bên
-trong khối lúa không thể bao quanh khối lúa đó).
-
-GHI CHÚ VỀ SAI SỐ ĐO LƯỜNG (quan trọng, v1 bỏ qua hoàn toàn):
---------------------------------------------------------------
-`pixels_per_mm` được đo tại MẶT PHẲNG MIỆNG LY, nhưng lại được dùng để đo hạt
-lúa nằm thấp hơn `empty_height_mm`. Với chụp điện thoại gần (khoảng cách làm
-việc ~200mm), chênh lệch 10mm độ sâu gây sai scale ~5%, kéo theo ~10% sai số
-DIỆN TÍCH và ~15% sai số THỂ TÍCH — lớn hơn nhiều so với sai số nhận diện viền.
-v2 luôn trả về:
-    "depth_scale_factor"            = d / (d + empty_height_mm)
-    "pixels_per_mm_at_rice_surface" = pixels_per_mm * depth_scale_factor
-Truyền `camera_distance_mm=<khoảng cách ống kính tới miệng ly, mm>` để có hệ số
-đúng; đặt `apply_depth_correction=True` nếu muốn `pixels_per_mm` trả về đã được
-hiệu chỉnh sẵn (mặc định False để không đổi hành vi của code đang gọi).
-
-TƯƠNG THÍCH NGƯỢC:
-------------------
-Giữ nguyên tên hàm `detect_container_and_scale` / `draw_container_overlay`,
-giữ nguyên TOÀN BỘ key trong dict trả về của v1 (kể cả "detect_type",
-"outer_confidence", "inner_confidence", "ellipse_params", "crop_offset"...),
-và giữ nguyên mọi tham số của v1 (các tham số đã mất vai trò được chấp nhận
-nhưng bị bỏ qua, có ghi rõ trong docstring) -> dán thẳng vào file cũ là chạy.
-===============================================================================
+surface_method='radial' retains v2.2 only for explicit before/after comparison.
+Existing result keys are preserved. outer_ellipse is inferred in adaptive mode
+and must not be treated as an observed glass wall. surface_mask and
+surface_isolated_bgr preserve full-frame coordinates for downstream SAHI.
 """
 
 from __future__ import annotations
@@ -354,8 +281,9 @@ def _segment_rice(
     với ánh sáng và độ phân giải — trái ngược với tương phản viền ly kính (yếu,
     phụ thuộc phản chiếu, chính là điểm chết của v1).
 
-    Sau khi tạo mask: OPEN để bỏ đốm nhiễu, CLOSE để lấp kẽ giữa các hạt, rồi
-    lấy thành phần liên thông lớn nhất và bọc bằng `cv2.minEnclosingCircle`.
+    Sau khi tạo mask: OPEN/CLOSE để nối các hạt, loại vùng chạm biên (nền),
+    chấm điểm các thành phần theo khoảng cách tới tâm và kích thước, rồi bọc
+    thành phần tốt nhất bằng `cv2.minEnclosingCircle`.
 
     Returns
     -------
@@ -365,26 +293,56 @@ def _segment_rice(
     """
     h, w = proc_bgr.shape[:2]
     hsv = cv2.cvtColor(proc_bgr, cv2.COLOR_BGR2HSV)
-
-    lo = np.array([hue_range[0], sat_min, val_min], dtype=np.uint8)
-    hi = np.array([hue_range[1], 255, 255], dtype=np.uint8)
-    mask = cv2.inRange(hsv, lo, hi)
-
     k_small = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
     k_big = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (13, 13))
-    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, k_small, iterations=1)
-    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, k_big, iterations=2)
 
-    n_lbl, labels, stats, centroids = cv2.connectedComponentsWithStats(mask, 8)
-    if n_lbl <= 1:
+    def _components_for(s_min: int):
+        lo = np.array([hue_range[0], s_min, val_min], dtype=np.uint8)
+        hi = np.array([hue_range[1], 255, 255], dtype=np.uint8)
+        candidate_mask = cv2.inRange(hsv, lo, hi)
+        candidate_mask = cv2.morphologyEx(
+            candidate_mask, cv2.MORPH_OPEN, k_small, iterations=1
+        )
+        candidate_mask = cv2.morphologyEx(
+            candidate_mask, cv2.MORPH_CLOSE, k_big, iterations=2
+        )
+        return candidate_mask, cv2.connectedComponentsWithStats(candidate_mask, 8)
+
+    seed_sat_min = max(int(sat_min), 80)
+    attempts = [seed_sat_min]
+    if seed_sat_min != int(sat_min):
+        attempts.append(int(sat_min))
+
+    selected = None
+    for current_sat in attempts:
+        mask, (n_lbl, labels, stats, centroids) = _components_for(current_sat)
+        candidates = []
+        for label_idx in range(1, n_lbl):
+            x, y, bw, bh, area_i = stats[label_idx]
+            area_ratio = float(area_i) / float(h * w)
+            if area_ratio < min_area_ratio or area_ratio > 0.45:
+                continue
+            touches_border = (
+                x <= 1 or y <= 1 or x + bw >= w - 1 or y + bh >= h - 1
+            )
+            if touches_border:
+                continue
+            cx_i, cy_i = centroids[label_idx]
+            center_distance = math.hypot(cx_i - w / 2.0, cy_i - h / 2.0) / max(
+                1.0, min(h, w)
+            )
+            size_penalty = 0.10 * abs(math.log(max(area_ratio, EPS) / 0.04))
+            candidates.append((center_distance + size_penalty, label_idx))
+        if candidates:
+            candidates.sort(key=lambda item: item[0])
+            selected = (mask, labels, stats, candidates[0][1], current_sat)
+            break
+
+    if selected is None:
         return None
 
-    areas = stats[1:, cv2.CC_STAT_AREA]
-    best = int(np.argmax(areas)) + 1
+    mask, labels, stats, best, used_sat_min = selected
     area = float(stats[best, cv2.CC_STAT_AREA])
-    if area < min_area_ratio * h * w:
-        return None
-
     comp = (labels == best).astype(np.uint8) * 255
     cnts, _ = cv2.findContours(comp, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if not cnts:
@@ -399,6 +357,7 @@ def _segment_rice(
         "area": area,
         "area_ratio": area / float(h * w),
         "contour": cnt,
+        "sat_min_used": int(used_sat_min),
     }
 
 
@@ -555,6 +514,142 @@ def _radius_votes(
 
     out.sort(key=lambda d: d["weight"], reverse=True)
     return out
+
+
+def _adaptive_surface(proc_bgr, rice, hue_range, val_min):
+    """Fit the rice envelope, not a concentric glass/reflection edge.
+
+    Local Otsu separates saturated rice from pale glass reflections. The fit
+    must remain stable under two nearby thresholds. These checks measure
+    segmentation consistency, NOT calibrated probability or metric accuracy.
+    Assumes rice fills a circular cross-section; sparse piles are unsupported.
+    """
+    if rice is None:
+        return None, "No rice seed for adaptive surface segmentation."
+    hsv = cv2.cvtColor(proc_bgr, cv2.COLOR_BGR2HSV)
+    cx, cy = rice['center']
+    radius = rice['radius']
+    yy, xx = np.indices(hsv.shape[:2])
+    local = (xx-cx)**2 + (yy-cy)**2 < (1.15*radius)**2
+    kernel = max(3, int(round(radius * 0.04)) | 1)
+    sat = cv2.GaussianBlur(hsv[:, :, 1], (kernel, kernel), 0)
+    values = sat[local]
+    threshold, _ = cv2.threshold(values, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    low, high = values[values <= threshold], values[values > threshold]
+    if not len(low) or not len(high):
+        return None, "Surface color cannot be separated."
+    separation = float(high.mean() - low.mean())
+    if separation < 15:
+        return None, "Surface/background color separation is too weak."
+    hue_ok = (hsv[:, :, 0] >= hue_range[0]) & (hsv[:, :, 0] <= hue_range[1])
+    valid = local & hue_ok & (hsv[:, :, 2] >= val_min)
+    close_size = max(3, int(round(radius * 0.05)) | 1)
+    close_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (close_size, close_size))
+
+    def fit(t):
+        mask = ((sat > t) & valid).astype(np.uint8) * 255
+        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, close_kernel)
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        if not contours:
+            return None
+        contour = max(contours, key=cv2.contourArea)
+        hull = cv2.convexHull(contour)
+        if len(hull) < 5:
+            return None
+        ellipse = cv2.fitEllipse(hull)
+        axes = ellipse[1]
+        area = cv2.contourArea(contour)
+        if (min(axes) / max(axes) < 0.65 or
+                area < 0.30 * math.pi * radius**2 or
+                area / max(EPS, cv2.contourArea(hull)) < 0.75):
+            return None
+        points = hull[:, 0, :]
+        # A contour clipped by the search disk is not an observed surface edge.
+        if np.any(np.hypot(points[:, 0]-cx, points[:, 1]-cy) > 1.12*radius):
+            return None
+        return ellipse, hull, contour
+
+    base = fit(threshold)
+    delta = max(5.0, 0.08 * separation)
+    variants = [fit(threshold-delta), fit(threshold+delta)]
+    if base is None or any(v is None for v in variants):
+        return None, "Surface envelope is incomplete or unstable."
+    ellipse, hull, contour = base
+    diameter = _ellipse_diam(ellipse)
+    diameter_spread = max(abs(_ellipse_diam(v[0])-diameter)/diameter for v in variants)
+    center_spread = max(math.dist(v[0][0], ellipse[0])/diameter for v in variants)
+    if diameter_spread > 0.08 or center_spread > 0.06:
+        return None, "Surface fit changes too much with the segmentation threshold."
+    mask = np.zeros(hsv.shape[:2], np.uint8)
+    # Convex envelope retains peripheral grain tips that a fitted ellipse can cut.
+    # It fills gaps between grains without adding the outer glass ring.
+    cv2.fillConvexPoly(mask, hull, 255)
+    coverage = _contour_angular_coverage(contour.reshape(-1, 2), ellipse[0])
+    return {
+        'ellipse': ellipse, 'mask': mask, 'coverage': float(coverage),
+        'diagnostics': {'saturation_threshold': float(threshold),
+                        'class_separation': separation,
+                        'diameter_threshold_spread': float(diameter_spread),
+                        'center_threshold_spread': float(center_spread),
+                        'metric_accuracy_validated': False},
+    }, None
+
+
+def _rank_surface_transition_votes(
+    votes: List[Dict[str, float]],
+    saturation: np.ndarray,
+    rice_mask: np.ndarray,
+    center: Tuple[float, float],
+    n_rays: int,
+) -> List[Dict[str, float]]:
+    """Xếp hạng vòng theo chuyển tiếp lúa -> thành ly để khử phản chiếu.
+
+    Gradient tuyệt đối dễ chọn nhầm dải phản chiếu sáng/tối trong ly thủy tinh.
+    Biên mặt lúa thật phải đồng thời có mật độ mask lúa giảm khi đi ra ngoài và
+    saturation giảm. Hai tín hiệu này được ưu tiên hơn cường độ cạnh thuần túy.
+    """
+    if not votes:
+        return []
+
+    cx, cy = center
+    angles = np.linspace(0.0, 2.0 * np.pi, n_rays, endpoint=False)
+    cos_a, sin_a = np.cos(angles), np.sin(angles)
+    sat = saturation.astype(np.float64, copy=False)
+    mask = rice_mask.astype(np.float64, copy=False) / 255.0
+    max_weight = max(EPS, max(float(v["weight"]) for v in votes))
+
+    ranked: List[Dict[str, float]] = []
+    for vote in votes:
+        radius = float(vote["radius"])
+        band = max(5.0, 0.04 * radius)
+        x_in = cx + (radius - band) * cos_a
+        y_in = cy + (radius - band) * sin_a
+        x_out = cx + (radius + band) * cos_a
+        y_out = cy + (radius + band) * sin_a
+
+        sat_in = _bilinear(sat, x_in, y_in)
+        sat_out = _bilinear(sat, x_out, y_out)
+        mask_in = _bilinear(mask, x_in, y_in)
+        mask_out = _bilinear(mask, x_out, y_out)
+
+        mask_drop = max(0.0, float(np.mean(mask_in) - np.mean(mask_out)))
+        sat_drop_raw = float(np.median(sat_in - sat_out))
+        sat_drop = float(np.clip(sat_drop_raw / 50.0, 0.0, 1.0))
+        transition_evidence = 0.75 * mask_drop + 0.25 * sat_drop
+        weight_score = float(vote["weight"]) / max_weight
+        ray_coverage = min(1.0, float(vote["n_rays"]) / max(1.0, 0.60 * n_rays))
+
+        enriched = dict(vote)
+        enriched.update({
+            "surface_score": 0.75 * transition_evidence + 0.15 * weight_score
+                             + 0.10 * ray_coverage,
+            "mask_drop": mask_drop,
+            "sat_drop": sat_drop_raw,
+        })
+        ranked.append(enriched)
+
+    ranked.sort(key=lambda d: d["surface_score"], reverse=True)
+    return ranked
 
 
 def _points_near_radius(
@@ -741,7 +836,7 @@ def detect_container_and_scale(
     rice_hue_range: Tuple[int, int] = (8, 42),
     rice_sat_min: int = 35,
     rice_val_min: int = 45,
-    search_r_max_factor: float = 3.2,
+    search_r_max_factor: float = 1.35,
     ratio_tol: float = 0.08,
     min_rim_rays_ratio: float = 0.30,
     min_containment_factor: float = 1.90,
@@ -749,6 +844,7 @@ def detect_container_and_scale(
     min_inner_outer_ratio_floor: float = 0.5,
     camera_distance_mm: Optional[float] = None,
     apply_depth_correction: bool = False,
+    surface_method: str = "adaptive",
     on_failure: str = "raise",
     verbose: bool = False,
     # ---- tham số v1 giữ lại cho tương thích (xem ghi chú bên dưới) ----
@@ -763,7 +859,7 @@ def detect_container_and_scale(
     **_ignored_legacy_kwargs: Any,
 ) -> Dict[str, Any]:
     """
-    Nhận diện miệng ly (mép trong + mép ngoài đồng tâm) và tính tỷ lệ quy đổi.
+    Nhận diện vòng trong/ngoài tại mặt phẳng bề mặt lúa và tính tỷ lệ quy đổi.
 
     Parameters
     ----------
@@ -776,7 +872,7 @@ def detect_container_and_scale(
     wall_thickness_mm : float, default 1.5
         Độ dày thành miệng ly (mm) — dùng để suy ra expected_ratio hình học.
     detect_mode : {'inner', 'outer', 'both'}, default 'inner'
-        Mép dùng để tính pixels_per_mm. 'inner' chính xác nhất.
+        Vòng tại mặt lúa dùng để tính pixels_per_mm. 'inner' chính xác nhất.
 
     working_max_dim : int, default 1600
         Toàn bộ bước NHẬN DIỆN chạy trên bản resize sao cho cạnh dài <= giá trị
@@ -788,9 +884,9 @@ def detect_container_and_scale(
     rice_hue_range, rice_sat_min, rice_val_min
         Dải HSV tách khối lúa. Nới `rice_hue_range` nếu lúa sẫm/bạc màu; hạ
         `rice_sat_min` nếu ảnh chụp dưới đèn trắng làm nhạt màu.
-    search_r_max_factor : float, default 3.2
-        Bán kính tìm viền tối đa = giá trị này × bán kính khối lúa. Tăng nếu ly
-        rộng mà lúa chỉ đổ một ít dưới đáy.
+    search_r_max_factor : float, default 1.35
+        Bán kính tìm vòng tối đa = giá trị này × bán kính khối lúa. Dải hẹp này
+        giữ detector ở mặt lúa, không chạy ra vành miệng ly phía trên.
     ratio_tol : float, default 0.08
         Dung sai khi khớp tỉ lệ (r_in / r_out) với expected_ratio hình học.
         LƯU Ý: dung sai này LỎNG hơn v1 (0.035) một cách có chủ đích, vì ở v2 nó
@@ -801,22 +897,19 @@ def detect_container_and_scale(
         Tỉ lệ tia tối thiểu phải nhìn thấy một vòng để coi vòng đó là viền thật.
         Hạ xuống nếu viền ly bị phản chiếu che mất hơn 2/3 chu vi.
     min_containment_factor : float, default 1.90
-        RÀNG BUỘC BAO HÀM (bộ lọc quan trọng nhất của v2): đường kính mép trong
-        phải >= giá trị này × bán kính khối lúa, tức mép trong phải BAO QUANH
-        khối lúa. Một mình ràng buộc này loại bỏ toàn bộ lớp lỗi của v1.
+        Chỉ còn là ngưỡng cảnh báo chẩn đoán. Không loại ứng viên vì vòng bao
+        HSV có thể bị phản chiếu màu trong ly thủy tinh làm nở rộng.
     max_concentric_offset : float, default 0.55
         Khoảng lệch tâm tối đa giữa tâm miệng ly và tâm khối lúa, tính theo tỉ lệ
         bán kính khối lúa.
     min_inner_outer_ratio_floor : float, default 0.5
         Ngưỡng thô chặn lỗi tỉ lệ inner/outer vô lý về mặt vật lý.
     camera_distance_mm : float, optional
-        Khoảng cách ống kính → miệng ly (mm). Nếu truyền vào, hàm tính
-        "depth_scale_factor" = d/(d+empty_height_mm) và
-        "pixels_per_mm_at_rice_surface". Xem ghi chú sai số đo lường ở đầu file:
-        bỏ qua hiệu ứng này có thể gây ~15% sai số THỂ TÍCH.
+        Khoảng cách ống kính → miệng ly (mm), chỉ dùng để suy ngược key chẩn
+        đoán pixels_per_mm_at_rim. Scale chính được đo trực tiếp tại mặt lúa.
     apply_depth_correction : bool, default False
-        Nếu True, "pixels_per_mm" trả về đã được hiệu chỉnh về mặt phẳng bề mặt
-        lúa. Mặc định False để không đổi hành vi code đang gọi.
+        Tham số tương thích cũ. Scale nay đã đo trực tiếp tại mặt lúa nên True
+        chỉ tạo cảnh báo và không nhân hiệu chỉnh thêm.
     on_failure : {'raise', 'dict'}, default 'raise'
         'raise': raise ContainerDetectionError (kế thừa RuntimeError, tương thích
         code cũ). 'dict': trả về {"status": "failed", "reason": ...} để chạy
@@ -838,7 +931,7 @@ def detect_container_and_scale(
     Returns
     -------
     dict — giữ nguyên mọi key của v1, thêm: "status", "warnings", "rice_circle",
-    "outer_coverage", "inner_coverage", "depth_scale_factor",
+    "outer_coverage", "inner_coverage", "depth_scale_factor", "scale_source",
     "pixels_per_mm_at_rice_surface", "pixels_per_mm_at_rim".
     """
     warnings: List[str] = []
@@ -886,11 +979,20 @@ def detect_container_and_scale(
         val_min=rice_val_min,
     )
     rice_based = rice is not None
+    surface = None
+    if surface_method not in {"adaptive", "radial"}:
+        return _fail("surface_method must be 'adaptive' or 'radial'.")
+    if surface_method == "adaptive":
+        surface, surface_error = _adaptive_surface(
+            proc_bgr, rice, rice_hue_range, rice_val_min
+        )
+        if surface is None:
+            return _fail(surface_error)
 
     if rice_based:
         seed_c = rice["center"]
         r_rice = rice["radius"]
-        r_search_min = max(2.0, r_rice * 0.85)
+        r_search_min = max(2.0, r_rice * 0.60)
         r_search_max = min(
             r_rice * search_r_max_factor,
             math.hypot(proc_w, proc_h) * 0.5,
@@ -922,128 +1024,158 @@ def detect_container_and_scale(
         if verbose:
             print(f"[rice] THẤT BẠI -> Hough seed center={seed_c} r={r_seed:.1f}px")
 
-    # ------------------------------------ 2. Dò đỉnh cạnh trên tia hướng tâm
-    peaks = _ray_edge_peaks(
-        gx, gy, mag, seed_c,
-        r_min=r_search_min, r_max=r_search_max,
-        n_rays=n_rays,
-    )
-    if peaks["radius"].size == 0:
-        return _fail(
-            "Không tìm thấy đỉnh cạnh hướng tâm nào quanh khối lúa trong dải bán "
-            f"kính [{r_search_min:.0f}, {r_search_max:.0f}]px. Viền ly có thể quá "
-            "mờ/quá trong suốt. Thử tăng search_r_max_factor, hoặc chụp lại với "
-            "nền tối tương phản với thành ly."
-        )
-
-    # ------------------------------------------------ 3. Bình chọn bán kính vòng
-    votes = _radius_votes(peaks, r_search_min, r_search_max)
-    min_rays = max(6.0, min_rim_rays_ratio * n_rays)
-    votes = [v for v in votes if v["n_rays"] >= min_rays]
-
-    if rice_based:
-        # RÀNG BUỘC BAO HÀM: vòng hợp lệ phải bao quanh khối lúa
-        votes = [v for v in votes if 2.0 * v["radius"] >= min_containment_factor * r_rice]
-
-    if not votes:
-        return _fail(
-            "Không có vòng nào vừa được đủ tia bình chọn "
-            f"(>= {min_rays:.0f}/{n_rays} tia) vừa bao quanh được khối lúa "
-            f"(đường kính >= {min_containment_factor:.2f} x {r_rice:.1f}px). "
-            "Đây thường là dấu hiệu viền ly bị phản chiếu che mất phần lớn chu vi: "
-            "thử hạ min_rim_rays_ratio, hoặc chụp lại với ánh sáng tán xạ."
-        )
-
-    # ------------------------------ 4. Chọn cặp (mép trong, mép ngoài) đồng tâm
-    pair: Optional[Tuple[Dict[str, float], Dict[str, float], float]] = None
-    best_pair_score = -1.0
-    for i, vi in enumerate(votes):
-        for j, vj in enumerate(votes):
-            if i == j:
-                continue
-            r_in, r_out = vi["radius"], vj["radius"]
-            if r_out <= r_in:
-                continue
-            ratio = r_in / r_out
-            if abs(ratio - expected_ratio) > ratio_tol:
-                continue
-            s = (
-                math.sqrt(vi["weight"] * vj["weight"])
-                * math.exp(-((ratio - expected_ratio) / max(0.01, ratio_tol / 2.0)) ** 2)
-            )
-            if s > best_pair_score:
-                best_pair_score = s
-                pair = (vi, vj, ratio)
-
-    if pair is not None:
-        v_in, v_out, found_ratio = pair
-        r_in_vote, r_out_vote = v_in["radius"], v_out["radius"]
-        detect_type = "radial_vote_pair"
-        if verbose:
-            print(f"[rim] cặp vòng: r_in={r_in_vote:.1f} r_out={r_out_vote:.1f} "
-                  f"ratio={found_ratio:.3f} (kỳ vọng {expected_ratio:.3f})")
+    if surface_method == "adaptive":
+        inner_ell = surface["ellipse"]
+        (sx, sy), (sa, sb), sang = inner_ell
+        outer_ell = ((sx, sy), (sa / expected_ratio, sb / expected_ratio), sang)
+        inner_confidence = outer_confidence = None
+        inner_coverage = outer_coverage = surface["coverage"]
+        surface_transition_score = surface_mask_drop = surface_sat_drop = None
+        detect_type = "adaptive_surface_envelope"
     else:
-        # Chỉ thấy MỘT vòng (thường vì thành ly mỏng hơn ~2px ở độ phân giải xử lý
-        # hoặc do gradient viền ngoài mạnh hơn). Kế hoạch vá đề xuất: 
-        # coi vòng mạnh nhất là mép NGOÀI và suy ra mép TRONG thuần hình học.
-        v_out = votes[0]
-        r_out_vote = v_out["radius"]
-        r_in_vote = r_out_vote * max(EPS, expected_ratio)
-        detect_type = "radial_vote_single_geometric_inner"
-        warnings.append(
-            "Chỉ phát hiện được MỘT vành quanh khối lúa (không tách được mép trong "
-            "và mép ngoài). Giả định đây là viền ngoài, mép trong được suy ra "
-            "thuần hình học từ wall_thickness_mm, nên độ chính xác của nó phụ "
-            "thuộc hoàn toàn vào thông số này."
+        # ------------------------------------ 2. Dò đỉnh cạnh trên tia hướng tâm
+        peaks = _ray_edge_peaks(
+            gx, gy, mag, seed_c,
+            r_min=r_search_min, r_max=r_search_max,
+            n_rays=n_rays,
+            align_min=0.35,
+            top_k=8,
         )
-        if verbose:
-            print(f"[rim] chỉ 1 vòng: r_out={r_out_vote:.1f} -> inner suy hình học "
-                  f"r_in={r_in_vote:.1f}")
-
-    # ------------------------------------------- 5. Fit elip + tinh chỉnh hướng tâm
-    def _build_ellipse(r_vote: float, tol: float):
-        pts = _points_near_radius(peaks, r_vote, tol)
-        ell, conf = (None, None)
-        if pts.shape[0] >= 5:
-            ell, conf = _ransac_fit_ellipse(
-                pts, iterations=ransac_iterations, inlier_dist_px=max(2.0, tol * 0.6)
+        if peaks["radius"].size == 0:
+            return _fail(
+                "Không tìm thấy đỉnh cạnh hướng tâm nào quanh khối lúa trong dải bán "
+                f"kính [{r_search_min:.0f}, {r_search_max:.0f}]px. Viền ly có thể quá "
+                "mờ/quá trong suốt. Thử tăng search_r_max_factor, hoặc chụp lại với "
+                "nền tối tương phản với thành ly."
             )
-        if ell is None:
-            ell = ((seed_c[0], seed_c[1]), (2.0 * r_vote, 2.0 * r_vote), 0.0)
-            conf = None
-        cov = _contour_angular_coverage(pts, seed_c) if pts.shape[0] else 0.0
 
-        if use_ransac:
-            refined, ref_cov = _refine_ellipse_radially(
-                ell, gx, gy, mag, band_px=max(4.0, tol)
+        # ------------------------------------------------ 3. Bình chọn bán kính vòng
+        votes = _radius_votes(peaks, r_search_min, r_search_max)
+        min_rays = max(6.0, min_rim_rays_ratio * n_rays)
+        votes = [v for v in votes if v["n_rays"] >= min_rays]
+
+        if not votes:
+            return _fail(
+                "Không có vòng nào được đủ tia bình chọn "
+                f"(>= {min_rays:.0f}/{n_rays} tia). Viền mặt lúa có thể quá mờ hoặc "
+                "bị che khuất; thử hạ min_rim_rays_ratio hoặc dùng ánh sáng tán xạ."
             )
-            if refined is not None and ref_cov >= cov * 0.8:
-                # Chấp nhận tinh chỉnh chỉ khi không làm mất độ phủ và không làm
-                # đường kính thay đổi quá 25% (chống trường hợp bị kéo sang một
-                # vành lân cận khác).
-                if 0.75 <= _ellipse_diam(refined) / max(EPS, _ellipse_diam(ell)) <= 1.25:
-                    ell, cov = refined, ref_cov
-        return ell, conf, cov
 
-    tol_in = max(3.0, 0.035 * r_in_vote)
-    inner_ell, inner_confidence, inner_coverage = _build_ellipse(r_in_vote, tol_in)
+        # ---------------------- 4. Chọn mép trong bằng chuyển tiếp màu/mật độ lúa
+        if rice_based:
+            hsv_for_surface = cv2.cvtColor(proc_bgr, cv2.COLOR_BGR2HSV)
+            votes = _rank_surface_transition_votes(
+                votes,
+                saturation=hsv_for_surface[:, :, 1],
+                rice_mask=rice["mask"],
+                center=seed_c,
+                n_rays=n_rays,
+            )
+        else:
+            votes = sorted(votes, key=lambda d: d["weight"], reverse=True)
 
-    if detect_type == "radial_vote_pair":
-        tol_out = max(3.0, 0.035 * r_out_vote)
-        outer_ell, outer_confidence, outer_coverage = _build_ellipse(r_out_vote, tol_out)
-    else:
-        (icx, icy), (iMA, ima), iang = inner_ell
-        inv = 1.0 / max(EPS, expected_ratio)
-        outer_ell = ((icx, icy), (iMA * inv, ima * inv), iang)
-        outer_confidence = None
-        outer_coverage = inner_coverage
+        v_in = votes[0]
+        r_in_vote = float(v_in["radius"])
+        surface_transition_score = v_in.get("surface_score")
+        surface_mask_drop = v_in.get("mask_drop")
+        surface_sat_drop = v_in.get("sat_drop")
 
-    # Nếu tinh chỉnh làm hai elip đổi chỗ (trong lớn hơn ngoài) -> hoán vị lại
-    if _ellipse_diam(inner_ell) > _ellipse_diam(outer_ell):
-        inner_ell, outer_ell = outer_ell, inner_ell
-        inner_confidence, outer_confidence = outer_confidence, inner_confidence
-        inner_coverage, outer_coverage = outer_coverage, inner_coverage
-        warnings.append("Hai vành bị hoán vị sau tinh chỉnh (đã tự sửa lại).")
+        # Mép ngoài chỉ phục vụ crop/overlay. Nó không được phép thay đổi vòng trong
+        # đã chọn, nhờ vậy một cặp phản chiếu mạnh không thể kéo scale ra ngoài.
+        outer_candidates = []
+        for candidate in votes[1:]:
+            r_out = float(candidate["radius"])
+            if r_out <= r_in_vote:
+                continue
+            found_ratio = r_in_vote / r_out
+            ratio_error = abs(found_ratio - expected_ratio)
+            if ratio_error <= ratio_tol:
+                outer_candidates.append((ratio_error, -float(candidate["weight"]), candidate))
+
+        if outer_candidates:
+            _, _, v_out = min(outer_candidates, key=lambda item: (item[0], item[1]))
+            r_out_vote = float(v_out["radius"])
+            found_ratio = r_in_vote / r_out_vote
+            detect_type = (
+                "rice_surface_transition_pair" if rice_based else "radial_vote_pair"
+            )
+            if verbose:
+                print(
+                    f"[surface] inner={r_in_vote:.1f} outer={r_out_vote:.1f} "
+                    f"ratio={found_ratio:.3f} score={surface_transition_score}"
+                )
+        else:
+            r_out_vote = r_in_vote / max(EPS, expected_ratio)
+            detect_type = (
+                "rice_surface_transition_single_geometric_outer"
+                if rice_based else "radial_vote_single_geometric_outer"
+            )
+            warnings.append(
+                "Chỉ phát hiện chắc chắn vòng trong tại mặt lúa; mép ngoài được suy "
+                "ra từ wall_thickness_mm và không tham gia tính pixels_per_mm."
+            )
+            if verbose:
+                print(
+                    f"[surface] inner={r_in_vote:.1f} -> outer hình học "
+                    f"r_out={r_out_vote:.1f} score={surface_transition_score}"
+                )
+
+        if surface_transition_score is not None and surface_transition_score < 0.25:
+            warnings.append(
+                f"Bằng chứng chuyển tiếp mặt lúa yếu ({surface_transition_score:.2f}); "
+                "ảnh có thể bị phản chiếu mạnh hoặc độ bão hòa màu thấp."
+            )
+
+        # ------------------------------------------- 5. Fit elip + tinh chỉnh hướng tâm
+        def _build_ellipse(r_vote: float, tol: float):
+            pts = _points_near_radius(peaks, r_vote, tol)
+            ell, conf = (None, None)
+            if pts.shape[0] >= 5:
+                ell, conf = _ransac_fit_ellipse(
+                    pts, iterations=ransac_iterations, inlier_dist_px=max(2.0, tol * 0.6)
+                )
+            if ell is None:
+                ell = ((seed_c[0], seed_c[1]), (2.0 * r_vote, 2.0 * r_vote), 0.0)
+                conf = None
+            cov = _contour_angular_coverage(pts, seed_c) if pts.shape[0] else 0.0
+
+            if use_ransac:
+                refined, ref_cov = _refine_ellipse_radially(
+                    ell, gx, gy, mag, band_px=max(4.0, tol)
+                )
+                if refined is not None and ref_cov >= cov * 0.8:
+                    # Chấp nhận tinh chỉnh chỉ khi không làm mất độ phủ và không làm
+                    # đường kính thay đổi quá 25% (chống trường hợp bị kéo sang một
+                    # vành lân cận khác).
+                    if 0.75 <= _ellipse_diam(refined) / max(EPS, _ellipse_diam(ell)) <= 1.25:
+                        ell, cov = refined, ref_cov
+            return ell, conf, cov
+
+        tol_in = max(3.0, 0.035 * r_in_vote)
+        inner_ell, inner_confidence, inner_coverage = _build_ellipse(r_in_vote, tol_in)
+
+        if outer_candidates:
+            tol_out = max(3.0, 0.035 * r_out_vote)
+            outer_ell, outer_confidence, outer_coverage = _build_ellipse(r_out_vote, tol_out)
+        else:
+            (icx, icy), (iMA, ima), iang = inner_ell
+            inv = 1.0 / max(EPS, expected_ratio)
+            outer_ell = ((icx, icy), (iMA * inv, ima * inv), iang)
+            outer_confidence = None
+            outer_coverage = inner_coverage
+
+        # Mép ngoài không được phép đổi hoặc kéo mép trong đã chọn. Nếu fit ngoài
+        # co vào trong do phản chiếu, bỏ nó và suy hình học từ mép trong.
+        if _ellipse_diam(outer_ell) <= _ellipse_diam(inner_ell):
+            (icx, icy), (iMA, ima), iang = inner_ell
+            inv = 1.0 / max(EPS, expected_ratio)
+            outer_ell = ((icx, icy), (iMA * inv, ima * inv), iang)
+            outer_confidence = None
+            outer_coverage = inner_coverage
+            warnings.append(
+                "Mép ngoài bị phản chiếu làm fit sai; đã suy lại từ mép trong và "
+                "không thay đổi pixels_per_mm."
+            )
 
     inner_diam_px = _ellipse_diam(inner_ell)
     outer_diam_px = _ellipse_diam(outer_ell)
@@ -1058,10 +1190,11 @@ def detect_container_and_scale(
         )
 
     if rice_based:
-        if inner_diam_px < min_containment_factor * r_rice:
+        if surface is None and inner_diam_px < min_containment_factor * r_rice:
             warnings.append(
-                f"Mép trong ({inner_diam_px:.1f}px đường kính) nhỏ hơn mức an toàn so với "
-                f"khối lúa (bán kính {r_rice:.1f}px). Đã bỏ qua lỗi theo yêu cầu để tiếp tục pipeline."
+                f"Vòng mặt lúa ({inner_diam_px:.1f}px) nhỏ hơn vòng bao HSV "
+                f"({2.0 * r_rice:.1f}px). Đây có thể là phản chiếu màu làm mask "
+                "HSV nở rộng; scale vẫn dùng vòng chuyển tiếp được chấm điểm."
             )
         off = math.hypot(inner_ell[0][0] - seed_c[0], inner_ell[0][1] - seed_c[1])
         if off > max_concentric_offset * r_rice:
@@ -1108,39 +1241,47 @@ def detect_container_and_scale(
     (cx, cy), (MA_out, ma_out), angle = outer_ell
 
     # ------------------------------------------------ 8. Tính pixels_per_mm
+    # Hai elip vừa fit đều nằm tại mặt phẳng bề mặt lúa. Vì vậy scale đo trực
+    # tiếp ở đúng độ sâu cần dùng cho đo hạt, không nhân hiệu chỉnh phối cảnh.
     if detect_mode == "outer":
         selected_diam_px = outer_diam_px
         selected_ell = outer_ell
-        pixels_per_mm_at_rim = outer_diam_px / (
+        pixels_per_mm_at_rice = outer_diam_px / (
             float(inner_diam_mm) + 2.0 * float(wall_thickness_mm)
         )
     else:  # 'inner' hoặc 'both'
         selected_diam_px = inner_diam_px
         selected_ell = inner_ell
-        pixels_per_mm_at_rim = inner_diam_px / float(inner_diam_mm)
+        pixels_per_mm_at_rice = inner_diam_px / float(inner_diam_mm)
 
     if camera_distance_mm is not None and camera_distance_mm > 0:
         depth_scale_factor = float(camera_distance_mm) / (
             float(camera_distance_mm) + float(empty_height_mm)
         )
+        # Chỉ suy ngược scale tại miệng ly để chẩn đoán/tương thích key cũ.
+        pixels_per_mm_at_rim = pixels_per_mm_at_rice / max(EPS, depth_scale_factor)
     else:
         depth_scale_factor = 1.0
-        if float(empty_height_mm) > 0.5:
-            warnings.append(
-                f"empty_height_mm={empty_height_mm}mm nhưng chưa truyền "
-                "camera_distance_mm -> KHÔNG hiệu chỉnh được sai số phối cảnh theo độ "
-                "sâu. Bề mặt lúa nằm thấp hơn miệng ly nên scale thực tại đó NHỎ hơn, "
-                "gây sai số ~2x ở diện tích và ~3x ở thể tích so với sai số scale."
-            )
+        pixels_per_mm_at_rim = pixels_per_mm_at_rice
 
-    pixels_per_mm_at_rice = pixels_per_mm_at_rim * depth_scale_factor
-    pixels_per_mm = pixels_per_mm_at_rice if apply_depth_correction else pixels_per_mm_at_rim
+    if apply_depth_correction:
+        warnings.append(
+            "apply_depth_correction không còn cần thiết: detector đã đo trực tiếp "
+            "vòng tại mặt lúa nên pixels_per_mm không bị hiệu chỉnh lần thứ hai."
+        )
+    pixels_per_mm = pixels_per_mm_at_rice
+    scale_source = "rice_envelope_proxy" if surface is not None else "visual_rice_surface"
+    if surface is not None:
+        warnings.append(
+            "Scale inferred from the rice envelope assuming a filled cylindrical "
+            "cross-section; absolute metric accuracy is not yet validated."
+        )
 
     rice_height_mm = max(0.0, float(container_height_mm) - float(empty_height_mm))
     radius_inner_mm = float(inner_diam_mm) / 2.0
     bulk_rice_volume_mm3 = math.pi * (radius_inner_mm ** 2) * rice_height_mm
 
-    # --------------------------------------- 9. Cắt gọn & cô lập vùng miệng ly
+    # --------------------------------------- 9. Cắt gọn & cô lập vùng mặt lúa
     half = max(MA_out, ma_out) / 2.0
     pad = int(round(outer_diam_px * 0.08))
     x_min = max(0, int(round(cx - half)) - pad)
@@ -1152,6 +1293,12 @@ def detect_container_and_scale(
 
     rim_mask = np.zeros((h, w), dtype=np.uint8)
     cv2.ellipse(rim_mask, ((cx, cy), (MA_out * 1.06, ma_out * 1.06), angle), 255, -1)
+    if surface is not None:
+        rim_mask = cv2.resize(surface["mask"], (w, h), interpolation=cv2.INTER_NEAREST)
+        mx, my, mw, mh = cv2.boundingRect(rim_mask)
+        pad = max(2, int(round(inner_diam_px * 0.02)))
+        x_min, y_min = max(0, mx-pad), max(0, my-pad)
+        x_max, y_max = min(w, mx+mw+pad), min(h, my+mh+pad)
 
     isolated_bgr = img_bgr.copy()
     isolated_bgr[rim_mask == 0] = (0, 0, 0)
@@ -1161,12 +1308,19 @@ def detect_container_and_scale(
 
     # ------------------------------------------------------- 10. Overlay chẩn đoán
     info_for_overlay = {
+        "surface_diagnostics": surface["diagnostics"] if surface is not None else None,
         "pixels_per_mm": float(pixels_per_mm),
+        "scale_source": scale_source,
         "inner_w_px": int(round(inner_diam_px)),
         "outer_w_px": int(round(outer_diam_px)),
         "inner_ellipse": inner_ell,
         "outer_ellipse": outer_ell,
         "detect_type": detect_type,
+        "surface_transition_score": (
+            None if surface_transition_score is None else float(surface_transition_score)
+        ),
+        "surface_mask_drop": None if surface_mask_drop is None else float(surface_mask_drop),
+        "surface_sat_drop": None if surface_sat_drop is None else float(surface_sat_drop),
         "outer_confidence": outer_confidence,
         "inner_confidence": inner_confidence,
         "inner_coverage": float(inner_coverage),
@@ -1186,6 +1340,7 @@ def detect_container_and_scale(
     return {
         # --- các key của v1 (giữ nguyên tên & ý nghĩa) ---
         "pixels_per_mm": float(pixels_per_mm),
+        "scale_source": scale_source,
         "inner_w_px": int(round(inner_diam_px)),
         "outer_w_px": int(round(outer_diam_px)),
         "container_w_px": int(round(selected_diam_px)),
@@ -1194,6 +1349,11 @@ def detect_container_and_scale(
         "inner_diam_mm": float(inner_diam_mm),
         "detect_mode": detect_mode,
         "detect_type": detect_type,
+        "surface_transition_score": (
+            None if surface_transition_score is None else float(surface_transition_score)
+        ),
+        "surface_mask_drop": None if surface_mask_drop is None else float(surface_mask_drop),
+        "surface_sat_drop": None if surface_sat_drop is None else float(surface_sat_drop),
         "outer_confidence": outer_confidence,
         "inner_confidence": inner_confidence,
         "ellipse_params": selected_ell,
@@ -1203,6 +1363,9 @@ def detect_container_and_scale(
         "angle": float(inner_ell[2]),
         "cropped_bgr": cropped_bgr,
         "raw_cropped_bgr": raw_cropped_bgr,
+        "surface_mask": rim_mask,
+        "surface_isolated_bgr": isolated_bgr,
+        "surface_diagnostics": surface["diagnostics"] if surface is not None else None,
         "crop_bbox": (x_min, y_min, x_max, y_max),
         "crop_offset": (x_min, y_min),
         "overlay_bgr": overlay_bgr,
@@ -1229,12 +1392,12 @@ def draw_container_overlay(
     container_info: Dict[str, Any],
 ) -> np.ndarray:
     """
-    Vẽ Mép Trong (xanh lá), Mép Ngoài (cam) và vòng bao Khối Lúa (xanh dương nét
-    mảnh) lên ảnh, kèm chú thích detect_type / độ phủ / độ tin cậy.
+    Vẽ vòng trong tại Mặt Lúa (xanh lá), vòng ngoài suy ra (cam) và vòng bao
+    Khối Lúa (xanh dương nét mảnh) lên ảnh, kèm chú thích detect_type / độ phủ / độ tin cậy.
 
-    Vòng bao khối lúa là thứ quan trọng nhất khi debug ở v2: nếu elip xanh lá
-    KHÔNG bao quanh vòng xanh dương thì ràng buộc bao hàm đã bị vi phạm và kết
-    quả sai — nhìn một cái là thấy, không cần đọc log.
+    Vòng xanh dương là phạm vi HSV thô, không phải ground truth. Với ly thủy
+    tinh nó có thể nở do phản chiếu; elip xanh lá được chọn bằng chuyển tiếp
+    mật độ/saturation và có thể nhỏ hơn vòng xanh dương một cách hợp lệ.
 
     Mỗi đường được vẽ với lớp viền đệm đen (halo) dày hơn phía dưới để luôn nổi
     rõ bất kể nền sáng, tối hay màu gần trùng.
@@ -1249,6 +1412,8 @@ def draw_container_overlay(
         cv2.ellipse(vis, ell, color, t, lineType=cv2.LINE_AA)
 
     rice_circle = container_info.get("rice_circle")
+    if container_info.get('detect_type') == 'adaptive_surface_envelope':
+        rice_circle = None  # Coarse seed is not the measured boundary.
     if rice_circle is not None:
         rx, ry, rr = rice_circle
         c = (int(round(rx)), int(round(ry)))
@@ -1257,7 +1422,7 @@ def draw_container_overlay(
         cv2.circle(vis, c, r, (255, 180, 0), max(1, int(round(1 * s))), lineType=cv2.LINE_AA)
 
     outer_ell = container_info.get("outer_ellipse")
-    if outer_ell is not None:
+    if outer_ell is not None and container_info.get('detect_type') != 'adaptive_surface_envelope':
         _halo_ellipse(outer_ell, (0, 165, 255), 2)
 
     inner_ell = container_info.get("inner_ellipse")
@@ -1274,16 +1439,30 @@ def draw_container_overlay(
         return f"{v * 100:.0f}%" if pct else f"{v:.2f}"
 
     lines = [
-        (f"[MEP TRONG] {container_info.get('inner_w_px', 0)}px | "
+        (f"[MAT LUA - TRONG] {container_info.get('inner_w_px', 0)}px | "
          f"Scale = {container_info.get('pixels_per_mm', 0.0):.2f} px/mm",
          (0, 255, 0), 0.80),
-        (f"[MEP NGOAI] {container_info.get('outer_w_px', 0)}px", (0, 165, 255), 0.70),
+        (f"[MAT LUA - NGOAI] {container_info.get('outer_w_px', 0)}px", (0, 165, 255), 0.70),
         (f"type={container_info.get('detect_type', 'n/a')} | "
          f"cov(in)={_f(container_info.get('inner_coverage'))} "
          f"conf(in)={_f(container_info.get('inner_confidence'))} "
          f"conf(out)={_f(container_info.get('outer_confidence'))}",
          (255, 255, 255), 0.55),
     ]
+    surface_score = container_info.get("surface_transition_score")
+    if container_info.get('detect_type') == 'adaptive_surface_envelope':
+        lines[1] = ("[SCALE PROXY] filled circular surface assumed", (0, 220, 255), 0.65)
+        diagnostics = container_info.get('surface_diagnostics') or {}
+        drift = diagnostics.get('diameter_threshold_spread')
+        lines[2] = (f"threshold diameter drift={_f(drift)} | accuracy unvalidated",
+                    (255, 255, 255), 0.55)
+    if surface_score is not None:
+        lines.append((
+            f"surface_score={surface_score:.2f} | "
+            f"mask_drop={container_info.get('surface_mask_drop', 0.0):.2f} | "
+            f"sat_drop={container_info.get('surface_sat_drop', 0.0):.1f}",
+            (255, 220, 120), 0.55,
+        ))
     if rice_circle is not None:
         lines.append((f"[KHOI LUA] r={rice_circle[2]:.0f}px (vong xanh duong)",
                       (255, 180, 0), 0.55))

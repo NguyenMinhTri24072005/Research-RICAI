@@ -7,7 +7,7 @@ from typing import Any, Dict, Union
 import numpy as np
 
 from rice_ai.contracts import ContainerResult, PipelineError
-from rice_ai.vision.container_detector import detect_container_and_scale
+from rice_ai.vision.container_detector import ContainerDetectionError, detect_container_and_scale
 
 
 def analyze_container(
@@ -37,14 +37,18 @@ def analyze_container(
     wall_mm = float(wall_thickness_mm)
 
     # 3. Gọi module thị giác phát hiện miệng ly và tỷ lệ scale
-    raw_res = detect_container_and_scale(
-        image_input=image,
-        inner_diam_mm=diam_mm,
-        container_height_mm=height_mm,
-        empty_height_mm=empty_mm,
-        wall_thickness_mm=wall_mm,
-        detect_mode="inner",
-    )
+    try:
+        raw_res = detect_container_and_scale(
+            image_input=image,
+            inner_diam_mm=diam_mm,
+            container_height_mm=height_mm,
+            empty_height_mm=empty_mm,
+            wall_thickness_mm=wall_mm,
+            detect_mode="inner",
+            surface_method="adaptive",
+        )
+    except ContainerDetectionError as exc:
+        raise PipelineError(422, "DETECTION_FAILED", str(exc)) from exc
 
     pixels_per_mm = float(raw_res.get("pixels_per_mm", 0.0))
     if pixels_per_mm <= 0 or not math.isfinite(pixels_per_mm):
@@ -67,5 +71,5 @@ def analyze_container(
         bulk_volume_mm3=bulk_vol_mm3,
         pixels_per_mm=pixels_per_mm,
         raw_dict=raw_res,
-        visual_overlay=raw_res.get("visual_overlay"),
+        visual_overlay=raw_res.get("overlay_bgr"),
     )

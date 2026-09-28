@@ -94,7 +94,8 @@ class MobileApiTests(unittest.TestCase):
                     self.assertIn(b'id="flashToggle"', page)
                     self.assertNotIn(b'id="Capture_Batch"', page)
                     self.assertNotIn(b'id="Device_ID"', page)
-                    self.assertIn(b'capture.js?v=5', page)
+                    self.assertIn(b'capture.js?v=6', page)
+                    self.assertIn(b'id="checkSurface"', page)
 
                 session_request = urllib.request.Request(
                     f"{base}/api/session",

@@ -13,6 +13,7 @@ def create_mobile_app(coordinator: CaptureCoordinator, token: str, web_root: Pat
         raise RuntimeError("Thiếu FastAPI. Hãy chạy setup_capture_app.bat.") from exc
 
     app = FastAPI(title="Rice Capture Node API", docs_url=None, redoc_url=None)
+    preview_lock = asyncio.Lock()
     static_dir = web_root / "static"
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
@@ -33,6 +34,29 @@ def create_mobile_app(coordinator: CaptureCoordinator, token: str, web_root: Pat
     async def session(x_capture_token: str | None = Header(default=None)):
         require_token(x_capture_token)
         return coordinator.session_payload()
+
+    @app.post("/api/surface-preview")
+    async def surface_preview(
+        image: UploadFile = File(...),
+        Inner_Diameter_mm: str = Form(...),
+        Container_Height_mm: str = Form(...),
+        Empty_Height_mm: str = Form(...),
+        x_capture_token: str | None = Header(default=None),
+    ):
+        require_token(x_capture_token)
+        from rice_capture.services.surface_preview import preview_jpeg
+        try:
+            async with preview_lock:
+                payload = await image.read(30 * 1024 * 1024 + 1)
+                return await asyncio.to_thread(preview_jpeg, payload, {
+                    'Inner_Diameter_mm': Inner_Diameter_mm,
+                    'Container_Height_mm': Container_Height_mm,
+                    'Empty_Height_mm': Empty_Height_mm,
+                })
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        finally:
+            await image.close()
 
     @app.post("/api/samples")
     async def save_sample(

@@ -157,6 +157,23 @@ vẫn có sẵn làm phương án dự phòng. Không cần DroidCam, USB debugg
 
 ## Lưu dữ liệu
 
+### Kiểm tra mặt lúa trước khi lưu
+
+Sau khi chụp, nhập đường kính trong, chiều cao ly và khoảng trống (mm), rồi bấm
+**Kiểm tra mặt lúa** trên desktop hoặc điện thoại. Ứng dụng hiển thị đường bao,
+ảnh vùng lúa đã tách và scale ước lượng bằng detector adaptive giống pipeline CODE.
+Desktop chạy kiểm tra ở luồng riêng; điện thoại gọi `/api/surface-preview` qua
+phiên QR hiện tại. Không cần YOLO, CNN hoặc kết nối Colab để dùng preview này.
+
+Preview không cấp ID, không ghi Excel/SQLite, và không thay ảnh raw bằng crop.
+Bạn vẫn có thể lưu ảnh khi detector chưa tìm được mặt lúa để giữ mẫu khó cho
+nghiên cứu. Khi thay ảnh hoặc kích thước trên điện thoại, preview cũ bị hủy.
+Scale giả định mặt lúa phủ đầy tiết diện tròn; không phải xác nhận sai số đo.
+
+Bản detector độc lập nằm trong `src/rice_capture/vision/container_detector.py`;
+test parity so sánh nó với CODE và AI_SERVICES khi chạy trong repository đầy đủ.
+Đóng/mở lại desktop và tải lại trang điện thoại sau khi cập nhật source.
+
 - Ảnh được lưu phẳng tại thư mục đã chọn: M0001.jpg, M0002.jpg, ...
 - Số chữ số sau M được cố định là 4 để tương thích pipeline: M0001-M9999.
 - SQLite nằm cạnh workbook dưới tên capture_data.sqlite3.

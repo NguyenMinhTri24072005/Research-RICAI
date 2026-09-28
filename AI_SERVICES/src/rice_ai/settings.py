@@ -63,7 +63,7 @@ class Settings:
             )
 
         # Hằng số tính toán vật lý & thị giác máy tính
-        self.packing_fraction_geometry: float = self._float_in_range(get_val("PACKING_FRACTION_GEOMETRY", "0.55"), 0.0, 1.0, "PACKING_FRACTION_GEOMETRY")
+        self.packing_fraction_geometry: float = self._float_in_range(get_val("PACKING_FRACTION_GEOMETRY", "0.82"), 0.0, 1.0, "PACKING_FRACTION_GEOMETRY")
         self.packing_fraction_feature_hybrid: float = self._float_in_range(
             get_val("PACKING_FRACTION_FEATURE_HYBRID", "0.62"), 0.0, 1.0,
             "PACKING_FRACTION_FEATURE_HYBRID",

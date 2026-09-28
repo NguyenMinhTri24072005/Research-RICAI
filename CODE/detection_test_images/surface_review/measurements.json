@@ -1,0 +1,70 @@
+[
+  {
+    "sample": "M0261",
+    "old_inner_px": 1710,
+    "new_inner_px": 1636,
+    "new_center": [
+      3044,
+      3470
+    ],
+    "pixels_per_mm": 71.73947464792352,
+    "diagnostics": {
+      "saturation_threshold": 72.0,
+      "class_separation": 77.67732852126301,
+      "diameter_threshold_spread": 0.010953846868233358,
+      "center_threshold_spread": 0.0061816258157825574,
+      "metric_accuracy_validated": false
+    }
+  },
+  {
+    "sample": "M0270",
+    "old_inner_px": 527,
+    "new_inner_px": 524,
+    "new_center": [
+      712,
+      1030
+    ],
+    "pixels_per_mm": 22.99525050113076,
+    "diagnostics": {
+      "saturation_threshold": 106.0,
+      "class_separation": 107.41107062639475,
+      "diameter_threshold_spread": 0.006933181826849407,
+      "center_threshold_spread": 0.0010047700022689737,
+      "metric_accuracy_validated": false
+    }
+  },
+  {
+    "sample": "M0293",
+    "old_inner_px": 945,
+    "new_inner_px": 935,
+    "new_center": [
+      1589,
+      2157
+    ],
+    "pixels_per_mm": 40.993457673725324,
+    "diagnostics": {
+      "saturation_threshold": 120.0,
+      "class_separation": 110.13834108603291,
+      "diameter_threshold_spread": 0.0025102382636405136,
+      "center_threshold_spread": 0.0005358199969679077,
+      "metric_accuracy_validated": false
+    }
+  },
+  {
+    "sample": "M0301",
+    "old_inner_px": 537,
+    "new_inner_px": 534,
+    "new_center": [
+      700,
+      1064
+    ],
+    "pixels_per_mm": 23.424910695929274,
+    "diagnostics": {
+      "saturation_threshold": 95.0,
+      "class_separation": 133.8761558126422,
+      "diameter_threshold_spread": 0.0038080350451400635,
+      "center_threshold_spread": 0.0008036159725068226,
+      "metric_accuracy_validated": false
+    }
+  }
+]

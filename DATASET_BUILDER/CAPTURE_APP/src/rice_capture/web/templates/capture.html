@@ -69,10 +69,18 @@
       </details>
     </section>
 
+    <section class="card">
+      <button id="checkSurface" type="button" disabled>KIỂM TRA MẶT LÚA</button>
+      <p id="surfaceStatus">Chụp ảnh và nhập kích thước ly để kiểm tra. Ảnh lưu vẫn là ảnh raw.</p>
+      <div id="surfaceResults" class="hidden">
+        <p>Đường bao mặt lúa</p><img id="surfaceOverlay" alt="Đường bao mặt lúa" style="width:100%;max-height:480px;object-fit:contain">
+        <p>Vùng lúa đã tách</p><img id="surfaceCrop" alt="Vùng lúa đã tách" style="width:100%;max-height:480px;object-fit:contain">
+      </div>
+    </section>
     <button id="saveButton" class="save" type="button" disabled>LƯU MẪU VÀ GỬI VỀ MÁY TÍNH</button>
     <p id="status" class="status">Hãy chụp ảnh và nhập đầy đủ thông số.</p>
   </main>
 
-  <script src="/static/capture.js?v=5"></script>
+  <script src="/static/capture.js?v=6"></script>
 </body>
 </html>

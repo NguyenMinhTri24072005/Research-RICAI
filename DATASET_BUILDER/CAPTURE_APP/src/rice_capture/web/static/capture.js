@@ -27,6 +27,52 @@ let mediaStream = null;
 let facingMode = "environment";
 let flashEnabled = false;
 let pageActive = true;
+let surfaceGeneration = 0;
+let surfaceController = null;
+const checkSurface = document.getElementById("checkSurface");
+const surfaceStatus = document.getElementById("surfaceStatus");
+const surfaceResults = document.getElementById("surfaceResults");
+const geometryKeys = ["Inner_Diameter_mm", "Container_Height_mm", "Empty_Height_mm"];
+
+function resetSurfacePreview() {
+  surfaceGeneration++;
+  surfaceController?.abort();
+  surfaceResults.classList.add("hidden");
+  document.getElementById("surfaceOverlay").removeAttribute("src");
+  document.getElementById("surfaceCrop").removeAttribute("src");
+  surfaceStatus.textContent = "Bấm kiểm tra mặt lúa cho ảnh và thông số hiện tại. Ảnh raw không thay đổi.";
+  checkSurface.disabled = !selectedFile;
+}
+
+for (const key of geometryKeys) document.getElementById(key).addEventListener("input", resetSurfacePreview);
+checkSurface.addEventListener("click", async () => {
+  if (!selectedFile) return;
+  resetSurfacePreview();
+  const generation = surfaceGeneration;
+  surfaceController = new AbortController();
+  const form = new FormData();
+  form.append("image", selectedFile, "preview.jpg");
+  for (const key of geometryKeys) form.append(key, document.getElementById(key).value);
+  checkSurface.disabled = true;
+  surfaceStatus.textContent = "Đang kiểm tra mặt lúa…";
+  try {
+    const response = await fetch("/api/surface-preview", {
+      method: "POST", headers: {"X-Capture-Token": token}, body: form,
+      signal: surfaceController.signal,
+    });
+    const data = await response.json();
+    if (generation !== surfaceGeneration) return;
+    if (!response.ok || data.status !== "ok") throw new Error(data.detail || data.reason || "Không thể xác định mặt lúa.");
+    document.getElementById("surfaceOverlay").src = data.overlay;
+    document.getElementById("surfaceCrop").src = data.crop;
+    surfaceResults.classList.remove("hidden");
+    surfaceStatus.textContent = `Tỷ lệ ước lượng: ${data.pixels_per_mm.toFixed(2)} px/mm. Kiểm tra đường bao trước khi lưu; đây chưa phải xác nhận độ chính xác đo.`;
+  } catch (error) {
+    if (generation === surfaceGeneration && error.name !== "AbortError") surfaceStatus.textContent = error.message;
+  } finally {
+    if (generation === surfaceGeneration) checkSurface.disabled = !selectedFile;
+  }
+});
 
 function setStatus(message, kind = "") {
   status.textContent = message;
@@ -168,6 +214,7 @@ function revokePreviewUrl() {
 
 function clearSelectedImage() {
   selectedFile = null;
+  resetSurfacePreview();
   pendingRequestId = null;
   input.value = "";
   preview.removeAttribute("src");
@@ -192,6 +239,7 @@ function showLiveCamera() {
 function showCapturedImage(file, message) {
   clearSelectedImage();
   selectedFile = file;
+  resetSurfacePreview();
   previewUrl = URL.createObjectURL(file);
   pendingRequestId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
   preview.src = previewUrl;

@@ -8,6 +8,7 @@ import queue
 import shutil
 import sys
 import tempfile
+import threading
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, simpledialog, ttk
@@ -50,6 +51,7 @@ class DatasetCaptureApp:
         self.current_frame = None
         self.captured_frame = None
         self.preview_photo = None
+        self.surface_preview_busy = False
         self.workbook_store: WorkbookStore | None = None
         self.mobile_events: queue.Queue[dict[str, Any]] = queue.Queue()
         self.coordinator = CaptureCoordinator(self.mobile_events)
@@ -203,6 +205,8 @@ class DatasetCaptureApp:
             side="left"
         )
         ttk.Button(capture_bar, text="Chụp lại", command=self.capture_frame).pack(side="left", padx=8)
+        self.surface_button = ttk.Button(capture_bar, text="Kiểm tra mặt lúa", command=self.check_surface)
+        self.surface_button.pack(side="left", padx=4)
         self.capture_state_label = ttk.Label(capture_bar, text="Chưa chụp")
         self.capture_state_label.pack(side="left", padx=10)
 
@@ -531,7 +535,16 @@ class DatasetCaptureApp:
             while True:
                 event = self.mobile_events.get_nowait()
                 event_type = event.get("type")
-                if event_type == "sample_saved":
+                if event_type == "surface_preview":
+                    self.surface_preview_busy = False
+                    self.surface_button.configure(state="normal")
+                    if self.captured_frame is not event['frame']:
+                        continue
+                    if event['values'] != {key: variable.get() for key, variable in self.manual_vars.items()}:
+                        self._set_status("Thông số đã đổi; hãy kiểm tra mặt lúa lại.")
+                        continue
+                    self._show_surface_preview(event['result'])
+                elif event_type == "sample_saved":
                     self._handle_sample_saved_event(event)
                 elif event_type == "node_connected":
                     self.mobile_nodes[event["node_id"]] = event.get("label", "Điện thoại")
@@ -813,6 +826,54 @@ class DatasetCaptureApp:
         self.captured_frame = self.current_frame.copy()
         self.capture_state_label.configure(text="Đã chụp – sẵn sàng lưu")
         self._set_status("Đã giữ khung hình. Kiểm tra thông số rồi bấm lưu.")
+
+    def check_surface(self) -> None:
+        if self.captured_frame is None:
+            messagebox.showwarning("Chưa chụp ảnh", "Hãy chụp khung hình trước khi kiểm tra mặt lúa.")
+            return
+        if self.surface_preview_busy:
+            return
+        frame = self.captured_frame
+        values = {key: variable.get() for key, variable in self.manual_vars.items()}
+        self.surface_preview_busy = True
+        self.surface_button.configure(state="disabled")
+        self._set_status("Đang kiểm tra mặt lúa; ảnh raw được giữ nguyên.")
+
+        def work():
+            try:
+                from rice_capture.services.surface_preview import preview_frame
+                result = preview_frame(frame, values)
+            except Exception as exc:
+                result = {'status': 'failed', 'reason': str(exc)}
+            self.mobile_events.put({'type': 'surface_preview', 'frame': frame,
+                                    'values': values, 'result': result})
+        threading.Thread(target=work, daemon=True, name='surface-preview').start()
+
+    def _show_surface_preview(self, result) -> None:
+        if result['status'] != 'ok':
+            messagebox.showwarning("Chưa xác định được mặt lúa", result['reason'])
+            self._set_status("Detection chưa đạt; kiểm tra ảnh và kích thước ly.")
+            return
+        import base64
+        import io
+        from PIL import Image, ImageTk
+        window = tk.Toplevel(self.root)
+        window.title("Kiểm tra mặt lúa — ảnh raw không thay đổi")
+        ttk.Label(window, text=f"Scale ước lượng: {result['pixels_per_mm']:.2f} px/mm. Kiểm tra biên trước khi lưu.").pack(padx=12, pady=8)
+        body = ttk.Frame(window)
+        body.pack(fill='both', expand=True)
+        window.surface_photos = []
+        for key, title in [('overlay', 'Đường bao mặt lúa'), ('crop', 'Vùng lúa đã tách')]:
+            panel = ttk.Frame(body)
+            panel.pack(side='left', padx=8, pady=8)
+            ttk.Label(panel, text=title).pack()
+            image = Image.open(io.BytesIO(base64.b64decode(result[key].split(',', 1)[1])))
+            image.thumbnail((480, 520))
+            photo = ImageTk.PhotoImage(image)
+            window.surface_photos.append(photo)
+            ttk.Label(panel, image=photo).pack()
+        ttk.Label(window, text="Giả định lúa phủ đầy tiết diện tròn; độ chính xác đo tuyệt đối chưa được xác thực.").pack(padx=12, pady=8)
+        self._set_status("Đã mở kết quả kiểm tra. Khi lưu, ứng dụng vẫn lưu ảnh raw.")
 
     def _write_jpeg_atomic(self, path: Path, frame) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)

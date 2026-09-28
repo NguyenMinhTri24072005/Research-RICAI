@@ -683,7 +683,7 @@ function App() {
                   {Object.entries(analysis.debug_info.visuals || {}).map(([name, src]) => (
                     <figure className="debug-visual" key={name}>
                       <img src={src} alt={name} />
-                      <figcaption>{name === 'container_detection' ? 'Phát hiện miệng ly' : 'Phân loại hạt: xanh = hạt nguyên, cam = chỉ dùng regression, đỏ = không đạt CNN'}</figcaption>
+                      <figcaption>{name === 'container_detection' ? 'Đường bao mặt lúa — đã loại vùng phản chiếu ngoài mặt lúa' : 'Phân loại hạt: xanh = hạt nguyên, cam = chỉ dùng regression, đỏ = không đạt CNN'}</figcaption>
                     </figure>
                   ))}
                   <pre>{JSON.stringify({ timings_ms: analysis.timings_ms, features_31: analysis.debug_info.features_vector }, null, 2)}</pre>

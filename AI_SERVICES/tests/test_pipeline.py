@@ -50,6 +50,7 @@ class TestRicePipeline(unittest.TestCase):
     @patch("rice_ai.pipeline.runner.analyze_container")
     @patch("rice_ai.pipeline.runner.process_grains")
     def test_pipeline_run_success(self, mock_process_grains, mock_analyze_container):
+        isolated_surface = np.zeros((200, 200, 3), dtype=np.uint8)
         mock_analyze_container.return_value = ContainerResult(
             inner_diam_mm=17.8,
             container_height_mm=33.9,
@@ -57,7 +58,7 @@ class TestRicePipeline(unittest.TestCase):
             rice_height_mm=23.0,
             bulk_volume_mm3=5724.8,
             pixels_per_mm=67.0,
-            raw_dict={"inner_w_px": 1192.6},
+            raw_dict={"inner_w_px": 1192.6, "surface_isolated_bgr": isolated_surface},
         )
 
         mock_process_grains.return_value = GrainAnalysis(
@@ -84,6 +85,7 @@ class TestRicePipeline(unittest.TestCase):
         )
 
         result = self.pipeline.run(inputs, self.image_bytes, request_id="test_req_01")
+        self.assertIs(mock_process_grains.call_args.kwargs["image_input"], isolated_surface)
 
         self.assertEqual(result.request_id, "test_req_01")
         self.assertIsNotNone(result.estimates.final)
