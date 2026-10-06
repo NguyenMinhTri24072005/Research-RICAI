@@ -1,0 +1,4 @@
+﻿,Precision,Recall,F1,mIoU (mask khớp),MAE đếm hạt,Thời gian/ảnh (s)
+A. YOLOv12-seg,0.8944,0.9634,0.9276,0.9221,0.47,0.026
+B. MobileSAM (auto),0.0541,0.4956,0.0975,0.9382,38.59,5.927
+C. YOLOv12 + MobileSAM,0.9007,0.9702,0.9341,0.9348,0.47,0.115

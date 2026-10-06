@@ -1,0 +1,14 @@
+# Normalize text files
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.xlsx binary
+*.xls binary
+*.sqlite3 binary
+*.pt binary
+*.keras binary

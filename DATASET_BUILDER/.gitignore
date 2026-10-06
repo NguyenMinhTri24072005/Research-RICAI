@@ -1,6 +1,192 @@
+# ==============================================================================
+# DATASET_BUILDER - Chuẩn .gitignore cho dự án Thị giác Máy tính & Dữ liệu
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Môi trường Python & Bytecode biên dịch
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+.Python
+
+# Đóng gói, phân phối và thư viện phụ thuộc
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+*.manifest
+*.spec
+
+# Môi trường ảo (Virtual Environments)
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ------------------------------------------------------------------------------
+# 2. Kiểm thử, Chất lượng mã nguồn & Profiling
+# ------------------------------------------------------------------------------
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.cache/
+
+# ------------------------------------------------------------------------------
+# 3. Jupyter Notebooks (Checkpoints & Trạng thái tạm thời)
+# ------------------------------------------------------------------------------
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+*-checkpoint.ipynb
+
+# ------------------------------------------------------------------------------
+# 4. Hệ điều hành & Đồng bộ Cloud (Windows, macOS, Google Drive)
+# ------------------------------------------------------------------------------
+desktop.ini
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+*~
+.fuse_hidden*
+.directory
+
+# ------------------------------------------------------------------------------
+# 5. IDEs, Trình soạn thảo & Không gian làm việc
+# ------------------------------------------------------------------------------
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+.idea/
+*.swp
+*.swo
+*.swn
+*.sublime-workspace
+*.sublime-project
+
+# ------------------------------------------------------------------------------
+# 6. Microsoft Office & File khóa tạm (Excel lock files khi đang mở)
+# ------------------------------------------------------------------------------
+~$*.xlsx
+~$*.xls
+~$*.csv
+~$*.docx
+~$*.pptx
+
+# ------------------------------------------------------------------------------
+# 7. Cơ sở dữ liệu SQLite & File sao lưu tạm thời
+# ------------------------------------------------------------------------------
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+*.db-journal
+*.db-wal
+*.db-shm
+
+# File backup tự động hoặc tạo tay
+*.bak
+*.backup
+*.backup_*
+*.old
+*.orig
+*.tmp
+*.temp
+temp/
+tmp/
+
+# ------------------------------------------------------------------------------
+# 8. CAPTURE_APP (Runtime cục bộ, Cấu hình máy client & Khóa bảo mật)
+# ------------------------------------------------------------------------------
 CAPTURE_APP/.venv/
 CAPTURE_APP/runtime/
 CAPTURE_APP/.dataset_capture_settings.json
-CAPTURE_APP/__pycache__/
-CAPTURE_APP/tests/__pycache__/
-CAPTURE_APP/src/**/__pycache__/
+
+# Chứng chỉ SSL cục bộ và thông tin nhạy cảm
+*.pem
+*.key
+*.pfx
+*.p12
+*.crt
+*.csr
+.env
+.env.*
+!.env.example
+credentials.json
+secrets.json
+*service-account*.json
+*service_account*.json
+
+# ------------------------------------------------------------------------------
+# 9. Trọng số Mô hình Học sâu & Checkpoints (YOLO, DenseNet, ...)
+# ------------------------------------------------------------------------------
+*.pt
+*.pth
+*.ckpt
+*.keras
+*.h5
+*.hdf5
+*.onnx
+*.joblib
+*.pkl
+*.pickle
+checkpoints/
+weights/
+runs/
+logs/
+tensorboard/
+wandb/
+
+# ------------------------------------------------------------------------------
+# 10. Dữ liệu hình ảnh thô dung lượng lớn (Raw Images ~2GB+)
+# ------------------------------------------------------------------------------
+# Bỏ qua toàn bộ ảnh raw để tránh phình repo và lỗi push GitHub (>100MB/2GB)
+# Giữ lại khung thư mục rỗng thông qua file .gitkeep
+# 1_Raw_Images/*
+# !1_Raw_Images/.gitkeep
+
+# ------------------------------------------------------------------------------
+# 11. (Tùy chọn) Bỏ qua tập dữ liệu trích xuất nếu chỉ muốn lưu mã nguồn
+# Mặc định: vẫn track file nhẹ trong 3_AI_Extracted & 4_Final_Dataset (CSV/XLSX)
+# Nếu không muốn track, hãy mở chú thích (bỏ dấu #) 2 dòng sau:
+# 3_AI_Extracted/
+# 4_Final_Dataset/

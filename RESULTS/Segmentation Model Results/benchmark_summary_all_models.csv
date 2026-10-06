@@ -1,0 +1,7 @@
+﻿Model,Task,Weight Size (MB),Total Time (h),Total Time (s),Epochs,Batch Size,Image Size,Optimizer,LR_Initial,Best Box Epoch,Box Precision,Box Recall,Box F1,Box mAP50,Box mAP50-95,Best Mask Epoch,Mask Precision,Mask Recall,Mask F1,Mask mAP50,Mask mAP50-95,Final Box mAP50,Final Box mAP50-95,Final Mask mAP50,Final Mask mAP50-95
+yolov8n,Instance Segmentation,6.48,1.84,6637.76,100,8,640,SGD,0.01,90,0.9617,0.9494,0.9555,0.9698,0.8993,89.0,0.9612,0.9413,0.9512,0.9681,0.8451,0.9698,0.8936,0.9672,0.8412
+yolov8s,Instance Segmentation,22.76,1.89,6803.64,100,8,640,SGD,0.01,74,0.9672,0.9458,0.9564,0.9705,0.9041,54.0,0.9584,0.9485,0.9534,0.961,0.8482,0.9693,0.8839,0.9567,0.8241
+yolov8m,Instance Segmentation,52.3,2.9,10450.8,100,8,640,SGD,0.01,92,0.9583,0.953,0.9556,0.9756,0.915,91.0,0.9629,0.9436,0.9531,0.9715,0.8585,0.9756,0.9147,0.9728,0.8553
+yolov10n,Object Detection,5.49,1.8,6480.07,100,8,640,SGD,0.01,71,0.9633,0.9357,0.9493,0.9618,0.8902,,,,,,,0.9617,0.8817,,
+yolov10s,Object Detection,15.77,1.77,6380.03,100,8,640,SGD,0.01,89,0.9614,0.9531,0.9572,0.9744,0.9118,,,,,,,0.974,0.9097,,
+yolov12_mobileSam,Instance Segmentation,19.34,2.49,8971.8,100,8,640,SGD,0.01,96,0.9553,0.9533,0.9543,0.9704,0.9002,98.0,0.9521,0.9464,0.9492,0.9613,0.8392,0.97,0.8959,0.9605,0.8364

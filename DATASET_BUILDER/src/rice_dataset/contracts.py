@@ -58,6 +58,7 @@ STATUS_COLUMNS: Final[List[str]] = [
 
 DIAGNOSTIC_COLUMNS: Final[List[str]] = [
     "Physical_Estimated_Seeds",
+    "Bulk_To_Grain_Volume_Ratio",
     "Whole_Grains_Filtered_Count",
     "Whole_Grains_Raw_Count",
     "Mean_Clean_Grain_Volume_mm3",
