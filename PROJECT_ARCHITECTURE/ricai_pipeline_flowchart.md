@@ -58,7 +58,7 @@ flowchart TD
         
         F3(["Thống kê số liệu<br/>Mean V_grain, Uniformity Rate"]):::process
         
-        F1 -- "Ảnh Crop từng hạt riêng lẻ" -.-> F2
+        F1 -.->|Ảnh Crop từng hạt riêng lẻ| F2
         F1 -- "Kích thước hình học hạt" --> F3
     end
 
@@ -72,7 +72,7 @@ flowchart TD
         M4{{"Machine Learning<br/>Bayesian Few-Shot Calibration<br/>Ridge Residual Model<br/>[Thư mục: FromThanh/bayes_fewshot.py]"}}:::ai_model_ml
         
         M2 -- "Vector 31 đặc trưng tabular" --> M3
-        M2 -- "Features (V_bulk, V_grain, Diameter)" -.-> M4
+        M2 -.->|Features (V_bulk, V_grain, Diameter)| M4
     end
 
     %% Flow Connections
@@ -91,7 +91,7 @@ flowchart TD
     F3 --> M2
     C3 --> M1
     C3 --> M2
-    I3 -- "Dữ liệu cân nặng (g)" -.-> M4
+    I3 -.->|Dữ liệu cân nặng (g)| M4
     
     M1 --> M3
     M1 -.-> M4
@@ -100,7 +100,7 @@ flowchart TD
     O1(["Dự đoán cuối cùng<br/>Tổng số hạt lúa"]):::output
     
     M3 -- "Kết quả đếm hạt" --> O1
-    M4 -- "Kết quả đếm hạt + Khoảng tin cậy 90%" -.-> O1
+    M4 -.->|Kết quả đếm hạt + Khoảng tin cậy 90%| O1
 ```
 
 ### Các Mô Hình AI/ML Được Sử Dụng & Vị Trí:
