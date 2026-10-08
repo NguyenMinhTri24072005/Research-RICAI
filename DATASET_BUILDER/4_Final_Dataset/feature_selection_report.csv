@@ -1,0 +1,5 @@
+﻿Kịch_Bản_Features,Số_Biến,R2_Score (CV 5-Fold),MAE (CV 5-Fold),RMSE (CV 5-Fold),MAPE (%)
+1. Vision Đa Biến (V_bulk + Volume_Ratio + Grain_Width),3,0.9915,5.72,7.86,5.98
+2. Vision Đơn Biến (Chỉ dùng V_bulk),1,0.9915,5.76,7.85,6.06
+3. Vision + Số Hạt Bề Mặt (V_bulk + Whole_Grains_Count),2,0.9915,5.76,7.84,6.03
+4. Hybrid Sensor (Weight_g + V_bulk),2,0.9978,3.01,4.01,2.54

@@ -66,7 +66,7 @@ pnpm-debug.log*
 
 # Generated and preprocessed data
 /DATASET_BUILDER/3_AI_Extracted/
-/DATASET_BUILDER/4_Final_Dataset/
+# /DATASET_BUILDER/4_Final_Dataset/
 /DETECTED_OBJECTS/
 /AI_SERVICES/RICE_ESTIMATION_APPLICATION/backend/uploads/
 *.npy
@@ -82,7 +82,7 @@ pnpm-debug.log*
 # Model weights, checkpoints, and serialized estimators
 /MODELS/
 checkpoints/
-weights/
+# weights/
 models/checkpoints/
 *.pth
 *.pt
@@ -105,16 +105,6 @@ tensorboard/
 runtime/
 /AI_SERVICES/capture_server/certificates/
 
-# Ignore bulky top-level training results, but retain small textual summaries
-/RESULTS/**
-!/RESULTS/**/
-!/RESULTS/**/*.csv
-!/RESULTS/**/*.json
-!/RESULTS/**/*.yaml
-!/RESULTS/**/*.yml
-!/RESULTS/**/*.txt
-!/RESULTS/**/*.md
-
 # Generated project snapshots
 /AI_SERVICES/archive_legacy/COMBINE_FOR_AI_Project.txt
 
@@ -125,5 +115,3 @@ temp/
 *.tmp
 *.cache
 
-# Track the regression bundles explicitly requested for publication
-!/LINEAR_REGRESSION_MODEL/models/**/*.joblib
