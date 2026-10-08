@@ -3,7 +3,7 @@
 Dưới đây là sơ đồ luồng dữ liệu, trong đó làm nổi bật các **Mô hình Máy học (ML)** và **Học sâu (DL)** được sử dụng trong dự án, bao gồm đầu vào của chúng và thư mục chứa mã nguồn/trọng số.
 
 ```mermaid
-%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif", "fontSize": "15px"}, "flowchart": {"htmlLabels": true, "padding": 24, "nodeSpacing": 60, "rankSpacing": 70, "wrappingWidth": 260}}}%%
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif", "fontSize": "15px", "lineColor": "#6b7280", "textColor": "#1f2937", "primaryTextColor": "#1f2937", "tertiaryTextColor": "#1f2937", "titleColor": "#1f2937", "edgeLabelBackground": "#f1f5f9", "clusterBkg": "#f8fafc", "clusterBorder": "#94a3b8"}, "flowchart": {"htmlLabels": true, "padding": 24, "nodeSpacing": 60, "rankSpacing": 70, "wrappingWidth": 260}}}%%
 flowchart TD
     %% Định nghĩa các Style
     classDef input fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#0c4a6e
@@ -13,6 +13,9 @@ flowchart TD
     classDef postprocess fill:#dcfce7,stroke:#15803d,stroke-width:2px,color:#064e3b
     classDef math fill:#ffedd5,stroke:#b91c1c,stroke-width:2px,color:#7f1d1d
     classDef output fill:#fef08a,stroke:#a16207,stroke-width:2px,color:#422006
+
+    %% Đường nối: màu xám trung tính, nhìn rõ trên cả nền sáng lẫn tối
+    linkStyle default stroke:#6b7280,stroke-width:2px
 
     %% 1. Input
     I1["Ảnh chụp từ trên xuống<br/>RGB Image"]:::input
