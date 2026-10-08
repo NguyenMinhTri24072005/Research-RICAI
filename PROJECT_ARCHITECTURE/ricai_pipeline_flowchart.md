@@ -91,7 +91,7 @@ flowchart TD
     F3 --> M2
     C3 --> M1
     C3 --> M2
-    I3 -.->|Dữ liệu cân nặng (g)| M4
+    I3 -.->|"Dữ liệu cân nặng (g)"| M4
     
     M1 --> M3
     M1 -.-> M4
