@@ -72,7 +72,7 @@ flowchart TD
         M4{{"Machine Learning<br/>Bayesian Few-Shot Calibration<br/>Ridge Residual Model<br/>[Thư mục: FromThanh/bayes_fewshot.py]"}}:::ai_model_ml
         
         M2 --> |Vector 31 đặc trưng tabular| M3
-        M2 -.->|Features (V_bulk, V_grain, Diameter)| M4
+        M2 -.->|"Features (V_bulk, V_grain, Diameter)"| M4
     end
 
     %% Flow Connections
