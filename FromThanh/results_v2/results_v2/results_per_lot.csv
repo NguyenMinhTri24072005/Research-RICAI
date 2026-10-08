@@ -1,0 +1,593 @@
+model,K,lot,MAE,MSE,RMSE,MAPE,R2,Cov90,Width%
+"GP on V_bulk, support-only",3,18,22.612,1028.819,28.141,35.195,0.203,,
+"GP on V_bulk, support-only",3,23,13.956,742.242,18.833,6.791,0.644,,
+"GP on V_bulk, support-only",3,33,31.131,3102.124,42.326,26.588,0.607,,
+"GP on V_bulk, support-only",3,42,45.093,4795.124,58.296,22.587,0.219,,
+"GP on V_bulk, support-only",5,18,10.37,270.878,13.644,15.026,0.798,,
+"GP on V_bulk, support-only",5,23,6.418,234.965,9.24,3.317,0.876,,
+"GP on V_bulk, support-only",5,33,15.606,821.776,21.907,11.917,0.895,,
+"GP on V_bulk, support-only",5,42,25.892,1995.662,35.596,14.168,0.684,,
+"GP on V_bulk, support-only",10,18,6.677,96.474,8.906,8.655,0.927,,
+"GP on V_bulk, support-only",10,23,2.178,10.357,2.96,1.048,0.995,,
+"GP on V_bulk, support-only",10,33,6.942,93.74,8.83,5.338,0.987,,
+"GP on V_bulk, support-only",10,42,12.883,455.866,17.697,6.959,0.93,,
+"GP on V_bulk, support-only",20,18,5.29,49.941,6.628,6.17,0.937,,
+"GP on V_bulk, support-only",20,23,1.871,6.271,2.412,0.886,0.997,,
+"GP on V_bulk, support-only",20,33,5.492,48.913,6.866,4.059,0.993,,
+"GP on V_bulk, support-only",20,42,8.877,130.373,11.36,4.201,0.979,,
+"GP residual on source log-log, pooled+sup.",0,18,6.26,84.281,9.18,7.022,0.935,,
+"GP residual on source log-log, pooled+sup.",0,23,4.975,41.968,6.478,2.096,0.98,,
+"GP residual on source log-log, pooled+sup.",0,33,15.252,433.042,20.81,6.92,0.944,,
+"GP residual on source log-log, pooled+sup.",0,42,14.0,284.715,16.873,6.5,0.954,,
+"GP residual on source log-log, pooled+sup.",1,18,6.231,84.122,9.165,6.982,0.934,,
+"GP residual on source log-log, pooled+sup.",1,23,4.957,41.713,6.457,2.084,0.98,,
+"GP residual on source log-log, pooled+sup.",1,33,15.16,429.755,20.727,6.883,0.945,,
+"GP residual on source log-log, pooled+sup.",1,42,13.805,277.883,16.665,6.423,0.956,,
+"GP residual on source log-log, pooled+sup.",3,18,6.264,83.729,9.124,7.0,0.936,,
+"GP residual on source log-log, pooled+sup.",3,23,4.927,41.144,6.407,2.076,0.981,,
+"GP residual on source log-log, pooled+sup.",3,33,15.178,427.721,20.671,6.887,0.945,,
+"GP residual on source log-log, pooled+sup.",3,42,13.612,272.928,16.511,6.333,0.956,,
+"GP residual on source log-log, pooled+sup.",5,18,6.374,86.625,9.271,7.128,0.933,,
+"GP residual on source log-log, pooled+sup.",5,23,4.847,39.768,6.287,2.053,0.981,,
+"GP residual on source log-log, pooled+sup.",5,33,15.297,431.925,20.75,6.871,0.944,,
+"GP residual on source log-log, pooled+sup.",5,42,13.313,264.641,16.259,6.203,0.958,,
+"GP residual on source log-log, pooled+sup.",10,18,6.049,78.596,8.753,6.762,0.936,,
+"GP residual on source log-log, pooled+sup.",10,23,4.717,38.287,6.16,1.999,0.982,,
+"GP residual on source log-log, pooled+sup.",10,33,14.653,401.04,19.954,6.676,0.947,,
+"GP residual on source log-log, pooled+sup.",10,42,12.792,246.919,15.68,6.01,0.96,,
+"GP residual on source log-log, pooled+sup.",20,18,6.577,90.515,8.916,7.451,0.891,,
+"GP residual on source log-log, pooled+sup.",20,23,4.726,37.432,6.025,1.993,0.982,,
+"GP residual on source log-log, pooled+sup.",20,33,14.594,393.524,19.657,6.638,0.947,,
+"GP residual on source log-log, pooled+sup.",20,42,11.75,222.685,14.877,5.561,0.963,,
+"Gradient Boosting, pooled + support",0,18,15.534,308.395,17.561,26.916,0.763,,
+"Gradient Boosting, pooled + support",0,23,7.482,84.168,9.174,3.649,0.961,,
+"Gradient Boosting, pooled + support",0,33,12.851,276.634,16.632,6.518,0.964,,
+"Gradient Boosting, pooled + support",0,42,21.816,680.982,26.096,9.198,0.891,,
+"Gradient Boosting, pooled + support",1,18,11.263,194.602,13.717,20.387,0.848,,
+"Gradient Boosting, pooled + support",1,23,9.57,131.607,11.207,4.304,0.938,,
+"Gradient Boosting, pooled + support",1,33,12.835,279.486,16.707,6.463,0.964,,
+"Gradient Boosting, pooled + support",1,42,20.559,634.556,25.065,8.629,0.898,,
+"Gradient Boosting, pooled + support",3,18,10.269,165.142,12.651,18.053,0.875,,
+"Gradient Boosting, pooled + support",3,23,8.402,99.99,9.914,3.828,0.953,,
+"Gradient Boosting, pooled + support",3,33,12.591,270.922,16.416,6.372,0.965,,
+"Gradient Boosting, pooled + support",3,42,19.37,572.233,23.792,8.167,0.907,,
+"Gradient Boosting, pooled + support",5,18,8.816,123.389,10.83,14.433,0.907,,
+"Gradient Boosting, pooled + support",5,23,7.563,81.066,8.939,3.509,0.961,,
+"Gradient Boosting, pooled + support",5,33,12.501,262.187,16.075,6.344,0.966,,
+"Gradient Boosting, pooled + support",5,42,17.548,469.49,21.533,7.41,0.925,,
+"Gradient Boosting, pooled + support",10,18,7.708,89.943,9.326,11.524,0.928,,
+"Gradient Boosting, pooled + support",10,23,6.253,57.031,7.488,2.962,0.972,,
+"Gradient Boosting, pooled + support",10,33,11.133,206.8,14.155,5.935,0.973,,
+"Gradient Boosting, pooled + support",10,42,16.292,412.137,20.093,6.966,0.933,,
+"Gradient Boosting, pooled + support",20,18,7.471,85.279,8.887,10.419,0.898,,
+"Gradient Boosting, pooled + support",20,23,5.69,44.956,6.605,2.719,0.977,,
+"Gradient Boosting, pooled + support",20,33,9.426,148.653,11.841,5.357,0.98,,
+"Gradient Boosting, pooled + support",20,42,13.257,275.428,16.46,5.831,0.955,,
+"Ours+W (main): log W, g(z)=W+V_bulk",0,18,6.146,82.246,9.069,6.129,0.937,96.0,45.945
+"Ours+W (main): log W, g(z)=W+V_bulk",0,23,4.047,17.748,4.213,1.781,0.992,100.0,45.927
+"Ours+W (main): log W, g(z)=W+V_bulk",0,33,12.124,190.696,13.809,6.217,0.975,100.0,48.292
+"Ours+W (main): log W, g(z)=W+V_bulk",0,42,1.845,4.698,2.167,0.932,0.999,100.0,45.835
+"Ours+W (main): log W, g(z)=W+V_bulk",1,18,5.559,61.959,7.664,6.251,0.952,41.833,8.099
+"Ours+W (main): log W, g(z)=W+V_bulk",1,23,0.874,1.25,1.074,0.378,0.999,100.0,15.963
+"Ours+W (main): log W, g(z)=W+V_bulk",1,33,3.119,18.915,3.794,1.871,0.998,99.897,18.34
+"Ours+W (main): log W, g(z)=W+V_bulk",1,42,1.688,4.672,2.006,0.836,0.999,100.0,17.091
+"Ours+W (main): log W, g(z)=W+V_bulk",3,18,4.786,45.916,6.606,5.51,0.965,71.455,14.122
+"Ours+W (main): log W, g(z)=W+V_bulk",3,23,0.749,0.941,0.961,0.323,1.0,100.0,10.576
+"Ours+W (main): log W, g(z)=W+V_bulk",3,33,2.419,9.362,2.947,1.598,0.999,99.784,13.234
+"Ours+W (main): log W, g(z)=W+V_bulk",3,42,1.83,5.068,2.122,0.875,0.999,100.0,11.583
+"Ours+W (main): log W, g(z)=W+V_bulk",5,18,4.292,40.22,6.241,4.941,0.969,73.3,14.353
+"Ours+W (main): log W, g(z)=W+V_bulk",5,23,0.729,0.873,0.929,0.314,1.0,100.0,8.611
+"Ours+W (main): log W, g(z)=W+V_bulk",5,33,2.284,8.913,2.851,1.497,0.999,98.857,11.655
+"Ours+W (main): log W, g(z)=W+V_bulk",5,42,1.511,3.405,1.803,0.768,0.999,100.0,9.54
+"Ours+W (main): log W, g(z)=W+V_bulk",10,18,3.923,31.296,5.429,4.665,0.974,88.133,19.15
+"Ours+W (main): log W, g(z)=W+V_bulk",10,23,0.666,0.796,0.888,0.285,1.0,100.0,6.394
+"Ours+W (main): log W, g(z)=W+V_bulk",10,33,2.039,6.846,2.574,1.413,0.999,96.0,9.608
+"Ours+W (main): log W, g(z)=W+V_bulk",10,42,1.494,3.222,1.775,0.761,0.999,100.0,7.356
+"Ours+W (main): log W, g(z)=W+V_bulk",20,18,4.1,35.527,5.516,4.807,0.956,87.6,19.333
+"Ours+W (main): log W, g(z)=W+V_bulk",20,23,0.613,0.688,0.818,0.262,1.0,100.0,4.712
+"Ours+W (main): log W, g(z)=W+V_bulk",20,33,1.867,5.765,2.364,1.325,0.999,93.7,8.524
+"Ours+W (main): log W, g(z)=W+V_bulk",20,42,1.413,2.922,1.701,0.736,1.0,99.548,5.748
+Ours+W ablation: + V_g in g(z),0,18,6.425,89.23,9.446,6.365,0.931,96.0,46.022
+Ours+W ablation: + V_g in g(z),0,23,4.378,20.826,4.564,1.918,0.99,100.0,46.012
+Ours+W ablation: + V_g in g(z),0,33,12.443,207.532,14.406,6.258,0.973,100.0,47.879
+Ours+W ablation: + V_g in g(z),0,42,8.154,82.841,9.102,3.442,0.987,100.0,47.252
+Ours+W ablation: + V_g in g(z),1,18,5.717,65.392,7.872,6.408,0.949,40.583,7.807
+Ours+W ablation: + V_g in g(z),1,23,0.895,1.301,1.099,0.384,0.999,100.0,16.053
+Ours+W ablation: + V_g in g(z),1,33,4.204,32.115,5.111,2.37,0.996,99.897,17.913
+Ours+W ablation: + V_g in g(z),1,42,3.106,15.807,3.923,1.39,0.997,100.0,18.081
+Ours+W ablation: + V_g in g(z),3,18,4.906,48.243,6.765,5.62,0.963,71.636,14.193
+Ours+W ablation: + V_g in g(z),3,23,0.758,0.95,0.964,0.325,1.0,100.0,10.636
+Ours+W ablation: + V_g in g(z),3,33,3.236,16.546,3.964,1.978,0.998,98.811,13.111
+Ours+W ablation: + V_g in g(z),3,42,3.071,15.107,3.802,1.361,0.998,100.0,12.581
+Ours+W ablation: + V_g in g(z),5,18,4.433,42.476,6.408,5.069,0.967,73.2,14.575
+Ours+W ablation: + V_g in g(z),5,23,0.739,0.892,0.938,0.316,1.0,100.0,8.659
+Ours+W ablation: + V_g in g(z),5,33,3.143,15.941,3.849,1.88,0.998,97.943,11.851
+Ours+W ablation: + V_g in g(z),5,42,2.715,11.831,3.414,1.229,0.998,99.696,10.478
+Ours+W ablation: + V_g in g(z),10,18,4.066,32.919,5.572,4.809,0.973,88.133,19.441
+Ours+W ablation: + V_g in g(z),10,23,0.686,0.802,0.892,0.293,1.0,100.0,6.432
+Ours+W ablation: + V_g in g(z),10,33,2.873,12.42,3.473,1.791,0.998,95.533,10.169
+Ours+W ablation: + V_g in g(z),10,42,2.709,11.184,3.328,1.221,0.998,97.659,8.41
+Ours+W ablation: + V_g in g(z),20,18,4.242,37.259,5.673,4.962,0.954,87.6,19.638
+Ours+W ablation: + V_g in g(z),20,23,0.643,0.698,0.824,0.273,1.0,100.0,4.737
+Ours+W ablation: + V_g in g(z),20,33,2.794,11.595,3.366,1.742,0.998,93.6,9.206
+Ours+W ablation: + V_g in g(z),20,42,2.667,10.471,3.223,1.201,0.998,96.258,6.949
+Ours+W ablation: no NIG (fixed noise),0,18,6.146,82.246,9.069,6.129,0.937,92.0,35.339
+Ours+W ablation: no NIG (fixed noise),0,23,4.047,17.748,4.213,1.781,0.992,100.0,55.455
+Ours+W ablation: no NIG (fixed noise),0,33,12.124,190.696,13.809,6.217,0.975,100.0,101.694
+Ours+W ablation: no NIG (fixed noise),0,42,1.845,4.698,2.167,0.932,0.999,100.0,60.673
+Ours+W ablation: no NIG (fixed noise),1,18,5.559,61.959,7.664,6.251,0.952,39.0,7.038
+Ours+W ablation: no NIG (fixed noise),1,23,0.874,1.25,1.074,0.378,0.999,100.0,22.653
+Ours+W ablation: no NIG (fixed noise),1,33,3.119,18.915,3.794,1.871,0.998,100.0,42.509
+Ours+W ablation: no NIG (fixed noise),1,42,1.688,4.672,2.006,0.836,0.999,100.0,26.614
+Ours+W ablation: no NIG (fixed noise),3,18,4.786,45.916,6.606,5.51,0.965,34.0,5.447
+Ours+W ablation: no NIG (fixed noise),3,23,0.749,0.941,0.961,0.323,1.0,100.0,18.832
+Ours+W ablation: no NIG (fixed noise),3,33,2.419,9.362,2.947,1.598,0.999,100.0,35.592
+Ours+W ablation: no NIG (fixed noise),3,42,1.83,5.068,2.122,0.875,0.999,100.0,22.173
+Ours+W ablation: no NIG (fixed noise),5,18,4.292,40.22,6.241,4.941,0.969,39.0,5.192
+Ours+W ablation: no NIG (fixed noise),5,23,0.729,0.873,0.929,0.314,1.0,100.0,17.911
+Ours+W ablation: no NIG (fixed noise),5,33,2.284,8.913,2.851,1.497,0.999,100.0,33.719
+Ours+W ablation: no NIG (fixed noise),5,42,1.511,3.405,1.803,0.768,0.999,100.0,21.098
+Ours+W ablation: no NIG (fixed noise),10,18,3.923,31.296,5.429,4.665,0.974,32.533,4.93
+Ours+W ablation: no NIG (fixed noise),10,23,0.666,0.796,0.888,0.285,1.0,100.0,17.157
+Ours+W ablation: no NIG (fixed noise),10,33,2.039,6.846,2.574,1.413,0.999,100.0,32.379
+Ours+W ablation: no NIG (fixed noise),10,42,1.494,3.222,1.775,0.761,0.999,100.0,20.217
+Ours+W ablation: no NIG (fixed noise),20,18,4.1,35.527,5.516,4.807,0.956,34.0,4.816
+Ours+W ablation: no NIG (fixed noise),20,23,0.613,0.688,0.818,0.262,1.0,100.0,16.772
+Ours+W ablation: no NIG (fixed noise),20,33,1.867,5.765,2.364,1.325,0.999,100.0,31.647
+Ours+W ablation: no NIG (fixed noise),20,42,1.413,2.922,1.701,0.736,1.0,100.0,19.753
+Ours+W ablation: scale only (g=0),0,18,5.12,63.904,7.994,5.364,0.951,100.0,44.433
+Ours+W ablation: scale only (g=0),0,23,5.802,37.898,6.156,2.486,0.982,100.0,46.579
+Ours+W ablation: scale only (g=0),0,33,11.481,160.293,12.661,6.234,0.979,100.0,49.992
+Ours+W ablation: scale only (g=0),0,42,4.066,22.014,4.692,1.639,0.996,100.0,52.957
+Ours+W ablation: scale only (g=0),1,18,7.135,95.844,9.32,8.087,0.925,24.333,6.388
+Ours+W ablation: scale only (g=0),1,23,1.347,3.046,1.659,0.564,0.999,100.0,17.176
+Ours+W ablation: scale only (g=0),1,33,2.741,13.411,3.327,1.762,0.998,100.0,20.364
+Ours+W ablation: scale only (g=0),1,42,1.873,5.782,2.316,0.798,0.999,100.0,20.916
+Ours+W ablation: scale only (g=0),3,18,5.825,65.833,7.778,6.752,0.949,63.091,15.628
+Ours+W ablation: scale only (g=0),3,23,1.044,1.742,1.303,0.442,0.999,100.0,11.43
+Ours+W ablation: scale only (g=0),3,33,2.387,9.054,2.874,1.566,0.999,99.946,14.818
+Ours+W ablation: scale only (g=0),3,42,1.793,5.314,2.213,0.767,0.999,100.0,14.143
+Ours+W ablation: scale only (g=0),5,18,5.243,56.594,7.341,6.085,0.956,70.2,17.154
+Ours+W ablation: scale only (g=0),5,23,1.01,1.613,1.257,0.429,0.999,100.0,9.315
+Ours+W ablation: scale only (g=0),5,33,1.991,6.41,2.463,1.382,0.999,99.314,12.702
+Ours+W ablation: scale only (g=0),5,42,1.6,3.996,1.973,0.692,0.999,100.0,11.518
+Ours+W ablation: scale only (g=0),10,18,4.613,43.499,6.386,5.621,0.964,85.867,22.256
+Ours+W ablation: scale only (g=0),10,23,0.971,1.424,1.182,0.417,0.999,100.0,6.952
+Ours+W ablation: scale only (g=0),10,33,1.946,5.841,2.391,1.374,0.999,97.6,10.36
+Ours+W ablation: scale only (g=0),10,42,1.526,3.596,1.887,0.667,0.999,100.0,8.806
+Ours+W ablation: scale only (g=0),20,18,4.928,49.044,6.523,5.955,0.94,84.0,22.476
+Ours+W ablation: scale only (g=0),20,23,0.97,1.406,1.171,0.414,0.999,100.0,5.152
+Ours+W ablation: scale only (g=0),20,33,1.801,4.987,2.218,1.294,0.999,96.4,9.029
+Ours+W ablation: scale only (g=0),20,42,1.483,3.263,1.8,0.653,0.999,98.0,6.688
+Ours+W ablation: uncalibrated (lam=1),0,18,6.146,82.246,9.069,6.129,0.937,96.0,45.945
+Ours+W ablation: uncalibrated (lam=1),0,23,4.047,17.748,4.213,1.781,0.992,100.0,45.927
+Ours+W ablation: uncalibrated (lam=1),0,33,12.124,190.696,13.809,6.217,0.975,100.0,42.216
+Ours+W ablation: uncalibrated (lam=1),0,42,1.845,4.698,2.167,0.932,0.999,100.0,45.835
+Ours+W ablation: uncalibrated (lam=1),1,18,5.559,61.959,7.664,6.251,0.952,41.833,8.099
+Ours+W ablation: uncalibrated (lam=1),1,23,0.874,1.25,1.074,0.378,0.999,100.0,15.963
+Ours+W ablation: uncalibrated (lam=1),1,33,3.119,18.915,3.794,1.871,0.998,99.744,16.068
+Ours+W ablation: uncalibrated (lam=1),1,42,1.688,4.672,2.006,0.836,0.999,100.0,17.091
+Ours+W ablation: uncalibrated (lam=1),3,18,4.786,45.916,6.606,5.51,0.965,71.455,14.122
+Ours+W ablation: uncalibrated (lam=1),3,23,0.749,0.941,0.961,0.323,1.0,100.0,10.576
+Ours+W ablation: uncalibrated (lam=1),3,33,2.419,9.362,2.947,1.598,0.999,98.703,11.596
+Ours+W ablation: uncalibrated (lam=1),3,42,1.83,5.068,2.122,0.875,0.999,100.0,11.583
+Ours+W ablation: uncalibrated (lam=1),5,18,4.292,40.22,6.241,4.941,0.969,73.3,14.353
+Ours+W ablation: uncalibrated (lam=1),5,23,0.729,0.873,0.929,0.314,1.0,100.0,8.611
+Ours+W ablation: uncalibrated (lam=1),5,33,2.284,8.913,2.851,1.497,0.999,97.143,10.212
+Ours+W ablation: uncalibrated (lam=1),5,42,1.511,3.405,1.803,0.768,0.999,100.0,9.54
+Ours+W ablation: uncalibrated (lam=1),10,18,3.923,31.296,5.429,4.665,0.974,88.133,19.15
+Ours+W ablation: uncalibrated (lam=1),10,23,0.666,0.796,0.888,0.285,1.0,100.0,6.394
+Ours+W ablation: uncalibrated (lam=1),10,33,2.039,6.846,2.574,1.413,0.999,93.733,8.42
+Ours+W ablation: uncalibrated (lam=1),10,42,1.494,3.222,1.775,0.761,0.999,100.0,7.356
+Ours+W ablation: uncalibrated (lam=1),20,18,4.1,35.527,5.516,4.807,0.956,87.6,19.333
+Ours+W ablation: uncalibrated (lam=1),20,23,0.613,0.688,0.818,0.262,1.0,100.0,4.712
+Ours+W ablation: uncalibrated (lam=1),20,33,1.867,5.765,2.364,1.325,0.999,92.6,7.47
+Ours+W ablation: uncalibrated (lam=1),20,42,1.413,2.922,1.701,0.736,1.0,99.548,5.748
+Ours+W ablation: within-lot g(z),0,18,5.14,66.254,8.14,5.247,0.949,100.0,44.601
+Ours+W ablation: within-lot g(z),0,23,2.422,6.603,2.57,1.133,0.997,100.0,53.728
+Ours+W ablation: within-lot g(z),0,33,13.364,258.243,16.07,6.258,0.967,100.0,53.188
+Ours+W ablation: within-lot g(z),0,42,3.519,15.128,3.889,1.496,0.998,100.0,59.987
+Ours+W ablation: within-lot g(z),1,18,6.967,92.084,9.164,7.884,0.928,26.667,6.451
+Ours+W ablation: within-lot g(z),1,23,1.147,2.234,1.412,0.512,0.999,100.0,18.216
+Ours+W ablation: within-lot g(z),1,33,4.9,51.81,6.12,2.798,0.993,98.821,19.079
+Ours+W ablation: within-lot g(z),1,42,2.492,11.485,3.086,1.249,0.998,100.0,21.473
+Ours+W ablation: within-lot g(z),3,18,5.71,63.554,7.662,6.608,0.951,63.636,15.38
+Ours+W ablation: within-lot g(z),3,23,0.998,1.687,1.276,0.447,0.999,100.0,12.096
+Ours+W ablation: within-lot g(z),3,33,3.963,28.418,4.981,2.422,0.996,95.892,14.51
+Ours+W ablation: within-lot g(z),3,42,2.881,14.594,3.451,1.361,0.998,100.0,14.919
+Ours+W ablation: within-lot g(z),5,18,5.134,54.914,7.239,5.946,0.957,70.3,16.76
+Ours+W ablation: within-lot g(z),5,23,0.956,1.507,1.219,0.436,0.999,100.0,9.873
+Ours+W ablation: within-lot g(z),5,33,4.331,34.223,5.484,2.473,0.996,95.086,13.848
+Ours+W ablation: within-lot g(z),5,42,2.602,10.768,3.115,1.264,0.998,100.0,12.667
+Ours+W ablation: within-lot g(z),10,18,4.528,42.266,6.295,5.5,0.965,86.4,21.888
+Ours+W ablation: within-lot g(z),10,23,0.869,1.363,1.154,0.392,0.999,100.0,7.393
+Ours+W ablation: within-lot g(z),10,33,3.614,23.605,4.741,2.191,0.997,94.533,12.867
+Ours+W ablation: within-lot g(z),10,42,2.454,8.861,2.927,1.207,0.999,98.049,10.412
+Ours+W ablation: within-lot g(z),20,18,4.819,47.741,6.425,5.811,0.942,84.0,22.103
+Ours+W ablation: within-lot g(z),20,23,0.822,1.186,1.063,0.377,0.999,100.0,5.531
+Ours+W ablation: within-lot g(z),20,33,3.554,22.716,4.658,2.128,0.997,92.4,12.227
+Ours+W ablation: within-lot g(z),20,42,2.432,8.286,2.862,1.199,0.999,95.871,8.86
+Ours-V (no scale): g(z)=V_g,0,18,8.309,160.627,12.674,8.457,0.876,96.0,52.045
+Ours-V (no scale): g(z)=V_g,0,23,5.223,41.156,6.415,2.197,0.981,100.0,50.732
+Ours-V (no scale): g(z)=V_g,0,33,16.126,503.599,22.441,7.15,0.935,100.0,51.693
+Ours-V (no scale): g(z)=V_g,0,42,12.103,194.718,13.954,5.133,0.969,100.0,61.103
+Ours-V (no scale): g(z)=V_g,1,18,8.145,134.779,11.216,8.978,0.895,80.25,27.864
+Ours-V (no scale): g(z)=V_g,1,23,4.52,31.33,5.459,1.958,0.985,100.0,31.132
+Ours-V (no scale): g(z)=V_g,1,33,13.625,343.032,17.563,7.307,0.956,92.051,32.229
+Ours-V (no scale): g(z)=V_g,1,42,14.392,337.838,17.653,6.108,0.946,99.8,36.718
+Ours-V (no scale): g(z)=V_g,3,18,6.896,94.296,9.515,7.611,0.928,80.091,26.681
+Ours-V (no scale): g(z)=V_g,3,23,4.15,25.926,5.011,1.804,0.988,100.0,21.997
+Ours-V (no scale): g(z)=V_g,3,33,13.133,318.923,17.311,6.802,0.959,89.73,28.112
+Ours-V (no scale): g(z)=V_g,3,42,13.136,259.426,15.796,5.593,0.958,97.125,29.392
+Ours-V (no scale): g(z)=V_g,5,18,6.703,91.276,9.372,7.281,0.929,78.5,25.652
+Ours-V (no scale): g(z)=V_g,5,23,4.035,24.379,4.866,1.761,0.989,100.0,18.361
+Ours-V (no scale): g(z)=V_g,5,33,14.314,388.047,18.987,7.013,0.95,88.514,28.56
+Ours-V (no scale): g(z)=V_g,5,42,12.746,230.996,15.028,5.411,0.963,96.478,26.969
+Ours-V (no scale): g(z)=V_g,10,18,6.117,71.686,8.287,6.702,0.941,86.933,29.181
+Ours-V (no scale): g(z)=V_g,10,23,3.774,20.799,4.539,1.661,0.99,100.0,14.205
+Ours-V (no scale): g(z)=V_g,10,33,12.122,264.609,15.977,6.367,0.966,91.133,28.047
+Ours-V (no scale): g(z)=V_g,10,42,12.469,218.289,14.678,5.363,0.964,94.829,25.012
+Ours-V (no scale): g(z)=V_g,20,18,6.271,75.105,8.251,6.89,0.91,84.4,28.348
+Ours-V (no scale): g(z)=V_g,20,23,3.686,20.191,4.455,1.6,0.99,100.0,11.196
+Ours-V (no scale): g(z)=V_g,20,33,12.272,266.578,16.052,6.383,0.964,90.9,27.032
+Ours-V (no scale): g(z)=V_g,20,42,12.31,201.809,14.173,5.301,0.967,95.161,24.322
+Ours-V ablation: g=0,0,18,24.581,1959.789,44.27,22.72,-0.508,96.0,164.469
+Ours-V ablation: g=0,0,23,78.24,8776.008,93.68,32.643,-3.118,100.0,172.538
+Ours-V ablation: g=0,0,33,58.045,8561.102,92.526,26.443,-0.105,97.5,145.141
+Ours-V ablation: g=0,0,42,66.233,5867.354,76.599,27.33,0.058,92.157,94.233
+Ours-V ablation: g=0,1,18,24.685,1849.142,41.405,24.547,-0.45,93.5,119.369
+Ours-V ablation: g=0,1,23,56.238,5155.18,70.572,23.446,-1.432,98.71,137.644
+Ours-V ablation: g=0,1,33,65.583,12076.626,107.891,30.0,-0.559,85.949,116.939
+Ours-V ablation: g=0,1,42,58.275,4835.86,69.404,24.147,0.228,92.2,94.322
+Ours-V ablation: g=0,3,18,22.988,1656.712,39.327,22.796,-0.264,88.818,96.926
+Ours-V ablation: g=0,3,23,40.365,2958.145,53.039,17.02,-0.398,98.621,107.004
+Ours-V ablation: g=0,3,33,63.488,11303.338,103.546,29.013,-0.457,89.027,113.911
+Ours-V ablation: g=0,3,42,48.018,3657.377,60.075,20.009,0.409,93.042,96.025
+Ours-V ablation: g=0,5,18,22.502,1616.857,38.735,22.244,-0.247,89.4,93.313
+Ours-V ablation: g=0,5,23,34.703,2190.644,45.327,14.916,-0.035,98.074,93.164
+Ours-V ablation: g=0,5,33,63.53,11411.931,105.149,28.436,-0.485,84.4,100.606
+Ours-V ablation: g=0,5,42,43.096,3113.132,55.432,18.078,0.503,93.087,91.001
+Ours-V ablation: g=0,10,18,20.115,1315.846,33.875,20.557,-0.029,92.133,90.863
+Ours-V ablation: g=0,10,23,32.188,1881.986,42.615,13.889,0.092,96.091,80.827
+Ours-V ablation: g=0,10,33,61.638,10855.793,101.959,27.638,-0.475,87.8,111.365
+Ours-V ablation: g=0,10,42,35.875,2333.826,48.026,15.317,0.621,94.341,88.628
+Ours-V ablation: g=0,20,18,18.831,1090.716,27.053,20.398,0.001,96.4,87.511
+Ours-V ablation: g=0,20,23,29.846,1481.912,37.394,13.097,0.263,93.5,66.878
+Ours-V ablation: g=0,20,33,64.319,11538.153,104.64,28.324,-0.622,87.4,112.397
+Ours-V ablation: g=0,20,42,34.016,2066.272,45.125,14.526,0.666,93.484,80.91
+Ours-V ablation: no V_g term,0,18,16.181,473.8,21.767,16.003,0.636,76.0,53.813
+Ours-V ablation: no V_g term,0,23,4.959,34.822,5.901,2.28,0.984,100.0,56.305
+Ours-V ablation: no V_g term,0,33,16.913,544.648,23.338,7.462,0.93,100.0,58.283
+Ours-V ablation: no V_g term,0,42,12.94,238.401,15.44,5.109,0.962,100.0,70.183
+Ours-V ablation: no V_g term,1,18,11.692,271.658,15.43,12.799,0.786,54.917,25.858
+Ours-V ablation: no V_g term,1,23,4.238,26.269,4.982,1.908,0.987,100.0,32.646
+Ours-V ablation: no V_g term,1,33,13.662,341.476,17.474,7.27,0.956,95.231,36.561
+Ours-V ablation: no V_g term,1,42,13.488,295.052,16.359,5.678,0.953,99.8,41.94
+Ours-V ablation: no V_g term,3,18,8.861,151.294,11.738,10.184,0.883,72.182,29.714
+Ours-V ablation: no V_g term,3,23,3.766,20.315,4.473,1.689,0.99,100.0,22.739
+Ours-V ablation: no V_g term,3,33,13.059,308.099,17.02,6.757,0.96,93.838,31.828
+Ours-V ablation: no V_g term,3,42,11.657,207.827,14.137,5.006,0.966,99.25,33.578
+Ours-V ablation: no V_g term,5,18,8.248,135.746,11.252,9.465,0.895,73.5,32.339
+Ours-V ablation: no V_g term,5,23,3.625,18.565,4.273,1.629,0.991,100.0,18.922
+Ours-V ablation: no V_g term,5,33,14.216,374.884,18.669,6.97,0.951,93.429,32.078
+Ours-V ablation: no V_g term,5,42,11.107,182.92,13.381,4.79,0.971,98.522,30.551
+Ours-V ablation: no V_g term,10,18,7.325,102.431,9.818,8.736,0.916,82.533,38.026
+Ours-V ablation: no V_g term,10,23,3.495,16.525,4.053,1.577,0.992,100.0,14.544
+Ours-V ablation: no V_g term,10,33,12.042,254.005,15.674,6.334,0.967,94.533,31.496
+Ours-V ablation: no V_g term,10,42,10.977,178.06,13.263,4.778,0.971,97.22,27.619
+Ours-V ablation: no V_g term,20,18,7.507,105.07,9.666,9.122,0.874,78.0,37.351
+Ours-V ablation: no V_g term,20,23,3.369,15.937,3.965,1.5,0.992,100.0,11.442
+Ours-V ablation: no V_g term,20,33,12.247,255.456,15.74,6.386,0.965,95.1,30.305
+Ours-V ablation: no V_g term,20,42,10.778,164.407,12.791,4.707,0.973,96.645,26.548
+Ours-V ablation: uncalibrated,0,18,8.309,160.627,12.674,8.457,0.876,96.0,52.045
+Ours-V ablation: uncalibrated,0,23,5.223,41.156,6.415,2.197,0.981,100.0,50.732
+Ours-V ablation: uncalibrated,0,33,16.126,503.599,22.441,7.15,0.935,100.0,47.452
+Ours-V ablation: uncalibrated,0,42,12.103,194.718,13.954,5.133,0.969,100.0,50.953
+Ours-V ablation: uncalibrated,1,18,8.145,134.779,11.216,8.978,0.895,80.25,27.864
+Ours-V ablation: uncalibrated,1,23,4.52,31.33,5.459,1.958,0.985,100.0,31.132
+Ours-V ablation: uncalibrated,1,33,13.625,343.032,17.563,7.307,0.956,89.282,29.619
+Ours-V ablation: uncalibrated,1,42,14.392,337.838,17.653,6.108,0.946,97.32,30.705
+Ours-V ablation: uncalibrated,3,18,6.896,94.296,9.515,7.611,0.928,80.091,26.681
+Ours-V ablation: uncalibrated,3,23,4.15,25.926,5.011,1.804,0.988,100.0,21.997
+Ours-V ablation: uncalibrated,3,33,13.133,318.923,17.311,6.802,0.959,86.865,25.839
+Ours-V ablation: uncalibrated,3,42,13.136,259.426,15.796,5.593,0.958,93.125,24.592
+Ours-V ablation: uncalibrated,5,18,6.703,91.276,9.372,7.281,0.929,78.5,25.652
+Ours-V ablation: uncalibrated,5,23,4.035,24.379,4.866,1.761,0.989,100.0,18.361
+Ours-V ablation: uncalibrated,5,33,14.314,388.047,18.987,7.013,0.95,85.029,26.25
+Ours-V ablation: uncalibrated,5,42,12.746,230.996,15.028,5.411,0.963,92.217,22.569
+Ours-V ablation: uncalibrated,10,18,6.117,71.686,8.287,6.702,0.941,86.933,29.181
+Ours-V ablation: uncalibrated,10,23,3.774,20.799,4.539,1.661,0.99,100.0,14.205
+Ours-V ablation: uncalibrated,10,33,12.122,264.609,15.977,6.367,0.966,89.2,25.779
+Ours-V ablation: uncalibrated,10,42,12.469,218.289,14.678,5.363,0.964,90.39,20.934
+Ours-V ablation: uncalibrated,20,18,6.271,75.105,8.251,6.89,0.91,84.4,28.348
+Ours-V ablation: uncalibrated,20,23,3.686,20.191,4.455,1.6,0.99,100.0,11.196
+Ours-V ablation: uncalibrated,20,33,12.272,266.578,16.052,6.383,0.964,88.7,24.848
+Ours-V ablation: uncalibrated,20,42,12.31,201.809,14.173,5.301,0.967,90.581,20.358
+"Physics V_bulk/V_g, source offset",0,18,27.255,2310.577,48.068,24.824,-0.777,,
+"Physics V_bulk/V_g, source offset",0,23,89.259,11004.477,104.902,37.372,-4.163,,
+"Physics V_bulk/V_g, source offset",0,33,59.369,9961.417,99.807,26.242,-0.286,,
+"Physics V_bulk/V_g, source offset",0,42,64.634,5643.097,75.121,26.679,0.094,,
+"Physics V_bulk/V_g, source offset",1,18,27.032,2290.724,47.735,24.654,-0.787,,
+"Physics V_bulk/V_g, source offset",1,23,89.523,11067.093,105.188,37.447,-4.213,,
+"Physics V_bulk/V_g, source offset",1,33,59.409,10016.543,100.06,26.256,-0.292,,
+"Physics V_bulk/V_g, source offset",1,42,64.723,5657.596,75.213,26.755,0.097,,
+"Physics V_bulk/V_g, source offset",3,18,27.828,2365.342,48.279,25.227,-0.793,,
+"Physics V_bulk/V_g, source offset",3,23,89.301,11043.89,105.035,37.349,-4.221,,
+"Physics V_bulk/V_g, source offset",3,33,59.016,9781.584,98.701,26.005,-0.26,,
+"Physics V_bulk/V_g, source offset",3,42,64.8,5655.745,75.177,26.722,0.082,,
+"Physics V_bulk/V_g, source offset",5,18,28.162,2428.606,48.774,25.515,-0.871,,
+"Physics V_bulk/V_g, source offset",5,23,88.115,10763.541,103.584,36.949,-4.086,,
+"Physics V_bulk/V_g, source offset",5,33,60.873,10341.84,101.516,26.837,-0.345,,
+"Physics V_bulk/V_g, source offset",5,42,64.924,5675.899,75.289,26.788,0.091,,
+"Physics V_bulk/V_g, source offset",10,18,27.343,2336.838,46.628,24.691,-0.828,,
+"Physics V_bulk/V_g, source offset",10,23,89.355,10925.59,104.328,37.652,-4.283,,
+"Physics V_bulk/V_g, source offset",10,33,59.092,9895.932,98.804,26.15,-0.329,,
+"Physics V_bulk/V_g, source offset",10,42,64.335,5566.429,74.53,26.647,0.093,,
+"Physics V_bulk/V_g, source offset",20,18,26.78,2077.116,39.686,25.31,-0.958,,
+"Physics V_bulk/V_g, source offset",20,23,87.313,10636.757,101.987,36.386,-4.318,,
+"Physics V_bulk/V_g, source offset",20,33,61.972,10539.708,100.994,27.155,-0.481,,
+"Physics V_bulk/V_g, source offset",20,42,64.407,5562.491,74.436,26.734,0.096,,
+"Random Forest, pooled + support",0,18,14.094,343.579,18.536,28.861,0.736,,
+"Random Forest, pooled + support",0,23,14.596,272.359,16.503,6.367,0.872,,
+"Random Forest, pooled + support",0,33,15.631,384.413,19.606,8.01,0.95,,
+"Random Forest, pooled + support",0,42,23.594,884.408,29.739,9.711,0.858,,
+"Random Forest, pooled + support",1,18,13.158,292.839,16.965,25.641,0.772,,
+"Random Forest, pooled + support",1,23,13.333,236.259,15.32,5.848,0.888,,
+"Random Forest, pooled + support",1,33,15.53,379.016,19.464,8.004,0.951,,
+"Random Forest, pooled + support",1,42,22.659,804.599,28.277,9.381,0.871,,
+"Random Forest, pooled + support",3,18,12.153,246.233,15.414,22.79,0.814,,
+"Random Forest, pooled + support",3,23,11.971,195.353,13.881,5.318,0.907,,
+"Random Forest, pooled + support",3,33,15.62,380.436,19.486,8.124,0.951,,
+"Random Forest, pooled + support",3,42,22.326,771.398,27.644,9.333,0.874,,
+"Random Forest, pooled + support",5,18,10.94,189.678,13.528,18.73,0.855,,
+"Random Forest, pooled + support",5,23,10.737,161.89,12.575,4.819,0.922,,
+"Random Forest, pooled + support",5,33,15.475,372.098,19.259,7.993,0.952,,
+"Random Forest, pooled + support",5,42,21.489,717.005,26.564,9.007,0.885,,
+"Random Forest, pooled + support",10,18,9.261,136.285,11.487,14.245,0.891,,
+"Random Forest, pooled + support",10,23,8.478,101.609,9.988,3.971,0.95,,
+"Random Forest, pooled + support",10,33,14.436,338.962,18.318,7.353,0.955,,
+"Random Forest, pooled + support",10,42,19.119,551.208,23.326,8.184,0.91,,
+"Random Forest, pooled + support",20,18,8.648,111.786,10.158,12.844,0.875,,
+"Random Forest, pooled + support",20,23,7.488,76.761,8.695,3.6,0.96,,
+"Random Forest, pooled + support",20,33,13.66,312.663,17.453,6.987,0.957,,
+"Random Forest, pooled + support",20,42,15.569,370.437,19.107,6.86,0.939,,
+Repo physical estimate,0,18,28.589,2488.305,49.883,26.161,-0.914,,
+Repo physical estimate,0,23,81.717,9478.874,97.36,34.172,-3.448,,
+Repo physical estimate,0,33,60.15,10683.3,103.36,26.374,-0.38,,
+Repo physical estimate,0,42,42.235,3020.667,54.961,17.739,0.515,,
+Repo physical estimate,1,18,28.347,2466.483,49.532,25.973,-0.924,,
+Repo physical estimate,1,23,81.942,9527.322,97.596,34.235,-3.487,,
+Repo physical estimate,1,33,60.194,10742.357,103.62,26.393,-0.385,,
+Repo physical estimate,1,42,42.373,3034.803,55.085,17.822,0.515,,
+Repo physical estimate,3,18,29.14,2547.885,50.109,26.513,-0.931,,
+Repo physical estimate,3,23,81.807,9521.077,97.524,34.173,-3.501,,
+Repo physical estimate,3,33,59.802,10493.723,102.229,26.138,-0.351,,
+Repo physical estimate,3,42,42.292,3016.051,54.884,17.742,0.511,,
+Repo physical estimate,5,18,29.524,2614.313,50.596,26.888,-1.014,,
+Repo physical estimate,5,23,80.6,9255.788,96.049,33.763,-3.374,,
+Repo physical estimate,5,33,61.669,11092.694,105.134,26.96,-0.442,,
+Repo physical estimate,5,42,42.432,3030.529,54.981,17.821,0.515,,
+Repo physical estimate,10,18,28.694,2521.236,48.434,26.0,-0.972,,
+Repo physical estimate,10,23,81.987,9454.272,97.056,34.516,-3.574,,
+Repo physical estimate,10,33,59.869,10618.083,102.332,26.277,-0.426,,
+Repo physical estimate,10,42,41.961,2963.461,54.336,17.707,0.517,,
+Repo physical estimate,20,18,28.164,2245.086,41.285,26.697,-1.109,,
+Repo physical estimate,20,23,79.552,9059.926,94.066,33.147,-3.536,,
+Repo physical estimate,20,33,62.996,11318.386,104.598,27.405,-0.59,,
+Repo physical estimate,20,42,42.085,2967.721,54.238,17.81,0.519,,
+Repo physical estimate + MLE scale,1,18,30.026,2431.056,45.044,31.622,-0.912,,
+Repo physical estimate + MLE scale,1,23,41.172,2962.441,50.169,18.133,-0.4,,
+Repo physical estimate + MLE scale,1,33,80.695,18291.604,129.23,37.949,-1.363,,
+Repo physical estimate + MLE scale,1,42,48.286,4265.883,60.664,20.085,0.319,,
+Repo physical estimate + MLE scale,3,18,23.277,1678.29,39.396,23.514,-0.285,,
+Repo physical estimate + MLE scale,3,23,34.15,1864.514,41.957,15.222,0.115,,
+Repo physical estimate + MLE scale,3,33,66.286,12434.513,107.452,30.576,-0.602,,
+Repo physical estimate + MLE scale,3,42,44.412,3386.869,56.371,18.559,0.448,,
+Repo physical estimate + MLE scale,5,18,22.499,1627.765,38.804,22.428,-0.255,,
+Repo physical estimate + MLE scale,5,23,32.764,1665.3,39.889,14.782,0.207,,
+Repo physical estimate + MLE scale,5,33,64.518,11860.574,106.828,28.935,-0.544,,
+Repo physical estimate + MLE scale,5,42,39.55,2750.701,51.09,16.631,0.555,,
+Repo physical estimate + MLE scale,10,18,20.164,1358.879,34.414,20.487,-0.063,,
+Repo physical estimate + MLE scale,10,23,30.959,1546.828,38.769,13.762,0.252,,
+Repo physical estimate + MLE scale,10,33,61.895,10936.502,102.187,27.794,-0.485,,
+Repo physical estimate + MLE scale,10,42,38.413,2505.781,49.638,16.189,0.587,,
+Repo physical estimate + MLE scale,20,18,18.687,1129.593,27.481,20.116,-0.031,,
+Repo physical estimate + MLE scale,20,23,29.992,1347.656,35.92,13.502,0.325,,
+Repo physical estimate + MLE scale,20,33,64.326,11526.27,104.58,28.332,-0.62,,
+Repo physical estimate + MLE scale,20,42,36.741,2312.433,47.767,15.464,0.618,,
+"Ridge, all features, pooled + support",0,18,7.877,157.641,12.556,7.901,0.879,,
+"Ridge, all features, pooled + support",0,23,4.243,26.905,5.187,1.877,0.987,,
+"Ridge, all features, pooled + support",0,33,16.055,479.714,21.902,7.236,0.938,,
+"Ridge, all features, pooled + support",0,42,29.218,1026.652,32.041,12.86,0.835,,
+"Ridge, all features, pooled + support",1,18,8.427,152.543,12.147,9.044,0.881,,
+"Ridge, all features, pooled + support",1,23,3.903,22.408,4.688,1.751,0.99,,
+"Ridge, all features, pooled + support",1,33,15.418,462.256,21.453,7.006,0.94,,
+"Ridge, all features, pooled + support",1,42,21.99,690.832,26.044,9.972,0.89,,
+"Ridge, all features, pooled + support",3,18,7.707,126.042,10.985,8.272,0.903,,
+"Ridge, all features, pooled + support",3,23,3.684,19.371,4.352,1.677,0.991,,
+"Ridge, all features, pooled + support",3,33,15.139,450.501,21.11,7.007,0.942,,
+"Ridge, all features, pooled + support",3,42,16.195,427.796,20.241,7.472,0.93,,
+"Ridge, all features, pooled + support",5,18,7.292,115.429,10.551,7.69,0.911,,
+"Ridge, all features, pooled + support",5,23,3.612,18.082,4.207,1.661,0.992,,
+"Ridge, all features, pooled + support",5,33,15.025,430.647,20.62,7.088,0.944,,
+"Ridge, all features, pooled + support",5,42,14.663,356.608,18.504,6.784,0.943,,
+"Ridge, all features, pooled + support",10,18,6.318,80.599,8.721,6.611,0.935,,
+"Ridge, all features, pooled + support",10,23,3.507,16.308,4.021,1.624,0.992,,
+"Ridge, all features, pooled + support",10,33,13.185,345.123,18.255,6.404,0.954,,
+"Ridge, all features, pooled + support",10,42,12.725,255.189,15.704,5.757,0.958,,
+"Ridge, all features, pooled + support",20,18,6.04,66.692,7.745,6.65,0.919,,
+"Ridge, all features, pooled + support",20,23,3.486,16.178,3.992,1.598,0.992,,
+"Ridge, all features, pooled + support",20,33,11.591,253.679,15.564,5.91,0.966,,
+"Ridge, all features, pooled + support",20,42,11.433,196.028,13.927,5.154,0.968,,
+"Ridge, image features only",0,18,106.726,13240.451,115.067,181.8,-9.185,,
+"Ridge, image features only",0,23,65.441,5827.452,76.338,26.749,-1.734,,
+"Ridge, image features only",0,33,67.983,6743.095,82.116,53.009,0.129,,
+"Ridge, image features only",0,42,119.403,23391.676,152.943,49.169,-2.754,,
+"Ridge, image features only",1,18,106.21,13107.94,114.465,180.734,-9.237,,
+"Ridge, image features only",1,23,65.622,5848.416,76.467,26.8,-1.755,,
+"Ridge, image features only",1,33,68.024,6754.924,82.179,53.278,0.129,,
+"Ridge, image features only",1,42,119.623,23501.022,153.293,49.286,-2.753,,
+"Ridge, image features only",3,18,106.974,13342.035,115.46,181.978,-9.16,,
+"Ridge, image features only",3,23,65.346,5794.807,76.089,26.716,-1.74,,
+"Ridge, image features only",3,33,68.17,6775.139,82.278,53.019,0.129,,
+"Ridge, image features only",3,42,119.519,23221.255,152.268,49.306,-2.773,,
+"Ridge, image features only",5,18,106.325,13179.966,114.732,178.866,-9.231,,
+"Ridge, image features only",5,23,65.374,5812.86,76.183,26.796,-1.752,,
+"Ridge, image features only",5,33,68.322,6839.036,82.661,52.908,0.112,,
+"Ridge, image features only",5,42,118.684,23215.56,152.197,48.834,-2.721,,
+"Ridge, image features only",10,18,105.857,13120.867,114.234,178.04,-9.46,,
+"Ridge, image features only",10,23,64.638,5712.684,75.487,26.497,-1.767,,
+"Ridge, image features only",10,33,67.086,6566.783,80.885,51.93,0.13,,
+"Ridge, image features only",10,42,119.465,23260.809,152.249,49.453,-2.796,,
+"Ridge, image features only",20,18,105.234,12760.14,111.37,184.896,-12.984,,
+"Ridge, image features only",20,23,65.613,5881.774,76.221,26.772,-1.949,,
+"Ridge, image features only",20,33,65.939,6361.793,79.321,50.383,0.132,,
+"Ridge, image features only",20,42,118.459,23107.724,151.448,49.008,-2.769,,
+"V_bulk log-log, pooled source",0,18,6.26,84.281,9.18,7.022,0.935,,
+"V_bulk log-log, pooled source",0,23,4.975,41.968,6.478,2.096,0.98,,
+"V_bulk log-log, pooled source",0,33,15.252,433.042,20.81,6.92,0.944,,
+"V_bulk log-log, pooled source",0,42,14.0,284.715,16.873,6.5,0.954,,
+"V_bulk log-log, pooled source",1,18,6.226,84.031,9.162,6.974,0.934,,
+"V_bulk log-log, pooled source",1,23,4.983,42.113,6.488,2.094,0.98,,
+"V_bulk log-log, pooled source",1,33,15.226,433.377,20.815,6.909,0.944,,
+"V_bulk log-log, pooled source",1,42,13.961,282.826,16.815,6.488,0.955,,
+"V_bulk log-log, pooled source",3,18,6.258,83.747,9.129,6.984,0.936,,
+"V_bulk log-log, pooled source",3,23,4.998,42.215,6.492,2.105,0.98,,
+"V_bulk log-log, pooled source",3,33,15.339,436.357,20.882,6.951,0.944,,
+"V_bulk log-log, pooled source",3,42,14.003,285.1,16.88,6.497,0.954,,
+"V_bulk log-log, pooled source",5,18,6.365,86.446,9.266,7.113,0.933,,
+"V_bulk log-log, pooled source",5,23,4.966,41.529,6.429,2.102,0.98,,
+"V_bulk log-log, pooled source",5,33,15.489,442.062,21.003,6.947,0.943,,
+"V_bulk log-log, pooled source",5,42,13.99,285.934,16.905,6.496,0.954,,
+"V_bulk log-log, pooled source",10,18,6.033,78.733,8.771,6.715,0.936,,
+"V_bulk log-log, pooled source",10,23,4.944,41.751,6.438,2.093,0.98,,
+"V_bulk log-log, pooled source",10,33,15.179,428.353,20.638,6.884,0.943,,
+"V_bulk log-log, pooled source",10,42,13.985,283.512,16.816,6.532,0.954,,
+"V_bulk log-log, pooled source",20,18,6.561,91.1,8.942,7.389,0.89,,
+"V_bulk log-log, pooled source",20,23,5.155,43.799,6.531,2.171,0.979,,
+"V_bulk log-log, pooled source",20,33,15.565,444.159,20.91,7.007,0.94,,
+"V_bulk log-log, pooled source",20,42,13.89,282.722,16.773,6.51,0.954,,
+"V_bulk log-log, source slope + MLE shift",1,18,9.853,186.816,12.848,11.147,0.853,,
+"V_bulk log-log, source slope + MLE shift",1,23,4.763,34.496,5.736,2.099,0.984,,
+"V_bulk log-log, source slope + MLE shift",1,33,12.925,298.068,16.122,7.416,0.962,,
+"V_bulk log-log, source slope + MLE shift",1,42,14.746,351.562,17.603,6.257,0.944,,
+"V_bulk log-log, source slope + MLE shift",3,18,7.587,111.988,10.249,8.671,0.914,,
+"V_bulk log-log, source slope + MLE shift",3,23,3.958,23.561,4.804,1.741,0.989,,
+"V_bulk log-log, source slope + MLE shift",3,33,11.704,242.625,15.076,6.269,0.969,,
+"V_bulk log-log, source slope + MLE shift",3,42,11.054,191.723,13.584,4.833,0.969,,
+"V_bulk log-log, source slope + MLE shift",5,18,7.035,102.838,9.918,7.905,0.92,,
+"V_bulk log-log, source slope + MLE shift",5,23,3.762,20.867,4.511,1.661,0.99,,
+"V_bulk log-log, source slope + MLE shift",5,33,12.829,301.069,16.685,6.445,0.961,,
+"V_bulk log-log, source slope + MLE shift",5,42,10.399,166.947,12.795,4.576,0.973,,
+"V_bulk log-log, source slope + MLE shift",10,18,6.377,82.235,8.822,7.319,0.933,,
+"V_bulk log-log, source slope + MLE shift",10,23,3.585,18.114,4.238,1.591,0.991,,
+"V_bulk log-log, source slope + MLE shift",10,33,10.826,201.497,13.975,5.79,0.974,,
+"V_bulk log-log, source slope + MLE shift",10,42,10.244,161.213,12.625,4.533,0.974,,
+"V_bulk log-log, source slope + MLE shift",20,18,6.645,88.224,8.811,7.696,0.893,,
+"V_bulk log-log, source slope + MLE shift",20,23,3.467,17.613,4.162,1.516,0.991,,
+"V_bulk log-log, source slope + MLE shift",20,33,11.031,203.635,14.068,5.841,0.972,,
+"V_bulk log-log, source slope + MLE shift",20,42,9.949,148.006,12.135,4.427,0.976,,
+"V_bulk log-log, support-only",3,18,9.639,219.049,12.377,11.17,0.838,,
+"V_bulk log-log, support-only",3,23,6.069,137.264,7.553,2.877,0.931,,
+"V_bulk log-log, support-only",3,33,9.585,181.699,11.877,6.567,0.977,,
+"V_bulk log-log, support-only",3,42,17.947,1018.679,22.055,7.983,0.841,,
+"V_bulk log-log, support-only",5,18,6.058,67.981,8.061,6.91,0.948,,
+"V_bulk log-log, support-only",5,23,4.317,32.96,5.49,2.035,0.985,,
+"V_bulk log-log, support-only",5,33,8.455,128.658,10.446,5.639,0.984,,
+"V_bulk log-log, support-only",5,42,11.291,198.317,13.776,5.276,0.968,,
+"V_bulk log-log, support-only",10,18,5.484,53.769,7.189,6.184,0.956,,
+"V_bulk log-log, support-only",10,23,3.705,19.905,4.412,1.699,0.99,,
+"V_bulk log-log, support-only",10,33,7.646,94.38,9.469,4.783,0.988,,
+"V_bulk log-log, support-only",10,42,9.986,156.72,12.427,4.596,0.974,,
+"V_bulk log-log, support-only",20,18,5.352,49.17,6.674,6.183,0.938,,
+"V_bulk log-log, support-only",20,23,3.504,17.522,4.14,1.569,0.991,,
+"V_bulk log-log, support-only",20,33,7.563,88.696,9.28,4.782,0.988,,
+"V_bulk log-log, support-only",20,42,9.534,142.26,11.895,4.445,0.977,,
+Weight + V_bulk log-log,0,18,6.111,82.136,9.063,6.09,0.937,,
+Weight + V_bulk log-log,0,23,4.871,25.411,5.041,2.144,0.988,,
+Weight + V_bulk log-log,0,33,11.594,174.064,13.193,5.961,0.978,,
+Weight + V_bulk log-log,0,42,4.229,20.938,4.576,1.925,0.997,,
+Weight + V_bulk log-log,1,18,6.111,82.216,9.063,6.107,0.936,,
+Weight + V_bulk log-log,1,23,4.874,25.435,5.043,2.143,0.988,,
+Weight + V_bulk log-log,1,33,11.589,174.013,13.191,5.967,0.978,,
+Weight + V_bulk log-log,1,42,4.222,20.884,4.57,1.924,0.997,,
+Weight + V_bulk log-log,3,18,6.151,82.181,9.044,6.088,0.937,,
+Weight + V_bulk log-log,3,23,4.87,25.382,5.037,2.143,0.988,,
+Weight + V_bulk log-log,3,33,11.597,174.533,13.209,5.939,0.978,,
+Weight + V_bulk log-log,3,42,4.232,20.936,4.575,1.924,0.997,,
+Weight + V_bulk log-log,5,18,6.25,84.771,9.177,6.222,0.934,,
+Weight + V_bulk log-log,5,23,4.875,25.443,5.043,2.15,0.988,,
+Weight + V_bulk log-log,5,33,11.709,176.741,13.289,5.97,0.977,,
+Weight + V_bulk log-log,5,42,4.246,21.114,4.594,1.93,0.997,,
+Weight + V_bulk log-log,10,18,6.001,78.557,8.776,5.923,0.936,,
+Weight + V_bulk log-log,10,23,4.849,25.175,5.014,2.141,0.988,,
+Weight + V_bulk log-log,10,33,11.574,173.16,13.145,5.946,0.977,,
+Weight + V_bulk log-log,10,42,4.225,20.916,4.572,1.929,0.997,,
+Weight + V_bulk log-log,20,18,6.385,89.725,9.007,6.404,0.893,,
+Weight + V_bulk log-log,20,23,4.918,25.917,5.082,2.163,0.987,,
+Weight + V_bulk log-log,20,33,11.693,175.493,13.2,5.932,0.976,,
+Weight + V_bulk log-log,20,42,4.204,20.898,4.567,1.92,0.997,,
+Weight + V_bulk log-log + MLE shift,1,18,5.644,63.553,7.751,6.362,0.95,,
+Weight + V_bulk log-log + MLE shift,1,23,0.859,1.267,1.091,0.373,0.999,,
+Weight + V_bulk log-log + MLE shift,1,33,2.939,16.798,3.53,1.846,0.998,,
+Weight + V_bulk log-log + MLE shift,1,42,2.549,11.384,2.998,1.164,0.998,,
+Weight + V_bulk log-log + MLE shift,3,18,4.827,47.403,6.708,5.53,0.964,,
+Weight + V_bulk log-log + MLE shift,3,23,0.741,0.951,0.966,0.32,1.0,,
+Weight + V_bulk log-log + MLE shift,3,33,2.49,9.523,2.985,1.656,0.999,,
+Weight + V_bulk log-log + MLE shift,3,42,2.274,7.97,2.67,1.056,0.999,,
+Weight + V_bulk log-log + MLE shift,5,18,4.282,41.465,6.337,4.873,0.968,,
+Weight + V_bulk log-log + MLE shift,5,23,0.714,0.864,0.923,0.307,1.0,,
+Weight + V_bulk log-log + MLE shift,5,33,2.233,8.368,2.777,1.502,0.999,,
+Weight + V_bulk log-log + MLE shift,5,42,2.014,5.814,2.368,0.969,0.999,,
+Weight + V_bulk log-log + MLE shift,10,18,3.88,32.587,5.534,4.551,0.973,,
+Weight + V_bulk log-log + MLE shift,10,23,0.661,0.801,0.89,0.283,1.0,,
+Weight + V_bulk log-log + MLE shift,10,33,2.026,6.7,2.552,1.431,0.999,,
+Weight + V_bulk log-log + MLE shift,10,42,2.009,5.675,2.352,0.969,0.999,,
+Weight + V_bulk log-log + MLE shift,20,18,4.096,37.568,5.645,4.734,0.953,,
+Weight + V_bulk log-log + MLE shift,20,23,0.608,0.689,0.818,0.26,1.0,,
+Weight + V_bulk log-log + MLE shift,20,33,1.844,5.631,2.34,1.339,0.999,,
+Weight + V_bulk log-log + MLE shift,20,42,1.973,5.251,2.281,0.958,0.999,,
+Weight only + MLE scale,1,18,7.177,96.784,9.36,8.139,0.924,,
+Weight only + MLE scale,1,23,1.262,2.506,1.522,0.547,0.999,,
+Weight only + MLE scale,1,33,2.605,13.024,3.137,1.688,0.998,,
+Weight only + MLE scale,1,42,1.899,5.815,2.34,0.813,0.999,,
+Weight only + MLE scale,3,18,5.832,66.488,7.818,6.741,0.949,,
+Weight only + MLE scale,3,23,1.019,1.6,1.252,0.441,0.999,,
+Weight only + MLE scale,3,33,2.553,10.395,3.039,1.636,0.999,,
+Weight only + MLE scale,3,42,1.798,5.32,2.219,0.771,0.999,,
+Weight only + MLE scale,5,18,5.234,57.181,7.386,6.026,0.956,,
+Weight only + MLE scale,5,23,0.994,1.52,1.223,0.428,0.999,,
+Weight only + MLE scale,5,33,2.072,6.773,2.526,1.413,0.999,,
+Weight only + MLE scale,5,42,1.585,3.91,1.954,0.688,0.999,,
+Weight only + MLE scale,10,18,4.612,44.37,6.454,5.563,0.964,,
+Weight only + MLE scale,10,23,0.967,1.39,1.17,0.419,0.999,,
+Weight only + MLE scale,10,33,1.996,6.053,2.43,1.394,0.999,,
+Weight only + MLE scale,10,42,1.519,3.566,1.88,0.664,0.999,,
+Weight only + MLE scale,20,18,4.952,50.257,6.597,5.925,0.939,,
+Weight only + MLE scale,20,23,0.966,1.38,1.161,0.414,0.999,,
+Weight only + MLE scale,20,33,1.831,5.097,2.242,1.306,0.999,,
+Weight only + MLE scale,20,42,1.479,3.246,1.796,0.651,0.999,,
+"Weight only, source scale",0,18,5.12,63.913,7.995,5.364,0.951,,
+"Weight only, source scale",0,23,6.147,42.301,6.504,2.638,0.98,,
+"Weight only, source scale",0,33,11.315,155.765,12.481,6.146,0.98,,
+"Weight only, source scale",0,42,5.364,36.132,6.011,2.156,0.994,,
+"Weight only, source scale",1,18,5.108,63.933,7.992,5.349,0.95,,
+"Weight only, source scale",1,23,6.155,42.384,6.51,2.638,0.98,,
+"Weight only, source scale",1,33,11.312,155.757,12.48,6.154,0.98,,
+"Weight only, source scale",1,42,5.361,36.083,6.007,2.157,0.994,,
+"Weight only, source scale",3,18,5.156,63.859,7.971,5.36,0.951,,
+"Weight only, source scale",3,23,6.147,42.266,6.5,2.637,0.98,,
+"Weight only, source scale",3,33,11.314,156.003,12.488,6.123,0.98,,
+"Weight only, source scale",3,42,5.36,36.037,6.002,2.154,0.994,,
+"Weight only, source scale",5,18,5.253,65.999,8.095,5.489,0.949,,
+"Weight only, source scale",5,23,6.14,42.235,6.496,2.64,0.98,,
+"Weight only, source scale",5,33,11.411,157.88,12.561,6.144,0.979,,
+"Weight only, source scale",5,42,5.395,36.557,6.044,2.166,0.994,,
+"Weight only, source scale",10,18,4.984,60.822,7.712,5.175,0.951,,
+"Weight only, source scale",10,23,6.11,41.773,6.457,2.631,0.98,,
+"Weight only, source scale",10,33,11.3,155.143,12.446,6.127,0.979,,
+"Weight only, source scale",10,42,5.352,35.928,5.991,2.157,0.994,,
+"Weight only, source scale",20,18,5.395,70.202,7.893,5.642,0.916,,
+"Weight only, source scale",20,23,6.195,43.124,6.547,2.654,0.978,,
+"Weight only, source scale",20,33,11.392,156.904,12.492,6.094,0.978,,
+"Weight only, source scale",20,42,5.362,36.06,5.997,2.162,0.994,,

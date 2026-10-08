@@ -1,0 +1,99 @@
+K,model,dMAPE,lo95,hi95,ref_wins_pct
+1,"GP residual on source log-log, pooled+sup.",3.259,2.215,4.004,100.0
+1,"Gradient Boosting, pooled + support",7.611,4.787,9.78,100.0
+1,Ours+W ablation: + V_g in g(z),0.304,0.054,0.522,98.0
+1,Ours+W ablation: no NIG (fixed noise),0.0,0.0,0.0,0.0
+1,Ours+W ablation: scale only (g=0),0.469,0.101,1.04,100.0
+1,Ours+W ablation: uncalibrated (lam=1),0.0,0.0,0.0,0.0
+1,Ours+W ablation: within-lot g(z),0.777,0.466,1.233,100.0
+1,Ours-V (no scale): g(z)=V_g,3.753,2.591,5.288,100.0
+1,Ours-V ablation: g=0,23.201,19.141,26.822,100.0
+1,Ours-V ablation: no V_g term,4.579,3.103,6.59,100.0
+1,Ours-V ablation: uncalibrated,3.753,2.591,5.288,100.0
+1,"Physics V_bulk/V_g, source offset",26.444,25.108,27.376,100.0
+1,"Random Forest, pooled + support",9.884,7.169,11.893,100.0
+1,Repo physical estimate,23.772,22.358,24.683,100.0
+1,Repo physical estimate + MLE scale,24.613,17.4,32.699,100.0
+1,"Ridge, all features, pooled + support",4.609,3.249,5.769,100.0
+1,"Ridge, image features only",75.19,69.763,77.475,100.0
+1,"V_bulk log-log, pooled source",3.282,2.247,4.014,100.0
+1,"V_bulk log-log, source slope + MLE shift",4.396,2.911,6.345,100.0
+1,Weight + V_bulk log-log,1.701,0.631,2.399,100.0
+1,Weight + V_bulk log-log + MLE shift,0.102,-0.039,0.301,86.0
+1,Weight only + MLE scale,0.463,0.028,1.083,98.0
+1,"Weight only, source scale",1.741,0.682,2.466,100.0
+3,"GP on V_bulk, support-only",20.714,4.783,40.615,100.0
+3,"GP residual on source log-log, pooled+sup.",3.497,2.634,3.961,100.0
+3,"Gradient Boosting, pooled + support",7.028,4.806,9.247,100.0
+3,Ours+W ablation: + V_g in g(z),0.245,0.037,0.443,98.0
+3,Ours+W ablation: no NIG (fixed noise),0.0,0.0,0.0,0.0
+3,Ours+W ablation: scale only (g=0),0.305,-0.056,0.741,94.0
+3,Ours+W ablation: uncalibrated (lam=1),0.0,0.0,0.0,0.0
+3,Ours+W ablation: within-lot g(z),0.633,0.342,0.914,100.0
+3,Ours-V (no scale): g(z)=V_g,3.376,2.837,3.877,100.0
+3,Ours-V ablation: g=0,20.133,16.936,25.02,100.0
+3,Ours-V ablation: no V_g term,3.832,3.173,4.983,100.0
+3,Ours-V ablation: uncalibrated,3.376,2.837,3.877,100.0
+3,"Physics V_bulk/V_g, source offset",26.749,24.435,28.158,100.0
+3,"Random Forest, pooled + support",9.315,6.386,12.448,100.0
+3,Repo physical estimate,24.065,21.788,25.399,100.0
+3,Repo physical estimate + MLE scale,19.891,16.817,24.379,100.0
+3,"Ridge, all features, pooled + support",4.031,3.229,5.177,100.0
+3,"Ridge, image features only",75.678,68.219,79.875,100.0
+3,"V_bulk log-log, pooled source",3.558,2.668,4.032,100.0
+3,"V_bulk log-log, source slope + MLE shift",3.302,2.71,4.084,100.0
+3,"V_bulk log-log, support-only",5.073,2.416,11.23,100.0
+3,Weight + V_bulk log-log,1.947,0.956,2.368,100.0
+3,Weight + V_bulk log-log + MLE shift,0.064,-0.098,0.168,82.0
+3,Weight only + MLE scale,0.321,-0.085,0.771,92.0
+3,"Weight only, source scale",1.992,1.059,2.429,100.0
+5,"GP on V_bulk, support-only",9.227,2.618,19.773,100.0
+5,"GP residual on source log-log, pooled+sup.",3.684,3.018,4.161,100.0
+5,"Gradient Boosting, pooled + support",6.044,4.278,9.681,100.0
+5,Ours+W ablation: + V_g in g(z),0.244,0.164,0.318,100.0
+5,Ours+W ablation: no NIG (fixed noise),0.0,0.0,0.0,0.0
+5,Ours+W ablation: scale only (g=0),0.267,0.001,0.494,96.0
+5,Ours+W ablation: uncalibrated (lam=1),0.0,0.0,0.0,0.0
+5,Ours+W ablation: within-lot g(z),0.65,0.451,0.971,100.0
+5,Ours-V (no scale): g(z)=V_g,3.487,2.976,4.253,100.0
+5,Ours-V ablation: g=0,19.039,16.756,23.29,100.0
+5,Ours-V ablation: no V_g term,3.834,3.286,4.614,100.0
+5,Ours-V ablation: uncalibrated,3.487,2.976,4.253,100.0
+5,"Physics V_bulk/V_g, source offset",27.143,25.313,29.158,100.0
+5,"Random Forest, pooled + support",8.257,5.772,12.292,100.0
+5,Repo physical estimate,24.478,22.571,26.407,100.0
+5,Repo physical estimate + MLE scale,18.814,16.46,22.201,100.0
+5,"Ridge, all features, pooled + support",3.926,3.04,4.959,100.0
+5,"Ridge, image features only",74.971,67.971,81.235,100.0
+5,"V_bulk log-log, pooled source",3.785,3.116,4.244,100.0
+5,"V_bulk log-log, source slope + MLE shift",3.267,2.758,3.999,100.0
+5,"V_bulk log-log, support-only",3.085,2.269,4.344,100.0
+5,Weight + V_bulk log-log,2.188,1.349,2.508,100.0
+5,Weight + V_bulk log-log + MLE shift,0.033,-0.099,0.124,80.0
+5,Weight only + MLE scale,0.259,-0.098,0.551,94.0
+5,"Weight only, source scale",2.23,1.423,2.522,100.0
+10,"GP on V_bulk, support-only",3.719,1.592,8.638,100.0
+10,"GP residual on source log-log, pooled+sup.",3.581,3.046,4.033,100.0
+10,"Gradient Boosting, pooled + support",5.066,3.601,8.236,100.0
+10,Ours+W ablation: + V_g in g(z),0.247,0.176,0.336,100.0
+10,Ours+W ablation: no NIG (fixed noise),0.0,0.0,0.0,0.0
+10,Ours+W ablation: scale only (g=0),0.239,0.028,0.407,98.0
+10,Ours+W ablation: uncalibrated (lam=1),0.0,0.0,0.0,0.0
+10,Ours+W ablation: within-lot g(z),0.542,0.33,0.708,100.0
+10,Ours-V (no scale): g(z)=V_g,3.242,2.695,3.874,100.0
+10,Ours-V ablation: g=0,17.569,15.049,20.378,100.0
+10,Ours-V ablation: no V_g term,3.575,2.824,4.254,100.0
+10,Ours-V ablation: uncalibrated,3.242,2.695,3.874,100.0
+10,"Physics V_bulk/V_g, source offset",27.004,24.581,29.39,100.0
+10,"Random Forest, pooled + support",6.657,5.212,10.361,100.0
+10,Repo physical estimate,24.344,21.611,26.886,100.0
+10,Repo physical estimate + MLE scale,17.777,15.205,21.206,100.0
+10,"Ridge, all features, pooled + support",3.318,2.602,4.02,100.0
+10,"Ridge, image features only",74.699,63.938,87.02,100.0
+10,"V_bulk log-log, pooled source",3.775,3.205,4.219,100.0
+10,"V_bulk log-log, source slope + MLE shift",3.027,2.393,3.542,100.0
+10,"V_bulk log-log, support-only",2.534,1.999,3.213,100.0
+10,Weight + V_bulk log-log,2.204,1.609,2.537,100.0
+10,Weight + V_bulk log-log + MLE shift,0.028,-0.036,0.09,76.0
+10,Weight only + MLE scale,0.229,-0.015,0.409,96.0
+10,"Weight only, source scale",2.241,1.671,2.527,100.0
